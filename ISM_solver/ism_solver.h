@@ -29,6 +29,12 @@ struct ISMParam {
 
 class ISMSolver {
 private:
+
+    struct InstanceID {
+        int id;
+        int type;
+    };
+    
     // Helper struct for independent set matching
     struct IndepSet {
         std::vector<int> set;        // instances in current independent set

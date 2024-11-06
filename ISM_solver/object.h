@@ -226,41 +226,39 @@ public:
     void setInstanceOwner(Instance* inst) { instanceOwner = inst; }
 };
 
-class Instance {
+struct ISMInstance {
+public:
     bool fixed; // 声明 fixed 成员变量
-    Lib* cellLib; // 声明 cellLib 成员变量
-    std::string instanceName; // 声明 instanceName 成员变量
+    int cellLib; // 声明 cellLib 成员变量
+    int inst_ID; // 声明 instanceName 成员变量
     std::string modelName; // 声明 modelName 成员变量
     std::tuple<int, int, int> baseLocation; // location before optimization
     std::tuple<int, int, int> location; // location after optimization
     std::vector<Pin*> inpins;  
     std::vector<Pin*> outpins;
+    std::vector<Pin*> pins;
 
-public:
-    Instance(); 
-    ~Instance();
+    ISMInstance(); 
+    ~ISMInstance();
 
     // Getter and setter
     std::tuple<int, int, int> getBaseLocation() const { return baseLocation; }
-    void setBaseLocation(const std::tuple<int, int, int>& loc) { baseLocation = loc; }
-
     std::tuple<int, int, int> getLocation() const { return location; }
-    void setLocation(const std::tuple<int, int, int>& loc) { location = loc; }
 
-    bool isFixed() const { return fixed; }
-    void setFixed(bool value) { fixed = value;}
+    bool isFixed() const { return fixed; } //whether fixed 
 
-    std::string getInstanceName() const { return instanceName; }
-    void setInstanceName(const std::string& name) { instanceName = name;}
+    int getInstanceName() const { return inst_ID; }
 
     std::string getModelName() const { return modelName; }
-    void setModelName(const std::string& name) { modelName = name; }
 
-    Lib* getCellLib() const { return cellLib; }
-    void setCellLib(Lib* lib);
+    int getCellLib() const { return cellLib; }
 
     bool isPlaced(); 
     bool isMoved();
+
+    bool hasCE() ;
+    bool hasReset();
+    bool hasClock();
 
     void createInpins();
     int getNumInpins() const { return inpins.size(); }
