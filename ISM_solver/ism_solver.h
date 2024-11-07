@@ -1,5 +1,3 @@
-#pragma once
-
 #include <vector>
 #include <set>
 #include <list>
@@ -30,71 +28,72 @@ struct ISMParam {
 class ISMSolver {
 private:
 
-    struct InstanceID {
-        int id;
-        int type;
-    };
-    
-    // Helper struct for independent set matching
-    struct IndepSet {
-        std::vector<int> set;        // instances in current independent set
-        std::vector<bool> dep;       // dependency flags 
-        int type = -1;               // instance type
-        std::pair<int,int> ceSet;    // CE pair
-        int cksr = -1;               // Clock/Reset signal
-    };
-
-    // Memory for solving ISM
-    struct ISMMemory {
-        std::vector<std::tuple<double, double, double, double>> bboxes;  // bounding boxes
-        std::vector<std::pair<double,double> > offsets;                // pin offsets
-        std::vector<int> netIds;                                      // net IDs
-        std::vector<int> ranges;                                      // ranges for instances
-        std::vector<std::vector<double> > costMtx;                     // cost matrix
-        std::vector<int> solution;                                    // matching solution
+    struct ISMInstance {
+        bool fixed; // 声明 fixed 成员变量
+        int cellLib; // 声明 cellLib 成员变量
+        int inst_ID; // 声明 instanceName 成员变量
+        std::string modelName; // 声明 modelName 成员变量
+        std::tuple<int, int, int> baseLocation; // location before optimization
+        std::tuple<int, int, int> optimizeLocation; // location after optimization
+        std::vector<Pin*> inpins;
+        std::vector<Pin*> outpins;
+        std::vector<Pin*> pins;
+        std::vector<int> conn;
+        bool ce;    //检查是否有CE
+        bool cksr;  //检查是否有clock/reset
     };
 
-    // Member variables
-    ISMParam param;                        // parameters
-    std::vector<Instance*> instances;      // all instances
-    std::vector<Net*> nets;               // all nets
-    std::vector<Pin*> pins;               // all pins
-    std::vector<Tile*> tiles;             // all tiles
-    std::vector<ClockRegion*> clockRegs;  // all clock regions
-    
-    // Working variables
-    IndepSet indepSet;                    // current independent set
-    std::vector<ISMMemory> threadMem;     // per-thread memory
-    std::vector<int> priority;            // instance priorities
-    int iteration = 0;                    // current iteration
-    double curWL = 0;                     // current wirelength
-    int numThreads = 1;                   // number of threads
+    struct ISMNet {
+        int id; // 声明 id 成员变量
+        bool clock; // 声明 clock 成员变量    
+        std::vector<Pin*> PinArray;
+        int weight; // 声明 weight 成员变量
+        std::vector<int> bbox; // 声明 bbox 成员变量,(x1, y1, x2, y2)
 
-    // Key functions
-    void buildIndepSet(Instance* seed);
-    void computeNetBBoxes(const std::vector<int>& set, ISMMemory& mem);
-    void computeCostMatrix(const std::vector<int>& set, ISMMemory& mem); 
-    void computeMatching(ISMMemory& mem);
-    void realizeMatching(const std::vector<int>& set, ISMMemory& mem);
-    bool checkStopCondition();
-    double computeHPWL(int maxDegree = -1);
-    void updateInstancePriority();
-    bool isInstFeasible(Instance* inst) const;
-    
+
+    };
+
+    struct ISMPin {
+        int id; // 声明 id 成员变量
+        std::vector<int> netID; // 声明 netID 成员变量
+        std::vector<int> instID; // 声明 instID 成员变量
+        int xOff; // 声明 xOff 成员变量
+        int yOff; // 声明 yOff 成员变量
+        int type; // 声明 type 成员变量
+        bool isTimeCritical; // 声明 isTimeCritical 成员变量
+    };
+
+    struct ISMsite {
+        int x, y;   //位置
+        int InstID; //在这个site中的instanceID
+        bool controlSet;    //是不是含有control set的site
+    };
+
+    // 这里的独立集中我们将独立的和非独立的都框定进来
+    // 我们先找出所有的独立集放到一个大的vector中可以吗？
+    struct ISMIndepentSet {
+        std::vector<int> set;        // 在这个独立集里面的instances
+        std::vector<bool> dep;       // 每个对应的instance是不是独立的，独立为1，非独立为0 
+        bool finish;                // 是否完成
+        std::pair<int,int> ceSet;    // CE pair待定
+        int cksr = -1;               // Clock/Reset signal 待定
+    };
+
 public:
-    // Constructor
-    ISMSolver(const ISMParam& p, int threads = 1);
+    ISMSolver(const ISMProblem& prob, int xl = 0, int yl = 0);
 
-    // Main interfaces  
-    void addInstance(Instance* inst) { instances.push_back(inst); }
-    void addNet(Net* net) { nets.push_back(net); }
-    void addPin(Pin* pin) { pins.push_back(pin); }
-    void addTile(Tile* tile) { tiles.push_back(tile); }
-    void addClockRegion(ClockRegion* cr) { clockRegs.push_back(cr); }
-    
-    // Run optimization
+    void buildProblem(const ISMProblem& prob);
     void run();
-    
-    std::pair<double,double> getWirelength() const;
-    std::pair<int,int> getLocation(Instance* inst) const;
+
+    // sortNet()
+    // sortPin()    
+    // sortInstance()
+    // sortSite()
+    // removeRedundancy()
+
+    std::vector<ISMIndepentSet> buildIndepSet();
+    void computeNetBBoxes(std::vector<int>& Nets_set);  //计算每个net的bbox
+    void computeCostMatrix(std::vector<int>& Instance_set); //这里用邻接矩阵的方式建了一个cost matrix，cost为每个instance放到对应site的线长优化量
+    int computeHPWL(const ISMNet); //计算HPWL
+
 };
