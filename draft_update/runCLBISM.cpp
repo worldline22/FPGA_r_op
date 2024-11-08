@@ -7,6 +7,7 @@
 struct Instance
 {
     std::tuple<int, int, int> Location;
+    int type;
 };
 struct Net
 {
@@ -25,7 +26,7 @@ std::vector<Pin> PinArray;
 struct IndepSet
 {
 
-}
+};
 
 
 void runCLBISM()
@@ -58,6 +59,15 @@ void runCLBISM()
     // allocate memory for ISM solver
     // initialize seeds, related to priorty
     std::vector<int> priority;
+    std::vector<std::vector<int>> movBuckets;
+    for (int i = 0; i < InstArray.size(); ++i)
+    {
+        const auto &inst = InstArray[i];
+        if (inst.type != -1)
+        {
+            priority.push_back(i);
+        }
+    }
     // compute HPWL，但是我们的实现中想必是调FLUTE去解的
     for (auto &net : NetArray)
     {
@@ -110,7 +120,10 @@ void runCLBISM()
         std::vector<std::vector<int>> indepSets;
         IndepSet indepSet;
         std::vector<std::vector<int>> sets;
-        // build independent sets
 
+        // build independent sets
+        
+        
+        
     }
 }
