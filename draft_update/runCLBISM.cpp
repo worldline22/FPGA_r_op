@@ -110,7 +110,9 @@ void runCLBISM()
             HPWL_res += (net.bbox[2] - net.bbox[0]) + (net.bbox[3] - net.bbox[1]);
         }
     }
-    // main iteration !
+
+
+    // main iteration: solver.run()
     int iteration = 0;
     while (true)
     {
@@ -294,6 +296,10 @@ void runCLBISM()
             }
         }    
     }
+
+    // z getter
+    // write solution back to the state vector (pos)
+
 }
 
 // Mates
