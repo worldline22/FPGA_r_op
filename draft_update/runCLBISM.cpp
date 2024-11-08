@@ -269,7 +269,7 @@ void runCLBISM()
                         // 没有计算减量
                         // 有 mateCredit 奖励
                     }
-                    costMtx[i][j] = cost;
+                    costMtx[ii][jj] = cost;
                 }
             }
             
