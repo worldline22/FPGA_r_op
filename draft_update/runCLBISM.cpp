@@ -8,6 +8,9 @@ struct Instance
 {
     std::tuple<int, int, int> Location;
     int type;
+    int numMov = 0;
+    std::vector<int> conn; // * 相当于连边，得另外建 - fixed的元件，不要加进conn里面?
+    std::vector<int> pin_ids;
 };
 struct Net
 {
@@ -25,7 +28,12 @@ std::vector<Pin> PinArray;
 
 struct IndepSet
 {
-
+    std::vector<int> set;        // 在这个独立集里面的instances
+    std::vector<bool> dep;       // 每个对应的instance是不是独立的，独立为1，非独立为0 
+    bool finish;                // 是否完成
+    std::pair<int,int> ceSet;    // CE pair待定
+    int cksr = -1;               // Clock/Reset signal 待定
+    int type;
 };
 
 
@@ -118,12 +126,128 @@ void runCLBISM()
         else HPWL_res = HPWL_res_new;
 
         std::vector<std::vector<int>> indepSets;
-        IndepSet indepSet;
+        IndepSet indepSet_builder; // "helper object"
         std::vector<std::vector<int>> sets;
 
-        // build independent sets
+        // build independent sets -------------------
+            // sort priority by numMov, update priority
+        for (auto &bkt : movBuckets)
+            bkt.clear();
+        int maxMove = 0;
+        for (int i : priority)
+        {
+            maxMove = std::max(maxMove, InstArray[i].numMov);
+        }
+        movBuckets.resize(maxMove + 1);
+        for (int i : priority)
+        {
+            movBuckets[InstArray[i].numMov].push_back(i);
+        }
+        auto it = priority.begin();
+        for (const auto &bkt : movBuckets)
+        {
+            std::copy(bkt.begin(), bkt.end(), it);
+            it += bkt.size();
+        }
+
+        indepSet_builder.dep.resize(InstArray.size(), 0);
+        sets.clear();
+
+        for (int inst_id : priority)
+        {
+            if (!indepSet_builder.dep[inst_id])
+            {
+                indepSet_builder.set.clear();
+                indepSet_builder.ceSet = std::make_pair(-1, -1);
+                indepSet_builder.cksr = -1;
+                
+                // build independent set -----------------
+                Instance seed = InstArray[inst_id];
+
+                    // add instance to independent set
+                        // control set 可能和多线程中的处理有关系
+                        // 找到 site xy -> 相同纵坐标位置内的一些inst，这些也要标记
+                        // 更新 control set
+                indepSet_builder.dep[inst_id] = 1;
+                for (int i : seed.conn)
+                {
+                    indepSet_builder.dep[i] = 1; // 连坐
+                }
+                // ... cs ...
+                indepSet_builder.set.push_back(inst_id);
+                indepSet_builder.type = seed.type;
+
+                int init_x = std::get<0>(seed.Location);
+                int init_y = std::get<1>(seed.Location);
+
+                // 用spiral accessor的方式把周围的东西遍历一遍
+                std::vector<std::pair<int, int>> reachList;
+                // ... fill ..., 注意不要超出边界
+                for (auto xy : reachList)
+                {
+                    // 这里先不向z方向延展
+                    // 这里做的是CLB ISM
+                    int getInstID;
+                    Instance inst = InstArray[getInstID];
+                    if (indepSet_builder.dep[getInstID]) continue;
+                    if (inst.type != indepSet_builder.type) continue;
+                    // not subject to cs constraint : fes
+                    // compatibility
+
+                    // add instance <
+                    indepSet_builder.dep[getInstID] = 1;
+                    for (int i : inst.conn)
+                    {
+                        indepSet_builder.dep[i] = 1; // 连坐
+                    }
+                    // ... cs ...
+                    indepSet_builder.set.push_back(getInstID);
+                    indepSet_builder.type = inst.type;
+
+                    if (indepSet_builder.set.size() >= 50) break;
+                }
+                sets.emplace_back(indepSet_builder.set);
+            }  
+        }
         
-        
+        // now we have many ISM. openMP -> parallel
+        for (int i = 0; i < sets.size(); ++i)
+        {
+            const auto &set = sets[i];
+            // 需要为每个线程分配内存
+            // computeNetBBoxes(set, mem);
+            for (int j = 0; j < set.size(); ++j)
+            {
+                int inst_id = set[j];
+                Instance inst = InstArray[inst_id];
+                auto loc = inst.Location;
+                for (int pinID : inst.pin_ids)
+            }
+        }
         
     }
 }
+
+// ISM Memory
+// std::vector<Box<RealType>>  bboxes;       // Bounding boxes of nets that are incident to the instances in the set
+// std::vector<Box<IndexType>> slr_bboxes;   // Bounding boxes_slr of nets that are incident to the instances in the set
+// std::vector<XY<RealType>>   offset;       // offset[i] is the pin offset for the insatnce in net bounding box bboxArray[i]
+// IndexVector                 netIds;       // netIds[i] is the ID of the net corresponding to bboxArray[i]
+// IndexVector
+//         ranges;   // [ranges[i], ranges[i+1]) contains the net bounding box related to the i-th instance in the set
+// Vector2D<FlowIntType>                        costMtx;   // Cost matrix
+
+// std::vector<bool>                            canConsider;   // If the ith element can't be swapped with ANY
+// // For solving ISM
+// // Since lemon::ListDigraph is not constructible, we need to wrap it with std::unique_ptr
+// std::unique_ptr<lemon::ListDigraph>          graphPtr;
+// std::vector<lemon::ListDigraph::Node>        lNodes;
+// std::vector<lemon::ListDigraph::Node>        rNodes;
+// std::vector<lemon::ListDigraph::Arc>         lArcs;
+// std::vector<lemon::ListDigraph::Arc>         rArcs;
+// std::vector<lemon::ListDigraph::Arc>         mArcs;
+// std::vector<std::pair<IndexType, IndexType>> mArcPairs;
+// IndexVector sol;   // Matching solution, the i-th instance is moved to sol[i]-th instance's location
+
+// // General purpose buffers
+// IndexVector idxVec;
