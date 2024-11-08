@@ -7,6 +7,7 @@
 struct Instance
 {
     std::tuple<int, int, int> Location;
+    int type;
 };
 struct Net
 {
@@ -22,6 +23,10 @@ std::vector<Instance> InstArray;
 std::vector<Net> NetArray;
 std::vector<Pin> PinArray;
 
+struct IndepSet
+{
+
+};
 
 
 void runCLBISM()
@@ -54,6 +59,15 @@ void runCLBISM()
     // allocate memory for ISM solver
     // initialize seeds, related to priorty
     std::vector<int> priority;
+    std::vector<std::vector<int>> movBuckets;
+    for (int i = 0; i < InstArray.size(); ++i)
+    {
+        const auto &inst = InstArray[i];
+        if (inst.type != -1)
+        {
+            priority.push_back(i);
+        }
+    }
     // compute HPWL，但是我们的实现中想必是调FLUTE去解的
     for (auto &net : NetArray)
     {
@@ -76,6 +90,7 @@ void runCLBISM()
     }
     // maxNetDegree = 16
     // openparf里长和宽还有权重，这里就不写了
+    // 赏析 16 在此处的作用
     int HPWL_res = 0;
     for (const auto &net : NetArray)
     {
@@ -85,17 +100,30 @@ void runCLBISM()
         }
     }
     // main iteration !
+    int iteration = 0;
     while (true)
     {
+        ++iteration;
         // the check of stop condition
-        int HPWL_res = 0;
-    for (const auto &net : NetArray)
-    {
-        if (net.pins_id.size() <= 16)
+        int HPWL_res_new = 0;
+        for (const auto &net : NetArray)
         {
-            HPWL_res += (net.bbox[2] - net.bbox[0]) + (net.bbox[3] - net.bbox[1]);
+            if (net.pins_id.size() <= 16)
+            {
+                HPWL_res += (net.bbox[2] - net.bbox[0]) + (net.bbox[3] - net.bbox[1]);
+            }
         }
-    }
-    
+        double improv = 1.0 - HPWL_res_new / HPWL_res;
+        if (improv < 0.001) break;
+        else HPWL_res = HPWL_res_new;
+
+        std::vector<std::vector<int>> indepSets;
+        IndepSet indepSet;
+        std::vector<std::vector<int>> sets;
+
+        // build independent sets
+        
+        
+        
     }
 }
