@@ -72,7 +72,7 @@ private:
     // 这里的独立集中我们将独立的和非独立的都框定进来
     // 我们先找出所有的独立集放到一个大的vector中可以吗？
     struct ISMIndepentSet {
-        std::vector<int> set;        // 在这个独立集里面的instances
+        std::vector<int> Set;        // 在这个独立集里面的instances
         std::vector<bool> dep;       // 每个对应的instance是不是独立的，独立为1，非独立为0 
         bool finish;                // 是否完成
         std::pair<int,int> ceSet;    // CE pair待定
@@ -94,6 +94,10 @@ public:
     std::vector<ISMIndepentSet> buildIndepSet();
     void computeNetBBoxes(std::vector<int>& Nets_set);  //计算每个net的bbox
     void computeCostMatrix(std::vector<int>& Instance_set); //这里用邻接矩阵的方式建了一个cost matrix，cost为每个instance放到对应site的线长优化量
+
+private:
     int computeHPWL(const ISMNet); //计算HPWL
+
+
 
 };

@@ -96,6 +96,6 @@ void runCLBISM()
             HPWL_res += (net.bbox[2] - net.bbox[0]) + (net.bbox[3] - net.bbox[1]);
         }
     }
-        
+    
     }
 }
