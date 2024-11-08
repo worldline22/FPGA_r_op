@@ -7,9 +7,11 @@
 struct Instance
 {
     std::tuple<int, int, int> Location;
+    int site_id;
     int type;
     int numMov = 0;
     std::vector<int> conn; // * 相当于连边，得另外建 - fixed的元件，不要加进conn里面?
+    std::vector<int> mate;
     std::vector<int> pin_ids;
 };
 struct Net
@@ -21,6 +23,7 @@ struct Pin
 {
     int inst_id;
     int net_id;
+    int offset; // 他的offset疑似是两个数，不知道为什么
 };
 std::vector<Instance> InstArray;
 std::vector<Net> NetArray;
@@ -211,10 +214,19 @@ void runCLBISM()
         }
         
         // now we have many ISM. openMP -> parallel
+        std::vector<std::vector<int>> Mbboxes{};
+        std::vector<int> Moffset{};
+        std::vector<int> MnetIds{};
+        std::vector<int> Mranges{};
+
+        std::vector<int> Msolutions{};
+        std::vector<int> MsiteIds{};
+
+        // set之间做并行
         for (int i = 0; i < sets.size(); ++i)
         {
             const auto &set = sets[i];
-            // 需要为每个线程分配内存
+
             // computeNetBBoxes(set, mem);
             for (int j = 0; j < set.size(); ++j)
             {
@@ -222,11 +234,71 @@ void runCLBISM()
                 Instance inst = InstArray[inst_id];
                 auto loc = inst.Location;
                 for (int pinID : inst.pin_ids)
+                {
+                    const auto &pin = PinArray[pinID];
+                    const auto &net = NetArray[pin.net_id];
+                    int a;
+                    if (net.pins_id.size() > a) continue;
+
+                    Mbboxes.emplace_back(net.bbox);
+                    auto &bbox = Mbboxes.back();
+                    Moffset.emplace_back(pin.offset);
+                    MnetIds.emplace_back(pin.net_id);
+
+                    bbox[0] = std::min(bbox[0], std::get<0>(loc));
+                    // ... 
+                }
+                Mranges.push_back(Mbboxes.size());
             }
-        }
-        
+
+            // Compute Cost Matrix(set, mem)
+            // Mtx, 他使用 Vector2D 来封装，这是用一维 Vector 包装的有两个索引的二维数组, FlowIntType = int64
+            std::vector<std::vector<long long>> costMtx; // {规模就是set.size()^2}
+            for (int ii = 0; ii < set.size(); ++ii)
+            {
+                const auto &mates = InstArray[set[i]].mate;
+                for (int jj = 0; jj < set.size(); ++jj)
+                {
+                    double cost = 0;
+                    // the moving cost of moving the i-th instance to the position of the j-th instance
+                    // if not allowed, costMtx(i, j) = MAXN
+                    for (int k = Mranges[i]; k < Mranges[i + 1]; ++k)
+                    {
+                        // get the location of this bbox, this bbox is belong to i's pin
+                        // 如果新 pin 脚的 location 在其 net 的 bbox 外面就要算到 cost 里去，增量就是超出边界的距离
+                        // 没有计算减量
+                        // 有 mateCredit 奖励
+                    }
+                    costMtx[i][j] = cost;
+                }
+            }
+            
+            // Compute Matching(mem)
+            // 问题的建模是这样的:
+            // 左边和右边都放 n 个点，n 是这个支持集里面的 instance 数量
+            // 仅仅用到了 costMtx
+            // 如果边上有流，那就得到匹配. Msolutions[p.first] = p.second - solution里存的也是 siteID
+
+
+            // Realize Matching(set, mem)
+            for (int j = 0; j < set.size(); ++j)
+            {
+                MsiteIds[j] = InstArray[set[j]].site_id;
+            }
+            for (int j = 0; j < set.size(); ++j)
+            {
+                auto &inst = InstArray[set[j]];
+                inst.site_id = MsiteIds[Msolutions[j]];
+                ++inst.numMov;
+                // update: inst_id in sitemap, control set, and net bounding boxes
+            }
+        }    
     }
 }
+
+// Mates
+// We want LUT/FF pairs that have LUT.output->FF.input nets be mates, 也是互相存inst_id
+// ism_detailed_placer.hpp, line 1030
 
 // ISM Memory
 // std::vector<Box<RealType>>  bboxes;       // Bounding boxes of nets that are incident to the instances in the set
