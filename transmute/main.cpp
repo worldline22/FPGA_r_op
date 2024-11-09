@@ -1,8 +1,8 @@
-#include "global.h"
-#include "object.h"
-#include "lib.h"
-#include "arch.h"
-#include "netlist.h"
+#include "checker_legacy/global.h"
+#include "checker_legacy/object.h"
+#include "checker_legacy/lib.h"
+#include "checker_legacy/arch.h"
+#include "checker_legacy/netlist.h"
 
 int main(int, char* argv[])
 {
@@ -27,6 +27,8 @@ int main(int, char* argv[])
     std::cout << "  Successfully read design files." << std::endl;
     reportDesignStatistics();   // from netlist.cpp
     std::cout << "the output file name is " << outputFileName << std::endl;
+
+
 
     return 0;
 }

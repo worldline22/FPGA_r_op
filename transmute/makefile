@@ -1,4 +1,6 @@
-SRC = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp main.cpp
+SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp
+SRC = $(addprefix checker_legacy\, $(SRC_FILES))
+SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
 
 default: $(OBJ)
