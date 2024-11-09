@@ -30,7 +30,7 @@ int main(int, char* argv[])
     reportDesignStatistics();   // from netlist.cpp
     std::cout << "the output file name is " << outputFileName << std::endl;
 
-    
+    copy_instances();
 
     return 0;
 }

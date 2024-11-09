@@ -5,6 +5,14 @@
 #include <map>
 #include <tuple>
 #include <..\checker_legacy\object.h>
+#include <..\checker_legacy\global.h>
+
+
+extern int xy_2_index(int x, int y);
+extern int index_2_x(int index);
+extern int index_2_y(int index);
+
+
 
 struct SSlot
 {
@@ -47,4 +55,12 @@ struct SNet
     Pin* inpin;
     std::list<Pin*> outpins;
 };
+
+extern std::map<int, SInstance*> InstArray;
+extern std::map<int, SNet*> NetArray;
+extern std::map<int, SPin*> PinArray;
+extern std::map<int, STile*> TileArray;  
+// Tile Map 的索引规则: X是列有150个，Y是行有300个，这样子会产生150*300=45000个位置
+
+void copy_instances();
 
