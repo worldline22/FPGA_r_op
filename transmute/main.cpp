@@ -4,6 +4,8 @@
 #include "checker_legacy/arch.h"
 #include "checker_legacy/netlist.h"
 
+#include "solver/solverObject.h"
+
 int main(int, char* argv[])
 {
     std::string nodeFileName = argv[1];
@@ -28,7 +30,7 @@ int main(int, char* argv[])
     reportDesignStatistics();   // from netlist.cpp
     std::cout << "the output file name is " << outputFileName << std::endl;
 
-
+    
 
     return 0;
 }
