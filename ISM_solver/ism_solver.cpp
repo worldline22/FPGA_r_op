@@ -39,7 +39,7 @@ class ISMSolver_matching {
 public:
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
-    void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize);
+    void buildIndepSet(IndepSet &indepSet, const STile & seed, const int maxR, const int maxIndepSetSize);
     void addInstToIndepSet(IndepSet &indepSet, const SInstance & inst);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
@@ -48,6 +48,7 @@ public:
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
     bool checkPinInTile(const STile &tile, SPin* &thisPin);
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
+    void addAllmateInstToIndepSet();
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -135,15 +136,16 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
 
 void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, const SInstance &inst){
     dep[inst.id] = true;
-    for(auto &inst : inst.conn){
-        dep[inst.id] = true;
+    for(auto it = inst.conn.begin(); it != inst.conn.end(); ++it){
+        SInstance* inst = InstArray[*it];
+        dep[inst->id] = true;
     }
     indepSet.inst.push_back(inst.id);
     return;
 }
 
-void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed, const int maxR, const int maxIndepSetSize){
-    std::pair<int, int> initXY = std::make_pair(get<0>(seed.Location), get<1>(seed.Location));
+void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, const int maxR, const int maxIndepSetSize){
+    std::pair<int, int> initXY = std::make_pair(seed.X, seed.Y);
     // use the spiral_access to get the instance in the range of maxR
     std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1;
     std::vector<std::pair<int, int> > seq;
@@ -161,7 +163,7 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
-    addInstToIndepSet(indepSet, seed);
+    addInstToIndepSet(indepSet, );
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
@@ -169,7 +171,7 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed
         if (index < 0 || index >= TileArray.size()){
             continue;
         }
-        if (TileArray[index]->tpye[0] == 0){
+        if (TileArray[index]->type[0] == 0){
             if (!dep[index]){
                 addInstToIndepSet(indepSet, InstArray[index]);
             }
@@ -319,6 +321,17 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
         set.push_back(indepSet);
     }
     return;
+}
+
+int main(){
+    ISMMemory mem;
+    ISMSolver_matching solver;
+    std::vector<IndepSet> indepSets;
+    solver.buildIndependentIndepSets(indepSets, 5, 10);
+    for (auto &indepSet : indepSets){
+        solver.realizeMatching(mem, indepSet);
+    }
+    return 0;
 }
 
 
