@@ -69,7 +69,7 @@ private:
         bool controlSet;    //是不是含有control set的site
     };
 
-    // 这里的独立集中我们将独立的和非独立的都框定进来
+    // 这里的独立集中我们将独立的和非独立的都框定进来 
     // 我们先找出所有的独立集放到一个大的vector中可以吗？
     struct ISMIndepentSet {
         std::vector<int> Set;        // 在这个独立集里面的instances
