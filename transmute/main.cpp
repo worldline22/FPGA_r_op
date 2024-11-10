@@ -22,12 +22,12 @@ int main(int, char* argv[])
 
     readAndCreateLib(libFileName);  // from lib.cpp
     chip.readArch(sclFileName, clkFileName);
-    chip.reportArch();
+    // chip.reportArch();
     readInputNodes(nodeFileName);
     readInputNets(netFileName);
     readInputTiming(timingFileName);
     std::cout << "  Successfully read design files." << std::endl;
-    reportDesignStatistics();   // from netlist.cpp
+    // reportDesignStatistics();   // from netlist.cpp
     std::cout << "the output file name is " << outputFileName << std::endl;
 
     init_tiles();
@@ -36,6 +36,8 @@ int main(int, char* argv[])
     std::cout << "Successfully copied nets." << std::endl;
     copy_instances();
     std::cout << "Successfully copied instances." << std::endl;
+    connection_setup();
+    std::cout << "Successfully set up connections." << std::endl;
     
 
     return 0;

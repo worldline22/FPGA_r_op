@@ -194,3 +194,43 @@ void copy_instances()
         // std::cout << InstArray[instance->id]->id << " " << InstArray[instance->id]->Lib << " " << InstArray[instance->id]->fixed << " " << std::get<0>(InstArray[instance->id]->baseLocation) << " " << std::get<1>(InstArray[instance->id]->baseLocation) << " " << std::get<2>(InstArray[instance->id]->baseLocation) << InstArray[instance->id]->inpins.size() << " " << InstArray[instance->id]->outpins.size() << std::endl; 
     }
 }
+
+void connection_setup()
+{
+    for (auto netP : NetArray)
+    {
+        std::vector<int> pinIDs{};
+        pinIDs.push_back(netP.second->inpin->pinID);
+        for (auto pin : netP.second->outpins)
+        {
+            pinIDs.push_back(pin->pinID);
+        }
+        int size = pinIDs.size();
+            // std::cout << netP.first << " " << size << std::endl;
+        if (size > 16) // parameter: to many pins, not consider
+        {
+            continue;
+        }
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = i + 1; j < size; ++j)
+            {
+                int inst1 = PinArray[pinIDs[i]]->instanceOwner->id;
+                int inst2 = PinArray[pinIDs[j]]->instanceOwner->id;
+                InstArray[inst1]->conn.insert(inst2);
+                InstArray[inst2]->conn.insert(inst1);
+            }
+        }
+    }
+    
+    // print the result
+    // for (auto instP : InstArray)
+    // {
+    //     std::cout << "Instance " << instP.first << " is connected to: ";
+    //     for (auto instID : instP.second->conn)
+    //     {
+    //         std::cout << instID << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+}

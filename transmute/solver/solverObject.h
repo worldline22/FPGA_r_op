@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 #include <tuple>
 #include <..\checker_legacy\object.h>
 #include <..\checker_legacy\global.h>
@@ -49,7 +50,7 @@ struct SInstance
     std::tuple<int, int, int> Location;
     std::vector<SPin*> inpins;
     std::vector<SPin*> outpins;
-    std::vector<int> conn;
+    std::set<int> conn;
 };
 
 struct SNet
@@ -70,4 +71,5 @@ extern std::vector<STile*> TileArray;
 void init_tiles();
 void copy_instances();
 void copy_nets();
+void connection_setup();
 
