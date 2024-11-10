@@ -84,6 +84,11 @@ void copy_nets()
         net->inpin = nullptr;
         net->outpins.clear();
 
+        net->BBox_L = 150;
+        net->BBox_R = 0;
+        net->BBox_U = 0;
+        net->BBox_D = 300;
+
         NetArray.insert(std::make_pair(net->id, net));
     }
 }
@@ -160,7 +165,13 @@ void copy_instances()
                 // caution! maybe -1
                 if (pin->netID != -1)
                 {
-                    NetArray[pin->netID]->outpins.push_back(pin);
+                    auto netp = NetArray[pin->netID];
+                    netp->outpins.push_back(pin);
+                    // bounding box calc
+                    netp->BBox_L = std::min(netp->BBox_L, std::get<0>(instance->Location));
+                    netp->BBox_R = std::max(netp->BBox_R, std::get<0>(instance->Location));
+                    netp->BBox_U = std::max(netp->BBox_U, std::get<1>(instance->Location));
+                    netp->BBox_D = std::min(netp->BBox_D, std::get<1>(instance->Location));
                 }
             pin->prop = pin_old->getProp();
             pin->timingCritical = pin_old->getTimingCritical();
@@ -179,8 +190,14 @@ void copy_instances()
             Pin* pin_old = instanceP.second->getOutpin(i);
             pin->netID = pin_old->getNetID();
                 if (pin->netID != -1) {
-                    assert(NetArray[pin->netID]->inpin == nullptr);
-                    NetArray[pin->netID]->inpin = pin;
+                    auto netp = NetArray[pin->netID];
+                    assert(netp->inpin == nullptr);
+                    netp->inpin = pin;
+                    // bounding box calc
+                    netp->BBox_L = std::min(netp->BBox_L, std::get<0>(instance->Location));
+                    netp->BBox_R = std::max(netp->BBox_R, std::get<0>(instance->Location));
+                    netp->BBox_U = std::max(netp->BBox_U, std::get<1>(instance->Location));
+                    netp->BBox_D = std::min(netp->BBox_D, std::get<1>(instance->Location));
                 }
             pin->prop = pin_old->getProp();
             pin->timingCritical = pin_old->getTimingCritical();
@@ -207,6 +224,7 @@ void connection_setup()
         }
         int size = pinIDs.size();
             // std::cout << netP.first << " " << size << std::endl;
+            std::cout << netP.first << " " << netP.second->BBox_L << " " << netP.second->BBox_R << " " << netP.second->BBox_D << " " << netP.second->BBox_U << std::endl;
         if (size > 16) // parameter: to many pins, not consider
         {
             continue;
