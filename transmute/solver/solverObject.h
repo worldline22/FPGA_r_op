@@ -28,8 +28,11 @@ struct STile
     std::set<int> type; // M
     std::map<std::string, std::vector<SSlot*>> instanceMap;
     // tile type 和 lib type 都改成数组，instanceMap的索引保留string
-    std::vector<int> netsConnected;
-    std::vector<std::vector<int>> pin_in_nets;
+    std::vector<int> netsConnected_bank0;
+    std::vector<std::vector<int>> pin_in_nets_bank0;
+    std::vector<int> netsConnected_bank1;
+    std::vector<std::vector<int>> pin_in_nets_bank1;
+    // 如果默认是其他类，默认放在'bank0'里面，PLB里的CARRY4，DRAM，DFF和LUT类引脚则可能放在bank1里面
 };
 
 struct SInstance;
@@ -65,6 +68,7 @@ struct SNet
     int BBox_R;
     int BBox_U; // y方向
     int BBox_D;
+    
 };
 
 extern std::map<int, SInstance*> InstArray;

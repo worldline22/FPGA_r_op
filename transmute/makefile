@@ -5,12 +5,13 @@ SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
 
 INCLUDE_PATHS = -I. -Ichecker_legacy -Isolver
+LEMON = -I/usr/local/include -L/usr/local/lib -lemon
 
 default: $(OBJ)
-	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) -o build $(OBJ)
+	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -o build $(OBJ)
 
 %.o: %.cpp
-	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) -c $< -o $@
+	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -c $< -o $@
 
 clean:
 	rm -f build.exe $(OBJ)
