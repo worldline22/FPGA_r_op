@@ -27,6 +27,7 @@ struct ISMMemory {
 };
 
 std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
+std::map<std::pair<int, int>, int> xy_2_index_map;
 
 struct IndepSet{
     int type;
@@ -40,15 +41,15 @@ public:
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
     void buildIndepSet(IndepSet &indepSet, const STile & seed, const int maxR, const int maxIndepSetSize);
-    void addInstToIndepSet(IndepSet &indepSet, const SInstance & inst);
+    void addInstToIndepSet(IndepSet &indepSet, int X, int Y);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-    int tileHPWLdifference(const STile &tile, const std::pair<int, int> &newLoc);
+    int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
-    bool checkPinInTile(const STile &tile, SPin* &thisPin);
+    bool checkPinInTile(STile* &tile, SPin* &thisPin);
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
-    void addAllmateInstToIndepSet();
+    void addAllsameBankInstToIndepSet();
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -134,13 +135,25 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
 
 /// @inst: 需要额外再建一个conn数组，存储和其相连的instance的id
 
-void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, const SInstance &inst){
-    dep[inst.id] = true;
-    for(auto it = inst.conn.begin(); it != inst.conn.end(); ++it){
-        SInstance* inst = InstArray[*it];
-        dep[inst->id] = true;
+// 以bank为最小单位
+
+void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y){
+    dep[xy_2_index(X, Y)] = true;
+    STile* tile = TileArray[xy_2_index(X, Y)];
+    for (auto &pinArr : tile->pin_in_nets_bank0){   //这里只遍历了bank0中的instance
+        for (int i = 0; i < pinArr.size(); i++){
+            SPin* pin = PinArray[pinArr[i]];
+            SInstance* inst = InstArray[pin->instanceOwner->id];
+            for(auto it = inst->conn.begin(); it != inst->conn.end(); ++it){
+                SInstance* inst = InstArray[*it];
+                int x = std::get<0>(inst->Location);
+                int y = std::get<1>(inst->Location);
+                dep[xy_2_index(x, y)] = true;
+            }
+        }
+        
     }
-    indepSet.inst.push_back(inst.id);
+    indepSet.inst.push_back(xy_2_index(X, Y));
     return;
 }
 
@@ -163,7 +176,7 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
-    addInstToIndepSet(indepSet, );
+    addInstToIndepSet(indepSet, initXY.first, initXY.second);
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
@@ -171,9 +184,9 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
         if (index < 0 || index >= TileArray.size()){
             continue;
         }
-        if (TileArray[index]->type[0] == 0){
+        if (*TileArray[index]->type.begin() == 0){  //0表示为PLB
             if (!dep[index]){
-                addInstToIndepSet(indepSet, InstArray[index]);
+                addInstToIndepSet(indepSet, x, y);
             }
             if (indepSet.inst.size() >= maxIndepSetSize){
                 break;
@@ -191,9 +204,10 @@ bool ISMSolver_matching::inBox(const int x, const int y, const int BBox_R, const
     return x >= BBox_L && x <= BBox_R && y >= BBox_D && y <= BBox_U;
 }
 
-bool ISMSolver_matching::checkPinInTile(const STile &tile, SPin* &thisPin){
-    for (auto &pinArr : tile.pin_in_nets){
-        for (auto &pin : pinArr){
+bool ISMSolver_matching::checkPinInTile(STile* &tile, SPin* &thisPin){
+    for (auto &pinArr : tile->pin_in_nets_bank0){
+        for (int i = 0; i < pinArr.size(); i++){
+            SPin* pin = PinArray[pinArr[i]];
             if (pin->pinID == thisPin->pinID){
                 return true;
             }
@@ -201,12 +215,12 @@ bool ISMSolver_matching::checkPinInTile(const STile &tile, SPin* &thisPin){
     }
 }
 
-int ISMSolver_matching::tileHPWLdifference(const STile &tile, const std::pair<int, int> &newLoc){
+int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc){
     int totalHPWL = 0;
     int x = newLoc.first;
     int y = newLoc.second;
-    for (int i = 0 ; i < tile.netsConnected.size(); i++){
-        SNet *net = NetArray[tile.netsConnected[i]];
+    for (int i = 0 ; i < tile->netsConnected_bank0.size(); i++){
+        SNet *net = NetArray[tile->netsConnected_bank0[i]];
         if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
             continue;
         }
@@ -287,11 +301,11 @@ void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int
     // costMtx[i][j]的意思是i移动到j所在的site时的cost
     for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
         int oldInst = set[i];
-        STile oldTile = TileArray[oldInst];
+        STile* oldTile = TileArray[oldInst];
         for (int j = 0; j < set.size(); j++){
             int newInst = set[j];
-            STile newTile = TileArray[newInst];
-            mem.costMtx[i][j] = tileHPWLdifference(oldTile, std::make_pair(std::get<0>(InstArray[newInst].Location), std::get<1>(InstArray[newInst].Location)));
+            STile* newTile = TileArray[newInst];
+            mem.costMtx[i][j] = tileHPWLdifference(oldTile, std::make_pair(newTile->X, newTile->Y));
         }
     }
     return;
@@ -312,12 +326,12 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 }
 
 void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
-    for (auto &inst : InstArray){
-        if (dep[inst]){
+    for (auto &inst : TileArray){
+        if (dep[xy_2_index(inst->X, inst->Y)]){
             continue;
         }
         IndepSet indepSet;
-        buildIndepSet(indepSet, InstArray[inst], maxR, maxIndepSetSize);
+        buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
         set.push_back(indepSet);
     }
     return;
