@@ -26,7 +26,7 @@ struct ISMMemory {
     std::vector<std::vector<int> > netIds;
 };
 
-std::vector<bool> dep;
+std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
 
 struct IndepSet{
     int type;
@@ -42,11 +42,12 @@ public:
     void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize);
     void addInstToIndepSet(IndepSet &indepSet, const SInstance & inst);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
-    void realizeMatching(ISMMemory &mem, const std::vector<int> &set);
+    void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
     int tileHPWLdifference(const STile &tile, const std::pair<int, int> &newLoc);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
     bool checkPinInTile(const STile &tile, SPin* &thisPin);
+    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -165,6 +166,9 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed
         int x = point.first;
         int y = point.second;
         int index = xy_2_index(x, y);
+        if (index < 0 || index >= TileArray.size()){
+            continue;
+        }
         if (TileArray[index]->tpye[0] == 0){
             if (!dep[index]){
                 addInstToIndepSet(indepSet, InstArray[index]);
@@ -290,6 +294,34 @@ void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int
     }
     return;
 }
+
+void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
+    computeCostMatrix(mem, indepSet.inst);
+    computeMatching(mem);
+    int number = indepSet.inst.size();
+    size_t noMatch = -1;
+    for (size_t i = 0; i < mem.sol.size(); ++i){
+        if(mem.sol[i] == noMatch){
+            continue;
+        }
+        std::cout << "Instance_id:" << indepSet.inst[i/number] << " is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << std::endl;
+    }
+    return;
+}
+
+void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
+    for (auto &inst : InstArray){
+        if (dep[inst]){
+            continue;
+        }
+        IndepSet indepSet;
+        buildIndepSet(indepSet, InstArray[inst], maxR, maxIndepSetSize);
+        set.push_back(indepSet);
+    }
+    return;
+}
+
+
 
 
 
