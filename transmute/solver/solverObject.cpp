@@ -63,8 +63,10 @@ void init_tiles()
                 tile->instanceMap[slotType] = tmpSlotArr;
             }
             // std::cout << std::endl;
-            tile->netsConnected.clear();
-            tile->pin_in_nets.clear();
+            tile->netsConnected_bank0.clear();
+            tile->pin_in_nets_bank0.clear();
+            tile->netsConnected_bank1.clear();
+            tile->pin_in_nets_bank1.clear();
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
         }
@@ -155,6 +157,11 @@ void copy_instances()
         //     assert(found);
         //     // success
         // }
+        if (instance->Lib >= 9 && instance->Lib <= 15 && std::get<2>(instance->Location) >= 4) instance->bank = true;
+        else if (instance->Lib == 19 && std::get<2>(instance->Location) >= 8) instance->bank = true;
+        else if (instance->Lib == 0 && std::get<2>(instance->Location) == 1) instance->bank = true;
+        else if (instance->Lib == 1 && std::get<2>(instance->Location) == 1) instance->bank = true;
+        else instance->bank = false;
         
         // pins and nets
         instance->inpins.clear();
@@ -180,22 +187,31 @@ void copy_instances()
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
                     auto tile_ptr = TileArray[tileindex];
-                    int sizen = tile_ptr->netsConnected.size();
-                    for (findindex = 0; findindex < sizen; ++findindex)
+                    if (!instance->bank)
                     {
-                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        int sizen = tile_ptr->netsConnected_bank0.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                        if (findindex == sizen)
                         {
-                            break;
+                            tile_ptr->netsConnected_bank0.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{pin->pinID});
                         }
-                    }
-                    if (findindex == sizen)
-                    {
-                        tile_ptr->netsConnected.push_back(pin->netID);
-                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                        else
+                            tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
                     }
                     else
                     {
-                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                        int sizen = tile_ptr->netsConnected_bank1.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                        if (findindex == sizen)
+                        {
+                            tile_ptr->netsConnected_bank1.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{pin->pinID});
+                        }
+                        else
+                            tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
                     }
                 }
             pin->prop = pin_old->getProp();
@@ -228,22 +244,31 @@ void copy_instances()
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
                     auto tile_ptr = TileArray[tileindex];
-                    int sizen = tile_ptr->netsConnected.size();
-                    for (findindex = 0; findindex < sizen; ++findindex)
+                    if (!instance->bank)
                     {
-                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        int sizen = tile_ptr->netsConnected_bank0.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                        if (findindex == sizen)
                         {
-                            break;
+                            tile_ptr->netsConnected_bank0.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{pin->pinID});
                         }
-                    }
-                    if (findindex == sizen)
-                    {
-                        tile_ptr->netsConnected.push_back(pin->netID);
-                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                        else
+                            tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
                     }
                     else
                     {
-                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                        int sizen = tile_ptr->netsConnected_bank1.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                        if (findindex == sizen)
+                        {
+                            tile_ptr->netsConnected_bank1.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{pin->pinID});
+                        }
+                        else
+                            tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
                     }
                 }
             pin->prop = pin_old->getProp();
@@ -258,23 +283,35 @@ void copy_instances()
         // std::cout << InstArray[instance->id]->id << " " << InstArray[instance->id]->Lib << " " << InstArray[instance->id]->fixed << " " << std::get<0>(InstArray[instance->id]->baseLocation) << " " << std::get<1>(InstArray[instance->id]->baseLocation) << " " << std::get<2>(InstArray[instance->id]->baseLocation) << InstArray[instance->id]->inpins.size() << " " << InstArray[instance->id]->outpins.size() << std::endl; 
         // check tile connect info
     }
-    // for (int i = 0; i < 45000; ++i)
-    //     {
-    //         auto tile_ptr = TileArray[i]; 
-    //         if (tile_ptr->type.find(0) == tile_ptr->type.end()) continue;
-    //         std::cout << "Tile " << i << " nets connected - ";
-    //         for (int j = 0; j < (int)tile_ptr->netsConnected.size(); ++j)
-    //         {
-    //             int netID = tile_ptr->netsConnected[j];
-    //             std::cout << "(net" << netID << ": ";
-    //             for (int k = 0; k < (int)tile_ptr->pin_in_nets[j].size(); ++k)
-    //             {
-    //                 std::cout << tile_ptr->pin_in_nets[j][k] << " ";
-    //             }
-    //             std::cout << ")";
-    //         }
-    //         std::cout << std::endl;
-    //     }
+    for (int i = 0; i < 45000; ++i)
+        {
+            auto tile_ptr = TileArray[i]; 
+            if (tile_ptr->type.find(0) == tile_ptr->type.end()) continue;
+            std::cout << "Tile " << i << " nets connected - \n";
+            std::cout << "bank0: ";
+            for (int j = 0; j < (int)tile_ptr->netsConnected_bank0.size(); ++j)
+            {
+                int netID = tile_ptr->netsConnected_bank0[j];
+                std::cout << "(net" << netID << ": ";
+                for (int k = 0; k < (int)tile_ptr->pin_in_nets_bank0[j].size(); ++k)
+                {
+                    std::cout << tile_ptr->pin_in_nets_bank0[j][k] << " ";
+                }
+                std::cout << ")";
+            }
+            std::cout << std::endl << "bank1: ";
+            for (int j = 0; j < (int)tile_ptr->netsConnected_bank1.size(); ++j)
+            {
+                int netID = tile_ptr->netsConnected_bank1[j];
+                std::cout << "(net" << netID << ": ";
+                for (int k = 0; k < (int)tile_ptr->pin_in_nets_bank1[j].size(); ++k)
+                {
+                    std::cout << tile_ptr->pin_in_nets_bank1[j][k] << " ";
+                }
+                std::cout << ")";
+            }
+            std::cout << std::endl;
+        }
 }
 
 void connection_setup()

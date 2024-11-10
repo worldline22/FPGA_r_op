@@ -53,6 +53,7 @@ struct SInstance
     int id;
     std::tuple<int, int, int> baseLocation;
     std::tuple<int, int, int> Location;
+    bool bank;
     std::vector<SPin*> inpins;
     std::vector<SPin*> outpins;
     std::set<int> conn;
