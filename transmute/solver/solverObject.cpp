@@ -63,6 +63,8 @@ void init_tiles()
                 tile->instanceMap[slotType] = tmpSlotArr;
             }
             // std::cout << std::endl;
+            tile->netsConnected.clear();
+            tile->pin_in_nets.clear();
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
         }
@@ -153,7 +155,8 @@ void copy_instances()
         //     assert(found);
         //     // success
         // }
-
+        
+        // pins and nets
         instance->inpins.clear();
         for (int i = 0; i < instanceP.second->getNumInpins(); ++i)
         {
@@ -172,6 +175,28 @@ void copy_instances()
                     netp->BBox_R = std::max(netp->BBox_R, std::get<0>(instance->Location));
                     netp->BBox_U = std::max(netp->BBox_U, std::get<1>(instance->Location));
                     netp->BBox_D = std::min(netp->BBox_D, std::get<1>(instance->Location));
+
+                    // process related to netsConneted and pin_in_nets
+                    int findindex = 0;
+                    int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
+                    auto tile_ptr = TileArray[tileindex];
+                    int sizen = tile_ptr->netsConnected.size();
+                    for (findindex = 0; findindex < sizen; ++findindex)
+                    {
+                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        {
+                            break;
+                        }
+                    }
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnected.push_back(pin->netID);
+                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                    }
+                    else
+                    {
+                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                    }
                 }
             pin->prop = pin_old->getProp();
             pin->timingCritical = pin_old->getTimingCritical();
@@ -198,6 +223,28 @@ void copy_instances()
                     netp->BBox_R = std::max(netp->BBox_R, std::get<0>(instance->Location));
                     netp->BBox_U = std::max(netp->BBox_U, std::get<1>(instance->Location));
                     netp->BBox_D = std::min(netp->BBox_D, std::get<1>(instance->Location));
+
+                    // process related to netsConneted and pin_in_nets
+                    int findindex = 0;
+                    int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
+                    auto tile_ptr = TileArray[tileindex];
+                    int sizen = tile_ptr->netsConnected.size();
+                    for (findindex = 0; findindex < sizen; ++findindex)
+                    {
+                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        {
+                            break;
+                        }
+                    }
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnected.push_back(pin->netID);
+                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                    }
+                    else
+                    {
+                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                    }
                 }
             pin->prop = pin_old->getProp();
             pin->timingCritical = pin_old->getTimingCritical();
@@ -209,7 +256,25 @@ void copy_instances()
         
         InstArray.insert(std::make_pair(instance->id, instance));
         // std::cout << InstArray[instance->id]->id << " " << InstArray[instance->id]->Lib << " " << InstArray[instance->id]->fixed << " " << std::get<0>(InstArray[instance->id]->baseLocation) << " " << std::get<1>(InstArray[instance->id]->baseLocation) << " " << std::get<2>(InstArray[instance->id]->baseLocation) << InstArray[instance->id]->inpins.size() << " " << InstArray[instance->id]->outpins.size() << std::endl; 
+        // check tile connect info
     }
+    // for (int i = 0; i < 45000; ++i)
+    //     {
+    //         auto tile_ptr = TileArray[i]; 
+    //         if (tile_ptr->type.find(0) == tile_ptr->type.end()) continue;
+    //         std::cout << "Tile " << i << " nets connected - ";
+    //         for (int j = 0; j < (int)tile_ptr->netsConnected.size(); ++j)
+    //         {
+    //             int netID = tile_ptr->netsConnected[j];
+    //             std::cout << "(net" << netID << ": ";
+    //             for (int k = 0; k < (int)tile_ptr->pin_in_nets[j].size(); ++k)
+    //             {
+    //                 std::cout << tile_ptr->pin_in_nets[j][k] << " ";
+    //             }
+    //             std::cout << ")";
+    //         }
+    //         std::cout << std::endl;
+    //     }
 }
 
 void connection_setup()
@@ -224,7 +289,7 @@ void connection_setup()
         }
         int size = pinIDs.size();
             // std::cout << netP.first << " " << size << std::endl;
-            std::cout << netP.first << " " << netP.second->BBox_L << " " << netP.second->BBox_R << " " << netP.second->BBox_D << " " << netP.second->BBox_U << std::endl;
+            // std::cout << netP.first << " " << netP.second->BBox_L << " " << netP.second->BBox_R << " " << netP.second->BBox_D << " " << netP.second->BBox_U << std::endl;
         if (size > 16) // parameter: to many pins, not consider
         {
             continue;
