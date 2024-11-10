@@ -5,8 +5,8 @@
 #include <map>
 #include <set>
 #include <tuple>
-#include <..\checker_legacy\object.h>
-#include <..\checker_legacy\global.h>
+#include <../checker_legacy/object.h>
+#include <../checker_legacy/global.h>
 
 
 extern int xy_2_index(int x, int y);
