@@ -72,6 +72,45 @@ struct SNet
     
 };
 
+struct SClockRegion
+{
+    int xline[5];
+    int yline[5];
+    //共有X0Y0-X4Y4共25个区域，索引方式遵从与TileArray相同的规则，索引为0-24
+    // index = y * 5 + x
+    // x = index % 5
+    // y = index / 5
+    std::set<int> clockNets[25];
+    // clockNet in each region should not be more than 28
+
+    // X轴方向，0-25,26-53,54-85,86-113,114-149
+    // Y轴方向，0-59,60-119,120-179，180-239，240-299
+
+    // setup in init_tiles, write value in copy_instances
+
+    int getCRID(int tileindex_x, int tileindex_y)
+    {
+        int crindex_x, crindex_y;
+        for (int i = 0; i < 5; ++i)
+        {
+            if (tileindex_x <= xline[i])
+            {
+                crindex_x = i;
+                break;
+            }
+        }
+        for (int i = 0; i < 5; ++i)
+        {
+            if (tileindex_y <= yline[i])
+            {
+                crindex_y = i;
+                break;
+            }
+        }
+        return crindex_y * 5 + crindex_x;
+    }
+};
+
 extern std::map<int, SInstance*> InstArray;
 extern std::map<int, SNet*> NetArray;
 extern std::map<int, SPin*> PinArray;
