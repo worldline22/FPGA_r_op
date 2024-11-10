@@ -44,7 +44,10 @@ public:
     void computeNetBBox(ISMMemory &mem, const std::vector<int> &set);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, const std::vector<int> &set);
-    int HPWL(const SNet &net, const SInstance &fixInst, const SInstance &moveInst);
+    int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+    int tileHPWL(const STile &tile, const std::pair<int, int> &newLoc);
+    bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
+    bool checkPinInTile(const STile &tile, const SPin &pin);
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -175,6 +178,75 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed
     return;
 }
 
+int ISMSolver_matching::HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
+    return std::abs(p1.second - p2.second) + std::abs(p2.first - p1.first);
+}
+
+bool ISMSolver_matching::inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D){
+    return x >= BBox_L && x <= BBox_R && y >= BBox_D && y <= BBox_U;
+}
+
+bool ISMSolver_matching::checkPinInTile(const STile &tile, const SPin &pin){
+    for (auto &pinArr : tile.pin_in_nets){
+        for (auto &pin : pinArr){
+            if (pin->pinID == pin.pinID){
+                return true;
+            }
+        }
+    }
+}
+
+int ISMSolver_matching::tileHPWL(const STile &tile, const std::pair<int, int> &newLoc){
+    int totalHPWL = 0;
+    int x = newLoc.first;
+    int y = newLoc.second;
+    for (int i = 0 ; i < tile.netsConnected.size(); i++){
+        SNet *net = NetArray[tile.netsConnected[i]];
+        if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
+            continue;
+        }
+        if ((net->outpins.size() + 1) > 16){
+            if(x < net->BBox_L){
+                if(y > net->BBox_U){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
+                }
+                else if (y < net->BBox_D){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
+                }
+                else{
+                    totalHPWL += std::abs(x - net->BBox_L);
+                }
+                continue;
+            }
+            if (x > net->BBox_R){
+                if (y > net->BBox_U){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
+                }
+                else if (y < net->BBox_D){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
+                }
+                else{
+                    totalHPWL += std::abs(x - net->BBox_R);
+                }
+                continue;
+            }
+            if (y > net->BBox_U){
+                totalHPWL += std::abs(y - net->BBox_U);
+                continue;
+            }
+            if (y < net->BBox_D){
+                totalHPWL += std::abs(y - net->BBox_D);
+                continue;
+            }
+        }
+        else{
+            if()
+        }
+    }
+    
+    return totalHPWL;
+}
+
 void ISMSolver_matching::computeNetBBox(ISMMemory &mem, const std::vector<int> &set){
     mem.bboxSet.clear();
     mem.netIds.clear();
@@ -182,9 +254,12 @@ void ISMSolver_matching::computeNetBBox(ISMMemory &mem, const std::vector<int> &
 
     mem.rangeSet.push_back(0);
 
-    for (int idx = 0; idx < set.size(); idx++){
-        int inst_id = set[idx];
-        TileArray[inst_id]
+    for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
+        int oldInst = set[i];
+        for (int j = 0;j < set.size(); j++){
+            int newInst = set[j];
+            
+        }
     }
 }
 

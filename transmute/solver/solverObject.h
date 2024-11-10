@@ -28,6 +28,8 @@ struct STile
     std::set<int> type; // M
     std::map<std::string, std::vector<SSlot*>> instanceMap;
     // tile type 和 lib type 都改成数组，instanceMap的索引保留string
+    std::vector<int> netsConnected;
+    std::vector<std::vector<int>> pin_in_nets;
 };
 
 struct SInstance;
@@ -59,6 +61,10 @@ struct SNet
     bool clock;
     SPin* inpin;
     std::list<SPin*> outpins;
+    int BBox_L; // x方向
+    int BBox_R;
+    int BBox_U; // y方向
+    int BBox_D;
 };
 
 extern std::map<int, SInstance*> InstArray;
