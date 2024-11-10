@@ -5,10 +5,12 @@
 #include <numeric>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 #include "ism_solver.h"
-#include "lemon/list_graph.h"
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
+#include "../transmute/solver/solverObject.h"
 
 
 struct ISMMemory {
@@ -21,12 +23,29 @@ struct ISMMemory {
     std::vector<std::pair<size_t, size_t> > mArcPairs;  // 匹配边的索引对
     std::vector<std::vector<int> > costMtx; // 成本矩阵
     std::vector<size_t> sol;                    // 结果存储
+    std::vector<int> rangeSet;
+    std::vector<std::vector<int> > bboxSet;
+    std::vector<std::vector<int> > netIds;
+};
+
+std::vector<bool> dep;
+
+struct IndepSet{
+    int type;
+    std::vector<int> inst;
+    // int cksr;
+    // std::vector<int> ce;
 };
 
 class ISMSolver_matching {
 public:
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
+    void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize);
+    void addInstToIndepSet(IndepSet &indepSet, const SInstance & inst);
+    void computeNetBBox(ISMMemory &mem, const std::vector<int> &set);
+    void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
+    void realizeMatching(ISMMemory &mem, const std::vector<int> &set);
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -109,3 +128,66 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
     runNetworkSimplex(mem, s, t, n);
 
 }
+
+/// @inst: 需要额外再建一个conn数组，存储和其相连的instance的id
+
+void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, const SInstance &inst){
+    dep[inst.id] = true;
+    for(auto &inst : inst.conn){
+        dep[inst.id] = true;
+    }
+    indepSet.inst.push_back(inst.id);
+    return;
+}
+
+void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed, const int maxR, const int maxIndepSetSize){
+    std::pair<int, int> initXY = std::make_pair(get<0>(seed.Location), get<1>(seed.Location));
+    // use the spiral_access to get the instance in the range of maxR
+    std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1;
+    std::vector<std::pair<int, int> > seq;
+    for (int r = 1; r <= maxR; r++){
+        for (int x = r, y = 0; y < r; x--, y++){
+            seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
+        }
+        for (int x = 0, y = r; y > 0; --x, --y){
+            seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
+        }
+        for (int x = -r, y = 0; x < 0; x++, y--){
+            seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
+        }
+        for (int x = 0, y = -r; y < 0; x--, y++){
+            seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
+        }
+    }
+    addInstToIndepSet(indepSet, seed);
+    for (auto &point : seq){
+        int x = point.first;
+        int y = point.second;
+        int index = xy_2_index(x, y);
+        if (TileArray[index]->tpye[0] == 0){
+            if (!dep[index]){
+                addInstToIndepSet(indepSet, InstArray[index]);
+            }
+            if (indepSet.inst.size() >= maxIndepSetSize){
+                break;
+            }
+        }
+    }
+    return;
+}
+
+void ISMSolver_matching::computeNetBBox(ISMMemory &mem, const std::vector<int> &set){
+    mem.bboxSet.clear();
+    mem.netIds.clear();
+    mem.rangeSet.clear();
+
+    mem.rangeSet.push_back(0);
+
+    for (int idx = 0; idx < set.size(); idx++){
+        
+    }
+}
+
+
+
+
