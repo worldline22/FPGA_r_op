@@ -5,3 +5,5 @@ usage after `make`:
 ```
 ./build.exe ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing case_1.nodes.out
 ```
+
+在`info/sclsort.txt`中打出了Tiles各自的属性

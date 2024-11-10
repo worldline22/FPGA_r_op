@@ -32,8 +32,11 @@ int main(int, char* argv[])
 
     init_tiles();
     std::cout << "Successfully initialized tiles." << std::endl;
+    copy_nets();
+    std::cout << "Successfully copied nets." << std::endl;
     copy_instances();
     std::cout << "Successfully copied instances." << std::endl;
+    
 
     return 0;
 }

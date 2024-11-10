@@ -69,8 +69,29 @@ void init_tiles()
     }
 }
 
+void copy_nets()
+{
+    NetArray.clear();
+    for (auto netP : glbNetMap)
+    {
+        SNet* net = new SNet();
+            // std::cout << "Net ID: " << netP.first << std::endl;
+        net->id = netP.first;
+        assert(netP.second->getId() == netP.first);
+        net->clock = netP.second->isClock();
+            // std::cout << "Clock: " << net->clock << std::endl;
+        // 这里: 无法从Net信息找到Pin是Instance的哪个端口，也就无从知道具体是哪个pin. 因此先建net再建pin
+        net->inpin = nullptr;
+        net->outpins.clear();
+
+        NetArray.insert(std::make_pair(net->id, net));
+    }
+}
+
 void copy_instances()
 {
+    InstArray.clear();
+    PinArray.clear();
     for (auto instanceP : glbInstMap)
     {
         SInstance* instance = new SInstance();
@@ -107,25 +128,69 @@ void copy_instances()
             // std::cout << "Lib: " << instance->Lib << std::endl;
 
         // check the instance position
-        int x = std::get<0>(instance->Location);
-        int y = std::get<1>(instance->Location);
-        int index = xy_2_index(x, y);
-        int z= std::get<2>(instance->Location);
-        if (instance->Lib >= 9 && instance->Lib <= 15)
+        // int x = std::get<0>(instance->Location);
+        // int y = std::get<1>(instance->Location);
+        // int index = xy_2_index(x, y);
+        // int z= std::get<2>(instance->Location);
+        // if (instance->Lib >= 9 && instance->Lib <= 15)
+        // {
+        //     STile* tile_ptr = TileArray[index];
+        //     SSlot* slot_ptr = tile_ptr->instanceMap["LUT"][z];
+        //     bool found = false;
+        //     for (auto instID : slot_ptr->baseline_InstIDs)
+        //     {
+        //         if (instID == instance->id)
+        //         {
+        //             found = true;
+        //             break;
+        //         }
+        //     }
+        //     assert(found);
+        //     // success
+        // }
+
+        instance->inpins.clear();
+        for (int i = 0; i < instanceP.second->getNumInpins(); ++i)
         {
-            STile* tile_ptr = TileArray[index];
-            SSlot* slot_ptr = tile_ptr->instanceMap["LUT"][z];
-            bool found = false;
-            for (auto instID : slot_ptr->baseline_InstIDs)
-            {
-                if (instID == instance->id)
+            SPin* pin = new SPin();
+            pin->pinID = PinArray.size();
+            PinArray.insert(std::make_pair(pin->pinID, pin));
+            Pin* pin_old = instanceP.second->getInpin(i);
+            pin->netID = pin_old->getNetID();
+                // caution! maybe -1
+                if (pin->netID != -1)
                 {
-                    found = true;
-                    break;
+                    NetArray[pin->netID]->outpins.push_back(pin);
                 }
-            }
-            assert(found);
+            pin->prop = pin_old->getProp();
+            pin->timingCritical = pin_old->getTimingCritical();
+            pin->instanceOwner = instance;
+                // std::cout << "in" << i << "(" << pin->netID << ", " << pin->prop << ", " << pin->timingCritical << ") ";
+            instance->inpins.push_back(pin);
         }
+        // std::cout << std::endl;
+
+        instance->outpins.clear();
+        for (int i = 0; i < instanceP.second->getNumOutpins(); ++i)
+        {
+            SPin* pin = new SPin();
+            pin->pinID = PinArray.size();
+            PinArray.insert(std::make_pair(pin->pinID, pin));
+            Pin* pin_old = instanceP.second->getOutpin(i);
+            pin->netID = pin_old->getNetID();
+                if (pin->netID != -1) {
+                    assert(NetArray[pin->netID]->inpin == nullptr);
+                    NetArray[pin->netID]->inpin = pin;
+                }
+            pin->prop = pin_old->getProp();
+            pin->timingCritical = pin_old->getTimingCritical();
+            pin->instanceOwner = instance;
+                // std::cout << "out" << i << "(" << pin->netID << ", " << pin->prop << ", " << pin->timingCritical << ") ";
+            instance->outpins.push_back(pin);
+        }
+        // std::cout << std::endl;
         
+        InstArray.insert(std::make_pair(instance->id, instance));
+        // std::cout << InstArray[instance->id]->id << " " << InstArray[instance->id]->Lib << " " << InstArray[instance->id]->fixed << " " << std::get<0>(InstArray[instance->id]->baseLocation) << " " << std::get<1>(InstArray[instance->id]->baseLocation) << " " << std::get<2>(InstArray[instance->id]->baseLocation) << InstArray[instance->id]->inpins.size() << " " << InstArray[instance->id]->outpins.size() << std::endl; 
     }
 }

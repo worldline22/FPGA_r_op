@@ -26,13 +26,15 @@ struct STile
     int Y; // row
     std::set<int> type; // M
     std::map<std::string, std::vector<SSlot*>> instanceMap;
+    // tile type 和 lib type 都改成数组，instanceMap的索引保留string
 };
 
 struct SInstance;
 
 struct SPin
 {
-    int netID;
+    int pinID; // 新增属性，用于管理PinArray，暂时不知道有没有用
+    int netID; // 可能是0
     PinProp prop;
     bool timingCritical;
     SInstance* instanceOwner;
@@ -45,16 +47,17 @@ struct SInstance
     int id;
     std::tuple<int, int, int> baseLocation;
     std::tuple<int, int, int> Location;
-    std::vector<Pin*> inpins;
-    std::vector<Pin*> outpins;
+    std::vector<SPin*> inpins;
+    std::vector<SPin*> outpins;
+    std::vector<int> conn;
 };
 
 struct SNet
 {
     int id;
     bool clock;
-    Pin* inpin;
-    std::list<Pin*> outpins;
+    SPin* inpin;
+    std::list<SPin*> outpins;
 };
 
 extern std::map<int, SInstance*> InstArray;
@@ -66,4 +69,5 @@ extern std::vector<STile*> TileArray;
 
 void init_tiles();
 void copy_instances();
+void copy_nets();
 
