@@ -41,13 +41,12 @@ public:
     void computeMatching(ISMMemory &mem) const;
     void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize);
     void addInstToIndepSet(IndepSet &indepSet, const SInstance & inst);
-    void computeNetBBox(ISMMemory &mem, const std::vector<int> &set);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, const std::vector<int> &set);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-    int tileHPWL(const STile &tile, const std::pair<int, int> &newLoc);
+    int tileHPWLdifference(const STile &tile, const std::pair<int, int> &newLoc);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
-    bool checkPinInTile(const STile &tile, const SPin &pin);
+    bool checkPinInTile(const STile &tile, SPin* &thisPin);
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -186,17 +185,17 @@ bool ISMSolver_matching::inBox(const int x, const int y, const int BBox_R, const
     return x >= BBox_L && x <= BBox_R && y >= BBox_D && y <= BBox_U;
 }
 
-bool ISMSolver_matching::checkPinInTile(const STile &tile, const SPin &pin){
+bool ISMSolver_matching::checkPinInTile(const STile &tile, SPin* &thisPin){
     for (auto &pinArr : tile.pin_in_nets){
         for (auto &pin : pinArr){
-            if (pin->pinID == pin.pinID){
+            if (pin->pinID == thisPin->pinID){
                 return true;
             }
         }
     }
 }
 
-int ISMSolver_matching::tileHPWL(const STile &tile, const std::pair<int, int> &newLoc){
+int ISMSolver_matching::tileHPWLdifference(const STile &tile, const std::pair<int, int> &newLoc){
     int totalHPWL = 0;
     int x = newLoc.first;
     int y = newLoc.second;
@@ -240,27 +239,56 @@ int ISMSolver_matching::tileHPWL(const STile &tile, const std::pair<int, int> &n
             }
         }
         else{
-            if()
+            int newBBox_R = net->BBox_R;
+            int newBBox_L = net->BBox_L;
+            int newBBox_U = net->BBox_U;
+            int newBBox_D = net->BBox_D;
+            if (checkPinInTile(tile, net->inpin)){
+                newBBox_R = std::max(newBBox_R, x);
+                newBBox_L = std::min(newBBox_L, x);
+                newBBox_U = std::max(newBBox_U, y);
+                newBBox_D = std::min(newBBox_D, y);
+            }
+            for (auto &pin : net->outpins){
+                if (!checkPinInTile(tile, pin)){
+                    newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
+                    newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
+                    newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
+                    newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
+                }else{
+                    newBBox_R = std::max(newBBox_R, x);
+                    newBBox_L = std::min(newBBox_L, x);
+                    newBBox_U = std::max(newBBox_U, y);
+                    newBBox_D = std::min(newBBox_D, y);
+                }
+            }
+            totalHPWL += (HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U)) 
+            - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U)));
         }
     }
-    
+
     return totalHPWL;
 }
 
-void ISMSolver_matching::computeNetBBox(ISMMemory &mem, const std::vector<int> &set){
+void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int> &set){
     mem.bboxSet.clear();
     mem.netIds.clear();
     mem.rangeSet.clear();
 
     mem.rangeSet.push_back(0);
+    mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
 
+    // costMtx[i][j]的意思是i移动到j所在的site时的cost
     for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
         int oldInst = set[i];
-        for (int j = 0;j < set.size(); j++){
+        STile oldTile = TileArray[oldInst];
+        for (int j = 0; j < set.size(); j++){
             int newInst = set[j];
-            
+            STile newTile = TileArray[newInst];
+            mem.costMtx[i][j] = tileHPWLdifference(oldTile, std::make_pair(std::get<0>(InstArray[newInst].Location), std::get<1>(InstArray[newInst].Location)));
         }
     }
+    return;
 }
 
 
