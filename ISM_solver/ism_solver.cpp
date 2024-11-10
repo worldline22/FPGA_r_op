@@ -7,11 +7,9 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "ism_solver.h"
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
 #include "../transmute/solver/solverObject.h"
-
 
 struct ISMMemory {
     lemon::ListDigraph graph;
@@ -46,6 +44,7 @@ public:
     void computeNetBBox(ISMMemory &mem, const std::vector<int> &set);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, const std::vector<int> &set);
+    int HPWL(const SNet &net, const SInstance &fixInst, const SInstance &moveInst);
 };
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
@@ -184,7 +183,8 @@ void ISMSolver_matching::computeNetBBox(ISMMemory &mem, const std::vector<int> &
     mem.rangeSet.push_back(0);
 
     for (int idx = 0; idx < set.size(); idx++){
-        
+        int inst_id = set[idx];
+        TileArray[inst_id]
     }
 }
 
