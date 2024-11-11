@@ -15,3 +15,6 @@ default: $(OBJ)
 
 clean:
 	rm -f build.exe $(OBJ)
+
+run:
+	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out

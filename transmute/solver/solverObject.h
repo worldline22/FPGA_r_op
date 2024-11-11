@@ -12,11 +12,20 @@
 extern int xy_2_index(int x, int y);
 extern int index_2_x(int index);
 extern int index_2_y(int index);
+extern int xyz_2_index(int x, int y, int z, bool isLUT);
+extern int index_2_x_inst(int index);
+extern int index_2_y_inst(int index);
+extern int index_2_z_inst(int index);
 
 
 
-struct SSlot
-{
+// struct SSlot
+// {
+//     std::list<int> baseline_InstIDs;
+//     std::list<int> current_InstIDs;
+// };
+
+struct SSlot {
     std::list<int> baseline_InstIDs;
     std::list<int> current_InstIDs;
 };
@@ -27,7 +36,7 @@ struct STile
     int Y; // row
     int type;
     std::vector<int> type_add;
-    std::map<std::string, std::vector<SSlot*>> instanceMap;
+    std::map<std::string, std::vector<SSlot>> instanceMap;
     // tile type 和 lib type 都改成数组，instanceMap的索引保留string
     std::vector<int> netsConnected_bank0;
     std::vector<std::vector<int>> pin_in_nets_bank0;
@@ -36,8 +45,53 @@ struct STile
     bool has_fixed_bank0;
     bool has_fixed_bank1;
     // 如果默认是其他类，默认放在'bank0'里面，PLB里的CARRY4，DRAM，DFF和LUT类引脚则可能放在bank1里面
-};
 
+    // 深复制构造函数
+    // STile(const STile& other) {
+    //     X = other.X;
+    //     Y = other.Y;
+    //     type = other.type;
+    //     for (const auto& pair : other.instanceMap) {
+    //         std::vector<SSlot*> vec;
+    //         for (const auto& slot : pair.second) {
+    //             vec.push_back(new SSlot(*slot)); // 深复制每个 SSlot 对象
+    //         }
+    //         instanceMap[pair.first] = vec;
+    //     }
+    // }
+
+    // // 深复制赋值运算符
+    // STile& operator=(const STile& other) {
+    //     if (this != &other) {
+    //         X = other.X;
+    //         Y = other.Y;
+    //         type = other.type;
+    //         for (auto& pair : instanceMap) {
+    //             for (auto& slot : pair.second) {
+    //                 delete slot; // 释放旧的 SSlot 对象
+    //             }
+    //         }
+    //         instanceMap.clear();
+    //         for (const auto& pair : other.instanceMap) {
+    //             std::vector<SSlot*> vec;
+    //             for (const auto& slot : pair.second) {
+    //                 vec.push_back(new SSlot(*slot)); // 深复制每个 SSlot 对象
+    //             }
+    //             instanceMap[pair.first] = vec;
+    //         }
+    //     }
+    //     return *this;
+    // }
+
+    // // 析构函数
+    // ~STile() {
+    //     for (auto& pair : instanceMap) {
+    //         for (auto& slot : pair.second) {
+    //             delete slot; // 释放动态分配的 SSlot 对象
+    //         }
+    //     }
+    // }
+};
 struct SInstance;
 
 struct SPin
@@ -60,6 +114,7 @@ struct SInstance
     std::vector<SPin*> inpins;
     std::vector<SPin*> outpins;
     std::set<int> conn;
+    int numMov = 0;
 };
 
 struct SNet

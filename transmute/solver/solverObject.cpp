@@ -23,6 +23,24 @@ extern int index_2_y(int index)
     return index / 150;
 }
 
+extern int xyz_2_index(int x, int y, int z, bool isLUT){
+    return isLUT ? (y * 150 + x) * 16 + z * 2 : (y * 150 + x) * 16 + z * 2 + 1;
+}
+
+extern int index_2_z_inst(int index){
+    return (index % 16) / 2;
+}
+
+extern int index_2_x_inst(int index)
+{
+    return (index / 16) % 150;
+}
+
+extern int index_2_y_inst(int index)
+{
+    return index / 2400;
+}
+
 void init_tiles()
 {
     TileArray.resize(45000);
@@ -68,18 +86,17 @@ void init_tiles()
             
             for (auto it = tileP->getInstanceMapBegin(); it != tileP->getInstanceMapEnd(); ++it)
             {
-                auto slotType = it->first;
+                std::string slotType = it->first;
                 auto slotArr = it->second;
-                std::vector<SSlot*> tmpSlotArr;
+                std::vector<SSlot> tmpSlotArr;
+                tmpSlotArr.resize(slotArr.size());
                 // std::cout << slotType << " ";
                 for (unsigned int i = 0; i < slotArr.size(); ++i)
                 {
-                    SSlot* slot = new SSlot();
-                    slot->baseline_InstIDs = slotArr[i]->getBaselineInstances();
-                    slot->current_InstIDs = slotArr[i]->getBaselineInstances();
-                    tmpSlotArr.push_back(slot);
+                    tmpSlotArr[i].baseline_InstIDs = slotArr[i]->getBaselineInstances();
+                    tmpSlotArr[i].current_InstIDs = slotArr[i]->getBaselineInstances();
                 }
-                tile->instanceMap[slotType] = tmpSlotArr;
+                tile->instanceMap.insert(std::make_pair(slotType, tmpSlotArr));
             }
             // std::cout << std::endl;
             tile->netsConnected_bank0.clear();
