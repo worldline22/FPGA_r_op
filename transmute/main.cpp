@@ -67,17 +67,17 @@ int main(int, char* argv[])
     //     }
     // }
     // std::cout << "Used bank count: " << used_bank_cnt << std::endl;
-    // int i = 0;
-    // for (auto &indepSet : indepSets)
-    // {
-    //     ++i;
-    //     std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
-    //     for (auto instID : indepSet.inst)
-    //     {
-    //         std::cout << instID << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    int i = 0;
+    for (auto &indepSet : indepSets)
+    {
+        ++i;
+        std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
+        for (auto instID : indepSet.inst)
+        {
+            std::cout << instID << " ";
+        }
+        std::cout << std::endl;
+    }
     for (auto &indepSet : indepSets)
     {
         if (indepSet.inst.size() > 30)
