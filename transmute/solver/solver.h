@@ -46,9 +46,9 @@ public:
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-    int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc);
+    int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
-    bool checkPinInTile(STile* &tile, SPin* &thisPin);
+    bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
     void addAllsameBankInstToIndepSet();
 };
