@@ -115,14 +115,17 @@ bool ISMSolver_matching::isLUT(int Lib){
 void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, int Z, int Lib){
     SInstance* inst = InstArray[xyz_2_index(X, Y, Z, isLUT(Lib))];
     dep_inst[xyz_2_index(X, Y, Z, isLUT(Lib))] = true;
-    indepSet.inst.push_back(xyz_2_index(X, Y, Z));
+    // 同一个xyz处的site不能同时在一个indepSet中
+    dep_inst[(xyz_2_index(X, Y, Z, isLUT(Lib)) + 1) % 2 + xyz_2_index(X, Y, Z, isLUT(Lib))] = true;
+    indepSet.inst.push_back(xyz_2_index(X, Y, Z, isLUT(Lib)));
     for(auto it = inst->conn.begin(); it != inst->conn.end(); ++it){
         SInstance* inst = InstArray[*it];
         int x = std::get<0>(inst->Location);
         int y = std::get<1>(inst->Location);
         int z = std::get<2>(inst->Location);
-        if (InstArray[xyz_2_index(x, y, z)]->Lib == Lib){
-            dep_inst[xyz_2_index(x, y, z)] = true;
+        if (InstArray[xyz_2_index(x, y, z, isLUT(Lib))]->Lib == Lib){
+            dep_inst[xyz_2_index(x, y, z, isLUT(Lib))] = true;
+            dep_inst[(xyz_2_index(x, y, z, isLUT(Lib)) + 1) % 2 + xyz_2_index(x, y, z, isLUT(Lib))] = true;
         }
     }
     return;
@@ -154,9 +157,9 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const SInstance &seed
         int x = point.first;
         int y = point.second;
         for (int i = 0; i < 16; i++){  //主要是解决同种的instance才可以交换的问题
-            SInstance* inst = InstArray[xyz_2_index(x, y, i)];
-            if(inst->Lib == Lib){
-                if (!dep_inst[xyz_2_index(x, y, i)]){
+            SInstance* inst = InstArray[xyz_2_index(x, y, i, isLUT(Lib))];
+            if(inst->Lib == Lib && !inst->fixed){   //只有不是fixed的instance才可以被加入到indepSet中
+                if (!dep_inst[xyz_2_index(x, y, i, isLUT(Lib))]){
                     addInstToIndepSet(indepSet, x, y, i, Lib);
                 }
             }
@@ -200,8 +203,72 @@ int ISMSolver_matching::instanceHPWLdifference(SInstance *&inst, const std::pair
     int totalHPWL = 0;
     int x = newLoc.first;
     int y = newLoc.second;
+    int old_clockregion = clockRegion.getCRID(std::get<0>(inst->Location), std::get<1>(inst->Location));
+    int new_clockregion = clockRegion.getCRID(x, y);
     for (int i = 0; i < inst->inpins.size(); i++){
-
+        SNet *net = NetArray[inst->inpins[i]->netID];
+        if(net->clock && clockRegion.clockNets[clockRegion.getCRID(x, y)].find(net->id) != clockRegion.clockNets[clockRegion.getCRID(x, y)].end()){
+            if(old_clockregion != new_clockregion){
+                if(clockRegion.clockNets[new_clockregion].size() + 1 > 28){
+                    return std::numeric_limits<int>::max();
+                }
+            }
+        }
+        if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
+            continue;
+        }
+        if ((net->outpins.size() + 1) > 16){
+            if(x < net->BBox_L){
+                if(y > net->BBox_U){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
+                }
+                else if (y < net->BBox_D){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
+                }
+                else{
+                    totalHPWL += std::abs(x - net->BBox_L);
+                }
+                continue;
+            }
+            if (x > net->BBox_R){
+                if (y > net->BBox_U){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
+                }
+                else if (y < net->BBox_D){
+                    totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
+                }
+                else{
+                    totalHPWL += std::abs(x - net->BBox_R);
+                }
+                continue;
+            }
+            if (y > net->BBox_U){
+                totalHPWL += std::abs(y - net->BBox_U);
+                continue;
+            }
+            if (y < net->BBox_D){
+                totalHPWL += std::abs(y - net->BBox_D);
+                continue;
+            }
+        }
+        else{
+            int newBBox_R = std::max(net->BBox_R, x);
+            int newBBox_L = std::min(net->BBox_L, x);
+            int newBBox_U = std::max(net->BBox_U, y);
+            int newBBox_D = std::min(net->BBox_D, y);
+            newBBox_R = std::max(newBBox_R, std::get<0>(net->inpin->instanceOwner->Location));
+            newBBox_L = std::min(newBBox_L, std::get<0>(net->inpin->instanceOwner->Location));
+            newBBox_U = std::max(newBBox_U, std::get<1>(net->inpin->instanceOwner->Location));
+            newBBox_D = std::min(newBBox_D, std::get<1>(net->inpin->instanceOwner->Location));
+            for (auto &pin : net->outpins){
+                newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
+                newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
+                newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
+                newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
+            }
+            totalHPWL += HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U)) 
+            - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U));
+        }
     }
 }
 
@@ -397,7 +464,7 @@ void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int
     return;
 }
 
-void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
+void ISMSolver_matching::realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet){
     computeCostMatrix(mem, indepSet.inst);
     computeMatching(mem);
     int number = indepSet.inst.size();
@@ -412,23 +479,18 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 }
 
 void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
-    dep.resize(2 * TileArray.size(), false);
-    for (auto &inst : TileArray){   //遍历了所有的bank
-        if (inst->type != 1) continue;
-        if (!dep[2 * xy_2_index(inst->X, inst->Y)]) {
-            if (inst->pin_in_nets_bank0.size() != 0) {
-                IndepSet indepSet;
-                buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
-                set.push_back(indepSet);
-            }
+    dep_inst.resize(45000 * 16, false);
+    for (auto it = InstArray.begin(); it != InstArray.end(); ++it){
+        SInstance* inst = it->second;
+        if (inst->fixed){
+            continue;
         }
-        if (!dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
-            if (inst->pin_in_nets_bank1.size() != 0) {
-                IndepSet indepSet;
-                buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
-                set.push_back(indepSet);
-            }
+        if (dep_inst[xyz_2_index(std::get<0>(inst->Location), std::get<1>(inst->Location), std::get<2>(inst->Location), isLUT(inst->Lib))]){
+            continue;
         }
+        IndepSet indepSet;
+        buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize, inst->Lib);
+        set.push_back(indepSet);
     }
     return;
 }

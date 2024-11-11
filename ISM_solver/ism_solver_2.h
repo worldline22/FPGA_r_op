@@ -39,16 +39,17 @@ class ISMSolver_matching {
 public:
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
-    void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize);
+    void buildIndepSet(IndepSet &indepSet, const SInstance & seed, const int maxR, const int maxIndepSetSize, int Lib);
     void addInstToIndepSet(IndepSet &indepSet, int X, int Y, int Z, int Lib);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
+    void realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet);  
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
     int tileHPWLdifference(STile* &inst, const std::pair<int, int> &newLoc, bool bank);
     int instanceHPWLdifference(SInstance* &inst, const std::pair<int, int> &newLoc);
     bool isLUT(int Lib);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
-    bool checkPinInTile(SInstance* &tile, SPin* &thisPin, bool bank);
+    bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
     void addAllsameBankInstToIndepSet();
 };
