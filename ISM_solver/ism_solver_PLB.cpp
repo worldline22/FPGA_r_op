@@ -12,6 +12,8 @@
 #include "../transmute/solver/solverObject.h"
 #include "ism_solver.h"
 
+SClockRegion clockRegion;
+
 
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
     using Graph = lemon::ListDigraph;
@@ -231,11 +233,24 @@ bool ISMSolver_matching::checkPinInTile(STile* &tile, SPin* &thisPin, bool bank)
 
 int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank){
     int totalHPWL = 0;
+    //找出pin上的netId，然后看这个net是不是有clock的
+    //再看这个tile是不是和这个loc是在一个clock region中的，如果是就不需要考虑clock region的clock net增加量了
+    //如果不是，就要考虑clock region的clock net增加量
+    //如果已经超过28个了，相当于是不可以移到这个位置了，就直接返回一个很大的值，表示不相连
+    int old_clockregion = clockRegion.getCRID(tile->X, tile->Y);
+    int new_clockregion = clockRegion.getCRID(newLoc.first, newLoc.second);
     int x = newLoc.first;
     int y = newLoc.second;
     if (bank == false){
         for (int i = 0 ; i < tile->netsConnected_bank0.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank0[i]];
+            if(net->clock && clockRegion.clockNets[new_clockregion].find(net->id) != clockRegion.clockNets[new_clockregion].end()){
+                if(old_clockregion != new_clockregion){
+                    if(clockRegion.clockNets[new_clockregion].size() + 1 > 28){
+                        return std::numeric_limits<int>::max();
+                    }
+                }
+            }
             if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
                 continue;
             }
@@ -305,6 +320,13 @@ int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, in
     else{
         for (int i = 0 ; i < tile->netsConnected_bank1.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank1[i]];
+            if(net->clock && clockRegion.clockNets[new_clockregion].find(net->id) != clockRegion.clockNets[new_clockregion].end()){
+                if(old_clockregion != new_clockregion){
+                    if(clockRegion.clockNets[new_clockregion].size() + 1 > 28){
+                        return std::numeric_limits<int>::max();
+                    }
+                }
+            }
             if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
                 continue;
             }
@@ -426,7 +448,7 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
                 set.push_back(indepSet);
             }
         }
-        if (dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
+        if (!dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
             if (inst->pin_in_nets_bank1.size() != 0) {
                 IndepSet indepSet;
                 buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);

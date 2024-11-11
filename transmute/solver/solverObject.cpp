@@ -23,6 +23,24 @@ extern int index_2_y(int index)
     return index / 150;
 }
 
+extern int xyz_2_index(int x, int y, int z, bool isLUT){
+    return isLUT ? (y * 150 + x) * 16 + z * 2 : (y * 150 + x) * 16 + z * 2 + 1;
+}
+
+extern int index_2_z_inst(int index){
+    return (index % 16) / 2;
+}
+
+extern int index_2_x_inst(int index)
+{
+    return (index / 16) % 150;
+}
+
+extern int index_2_y_inst(int index)
+{
+    return index / 2400;
+}
+
 void init_tiles()
 {
     TileArray.resize(45000);
