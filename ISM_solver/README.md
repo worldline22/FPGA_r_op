@@ -14,4 +14,4 @@ g++ ism_solver.cpp -o ism_solver -std=c++17 -I/usr/local/include -L/usr/local/li
 
 g++ -Wall -Wextra -std=c++11 -g -I. -Ichecker_legacy -Isolver -I/usr/local/include -L/usr/local/lib -lemon -c ism_solver.cpp -o ism_solver.o
 
-g++ -Wall -Wextra -std=c++11 -g -I. -Ichecker_legacy -Isolver -I/usr/local/include -L/usr/local/lib -lemon -o build ../transmute/checker_legacy/global.o ../transmute/checker_legacy/arch.o ../transmute/checker_legacy/lib.o ../transmute/checker_legacy/object.o ../transmute/checker_legacy/netlist.o ../transmute/solver/solverObject.o ../transmute/solver/solver.o ../transmute/main.o ism_solver.o
+g++ -Wall -Wextra -std=c++11 -g -I. -Ichecker_legacy -Isolver -I/usr/local/include -L/usr/local/lib -lemon -o build1 ../transmute/checker_legacy/global.o ../transmute/checker_legacy/arch.o ../transmute/checker_legacy/lib.o ../transmute/checker_legacy/object.o ../transmute/checker_legacy/netlist.o ../transmute/solver/solverObject.o ../transmute/solver/solver.o ism_solver.o
