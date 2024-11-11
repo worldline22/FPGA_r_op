@@ -1,5 +1,6 @@
 #include "solverObject.h"
 #include <cassert>
+#include <fstream>
 
 std::map<int, SInstance*> InstArray;
 std::map<int, SNet*> NetArray;
@@ -439,4 +440,48 @@ void connection_setup()
     //     }
     //     std::cout << std::endl;
     // }
+}
+
+void file_output(std::string filename)
+{
+    std::ofstream out(filename);
+    for (auto instP : InstArray)
+    {
+        int x = std::get<0>(instP.second->Location);
+        int y = std::get<1>(instP.second->Location);
+        int z = std::get<2>(instP.second->Location);
+        int lib = instP.second->Lib;
+        std::string libName;
+        if (lib == 0) libName = "CARRY4";
+        else if (lib == 1) libName = "DRAM";
+        else if (lib == 2) libName = "DSP";
+        else if (lib == 3) libName = "F7MUX";
+        else if (lib == 4) libName = "F8MUX";
+        else if (lib == 5) libName = "GCLK";
+        else if (lib == 6) libName = "IOA";
+        else if (lib == 7) libName = "IOB";
+        else if (lib == 8) libName = "IPPIN";
+        else if (lib == 9) libName = "LUT1";
+        else if (lib == 10) libName = "LUT2";
+        else if (lib == 11) libName = "LUT3";
+        else if (lib == 12) libName = "LUT4";
+        else if (lib == 13) libName = "LUT5";
+        else if (lib == 14) libName = "LUT6";
+        else if (lib == 15) libName = "LUT6X";
+        else if (lib == 16) libName = "PLB";
+        else if (lib == 17) libName = "RAMA";
+        else if (lib == 18) libName = "RAMB";
+        else if (lib == 19) libName = "SEQ";
+        else libName = "UNKNOWN";
+        bool fixed = instP.second->fixed;
+        int id = instP.second->id;
+        out << "X" << x;
+        out << "Y" << y;
+        out << "Z" << z;
+        out << " " << libName << " inst_";
+        out << id;
+        if (fixed) out << " FIXED";
+        out << std::endl;
+    }
+    
 }
