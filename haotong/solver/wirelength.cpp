@@ -1,8 +1,6 @@
 #include "solverObject.h"
 #include "global.h"
 #include "rsmt.h"
-#include <cassert>
-#include <fstream>
 
 void getMergedNonCritPinLocs(const SNet& net, std::vector<int>& xCoords, std::vector<int>& yCoords) { // increase the passing parameter net
     const SPin* driverPin = net.inpin; // change type from Pin to SPin, change getInpin() to net.inpin
