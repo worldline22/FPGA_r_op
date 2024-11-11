@@ -49,7 +49,7 @@ public:
     int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
     bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
-    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
+    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, std::vector<int> &priority);
     void addAllsameBankInstToIndepSet();
 };
 

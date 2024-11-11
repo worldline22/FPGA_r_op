@@ -114,6 +114,7 @@ struct SInstance
     std::vector<SPin*> inpins;
     std::vector<SPin*> outpins;
     std::set<int> conn;
+    int numMov = 0;
 };
 
 struct SNet

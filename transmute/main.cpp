@@ -42,77 +42,74 @@ int main(int, char* argv[])
 
     
     // solve start
-    ISMMemory mem;
-    ISMSolver_matching solver;
-    std::vector<IndepSet> indepSets;
-    solver.buildIndependentIndepSets(indepSets, 10, 50);
-    std::cout << "Successfully built independent indepSets." << std::endl;
-    // for (auto &indepSet : indepSets){
-    //     solver.realizeMatching(mem, indepSet);
-    // }
-
-    // int used_bank_cnt = 0;
-    // for (auto TileP : TileArray)
-    // {
-    //     if (TileP->type == 1)
-    //     {
-    //         if (TileP->netsConnected_bank0.size() > 0)
-    //         {
-    //             ++used_bank_cnt;
-    //         }
-    //         if (TileP->netsConnected_bank1.size() > 0)
-    //         {
-    //             ++used_bank_cnt;
-    //         }
-    //     }
-    // }
-    // std::cout << "Used bank count: " << used_bank_cnt << std::endl;
-    // int i = 0;
-    // for (auto &indepSet : indepSets)
-    // {
-    //     ++i;
-    //     std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
-    //     for (auto instID : indepSet.inst)
-    //     {
-    //         std::cout << instID << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-    for (auto &indepSet : indepSets)
+    std::vector<int> priority;
+    std::vector<std::vector<int>> movBuckets;
+    for (auto &inst : InstArray)
     {
-        solver.realizeMatching(mem, indepSet);
+        priority.push_back(inst.first);
+        inst.second->numMov = 0;
     }
-    //check the instance position
-    for (auto instancepair : InstArray)
+
+    int num_iter = 10;
+    for (int i = 0; i < num_iter; ++i)
     {
-        auto instance=instancepair.second;
-        int x = std::get<0>(instance->Location);
-        int y = std::get<1>(instance->Location);
-        int index = xy_2_index(x, y);
-        int z= std::get<2>(instance->Location);
-        if (instance->Lib >= 9 && instance->Lib <= 15)
+        ISMMemory mem;
+        std::cout << "Iteration " << i << std::endl;
+        ISMSolver_matching solver;
+        std::vector<IndepSet> indepSets;
+        // sort priority
+        for (auto &bkt : movBuckets)
+            bkt.clear();
+        movBuckets.resize(num_iter);
+        for (int i : priority)
         {
-            STile* tile_ptr = TileArray[index];
-            bool found = false;
-            // std::cout << "instance id: " << instance->id << " / ";
-            for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
-            {
-                // std::cout << instID << " ";
-                if (instID == instance->id)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            // std::cout << std::endl;
-            if (!found)
-            {std::cout << "not";
-            std::cout << "found";
-            }
-            assert(found);
-            // success
+            movBuckets[InstArray[i]->numMov].push_back(i);
+            if(InstArray[i]->numMov>1)std::cout<<"mark";
         }
-    } 
+        auto it = priority.begin();
+        for (const auto &bkt : movBuckets)
+        {
+            std::copy(bkt.begin(), bkt.end(), it);
+            it += bkt.size();
+        }
+        solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
+        for (auto &indepSet : indepSets)
+        {
+            solver.realizeMatching(mem, indepSet);
+        }
+    }
+    
+    //check the instance position
+    // for (auto instancepair : InstArray)
+    // {
+    //     auto instance=instancepair.second;
+    //     int x = std::get<0>(instance->Location);
+    //     int y = std::get<1>(instance->Location);
+    //     int index = xy_2_index(x, y);
+    //     int z= std::get<2>(instance->Location);
+    //     if (instance->Lib >= 9 && instance->Lib <= 15)
+    //     {
+    //         STile* tile_ptr = TileArray[index];
+    //         bool found = false;
+    //         // std::cout << "instance id: " << instance->id << " / ";
+    //         for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
+    //         {
+    //             // std::cout << instID << " ";
+    //             if (instID == instance->id)
+    //             {
+    //                 found = true;
+    //                 break;
+    //             }
+    //         }
+    //         // std::cout << std::endl;
+    //         if (!found)
+    //         {std::cout << "not";
+    //         std::cout << "found";
+    //         }
+    //         assert(found);
+    //         // success
+    //     }
+    // } 
     std::cout << "Successfully realized matching." << std::endl;
 
     file_output(outputFileName);
