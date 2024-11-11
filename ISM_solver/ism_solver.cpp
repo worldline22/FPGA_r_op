@@ -157,10 +157,10 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
         for (int x = 0, y = r; y > 0; --x, --y){
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
-        for (int x = -r, y = 0; x < 0; x++, y--){
+        for (int x = -r, y = 0; y > -r; x++, y--){
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
-        for (int x = 0, y = -r; y < 0; x--, y++){
+        for (int x = 0, y = -r; y < 0; x++, y++){
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
@@ -192,7 +192,7 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
             addInstToIndepSet(indepSet, x, y, true);
         }
         if (indepSet.inst.size() >= maxIndepSetSize){
-            break;
+            return;
         }
     }
     return;
@@ -418,13 +418,14 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
     for (auto &inst : TileArray){   //遍历了所有的bank
         if (dep[2 * xy_2_index(inst->X, inst->Y)]){
-            continue;
+            // continue;
         }
         else {
-            if (inst->type != 1) continue;
-            IndepSet indepSet;
-            buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
-            set.push_back(indepSet);
+            if (inst->type == 1){
+                IndepSet indepSet;
+                buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
+                set.push_back(indepSet);
+            }
         }
         if (dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
             continue;
