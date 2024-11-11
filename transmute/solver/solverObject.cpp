@@ -233,10 +233,8 @@ void copy_instances()
                             tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
                     }
 
-                    if (pin->prop == PinProp::PIN_PROP_CLOCK && pin->netID != -1)
+                    if (pin->prop == PinProp::PIN_PROP_CLOCK && NetArray[pin->netID]->clock)
                     {
-                        // std::cout << "add";
-                        assert(NetArray[pin->netID]->clock);
                         int x = std::get<0>(instance->Location);
                         int y = std::get<1>(instance->Location);
                         int CRID = ClockRegion_Info.getCRID(x, y);
@@ -245,6 +243,10 @@ void copy_instances()
                 }
                 // std::cout << "in" << i << "(" << pin->netID << ", " << pin->prop << ", " << pin->timingCritical << ") ";
             instance->inpins.push_back(pin);
+            // if (std::get<0>(instance->Location) <= 25)
+            // {
+            //     std::cout << "Input" << i << " " << pin->netID << " " << pin->prop << " " << pin->timingCritical << std::endl;
+            // }
         }
         // std::cout << std::endl;
 
@@ -256,6 +258,9 @@ void copy_instances()
             PinArray.insert(std::make_pair(pin->pinID, pin));
             Pin* pin_old = instanceP.second->getOutpin(i);
             pin->netID = pin_old->getNetID();
+            pin->prop = pin_old->getProp();
+            pin->timingCritical = pin_old->getTimingCritical();
+            pin->instanceOwner = instance;
                 if (pin->netID != -1) {
                     auto netp = NetArray[pin->netID];
                     assert(netp->inpin == nullptr);
@@ -297,21 +302,26 @@ void copy_instances()
                             tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
                     }
 
-                    if (pin->prop == PinProp::PIN_PROP_CLOCK && pin->netID != -1)
+                    if (pin->prop == PinProp::PIN_PROP_CLOCK && NetArray[pin->netID]->clock)
                     {
-                        assert(NetArray[pin->netID]->clock);
                         int x = std::get<0>(instance->Location);
                         int y = std::get<1>(instance->Location);
                         int CRID = ClockRegion_Info.getCRID(x, y);
                         ClockRegion_Info.clockNets[CRID].insert(pin->netID);
                     }
                 }
-            pin->prop = pin_old->getProp();
-            pin->timingCritical = pin_old->getTimingCritical();
-            pin->instanceOwner = instance;
                 // std::cout << "out" << i << "(" << pin->netID << ", " << pin->prop << ", " << pin->timingCritical << ") ";
             instance->outpins.push_back(pin);
+            // if (std::get<0>(instance->Location) <= 25)
+            // {
+            //     std::cout << "Output" << i << " " << pin->netID << " " << pin->prop << " " << pin->timingCritical << std::endl;
+            // }
         }
+
+        // if (std::get<0>(instance->Location) <= 25)
+        // {
+        //     std::cout << " > This is Instance " << instance->id << " " << instance->Lib << " " << instance->fixed << " " << std::get<0>(instance->Location) << " " << std::get<1>(instance->Location) << " " << std::get<2>(instance->Location) << " " << instance->inpins.size() << " " << instance->outpins.size() << std::endl;
+        // }
         // std::cout << std::endl;
         
         InstArray.insert(std::make_pair(instance->id, instance));
