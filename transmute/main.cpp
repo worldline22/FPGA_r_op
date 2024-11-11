@@ -40,15 +40,44 @@ int main(int, char* argv[])
     connection_setup();
     std::cout << "Successfully set up connections." << std::endl;
 
+    
     // solve start
-    // ISMMemory mem;
-    // ISMSolver_matching solver;
-    // std::vector<IndepSet> indepSets;
-    // solver.buildIndependentIndepSets(indepSets, 5, 10);
+    ISMMemory mem;
+    ISMSolver_matching solver;
+    std::vector<IndepSet> indepSets;
+    solver.buildIndependentIndepSets(indepSets, 10, 50);
+    std::cout << "Successfully built independent indepSets." << std::endl;
     // for (auto &indepSet : indepSets){
     //     solver.realizeMatching(mem, indepSet);
     // }
-    
+
+    // int used_bank_cnt = 0;
+    // for (auto TileP : TileArray)
+    // {
+    //     if (TileP->type == 1)
+    //     {
+    //         if (TileP->netsConnected_bank0.size() > 0)
+    //         {
+    //             ++used_bank_cnt;
+    //         }
+    //         if (TileP->netsConnected_bank1.size() > 0)
+    //         {
+    //             ++used_bank_cnt;
+    //         }
+    //     }
+    // }
+    // std::cout << "Used bank count: " << used_bank_cnt << std::endl;
+    int i = 0;
+    for (auto &indepSet : indepSets)
+    {
+        ++i;
+        std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
+        for (auto instID : indepSet.inst)
+        {
+            std::cout << instID << " ";
+        }
+        std::cout << std::endl;
+    }
 
     return 0;
 }
