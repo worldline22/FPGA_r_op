@@ -199,10 +199,26 @@ bool ISMSolver_matching::checkPinInTile(STile* &tile, SPin* &thisPin, bool bank)
     }
 }
 
-int ISMSolver_matching::instanceHPWLdifference(SInstance *&inst, const std::pair<int, int> &newLoc){
+int ISMSolver_matching::instanceHPWLdifference(int index, SInstance *&new_inst, int Lib){
+    if(inst == new_inst){
+        return 0;
+    }
+    std::pair<int, int> newLoc = std::make_pair(std::get<0>(new_inst->Location), std::get<1>(new_inst->Location));
     int totalHPWL = 0;
     int x = newLoc.first;
     int y = newLoc.second;
+    int z = std::get<2>(new_inst->Location);
+    int index_new = xyz_2_index(x, y, z, isLUT(Lib));
+    int index_old = xyz_2_index(std::get<0>(inst->Location), std::get<1>(inst->Location), std::get<2>(inst->Location), isLUT(Lib));
+    // 判断LUT是不是可以移到这个位置
+    if(isLUT(Lib)||Lib==-1){    //-1表示空的位置，一个在独立集里面的LUT或space其同样的位置的可放lut一定是depend的
+        if(InstArray[(index_new + 1) % 2 + index_new] != nullptr){
+            int pair_Lib = InstArray[(index_new + 1) % 2 + index_new]->Lib;
+            if ((pair_Lib + Lib) > 22){    //超过6的LUT不能放在一起
+                return std::numeric_limits<int>::max();
+            }
+        }
+    }
     int old_clockregion = clockRegion.getCRID(std::get<0>(inst->Location), std::get<1>(inst->Location));
     int new_clockregion = clockRegion.getCRID(x, y);
     for (int i = 0; i < inst->inpins.size(); i++){
@@ -448,17 +464,11 @@ void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int
     // costMtx[i][j]的意思是i移动到j所在的site时的cost
     for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
         int oldInst = set[i];
-        STile* oldTile = TileArray[oldInst/2];
+        SInstance* oldTile = InstArray[oldInst];
         for (int j = 0; j < set.size(); j++){
             int newInst = set[j];
-            STile* newTile = TileArray[newInst/2];
-            if(oldInst % 2 == 0){
-                mem.costMtx[i][j] = tileHPWLdifference(oldTile, std::make_pair(newTile->X, newTile->Y), false);
-            }
-            else {
-                mem.costMtx[i][j] = tileHPWLdifference(oldTile, std::make_pair(newTile->X, newTile->Y), true);
-            }
-            
+            SInstance* newTile = InstArray[newInst];
+            mem.costMtx[i][j] = instanceHPWLdifference(oldTile, std::make_pair(std::get<0>(newTile->Location), std::get<1>(newTile->Location)), oldTile->Lib);
         }
     }
     return;
@@ -473,7 +483,7 @@ void ISMSolver_matching::realizeMatching_Instance(ISMMemory &mem, IndepSet &inde
         if(mem.sol[i] == noMatch){
             continue;
         }
-        std::cout << "Instance_id:" << indepSet.inst[i/number] << " is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << std::endl;
+        std::cout << "Instance_id:" << indepSet.inst[i%number] << " is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << std::endl;
     }
     return;
 }

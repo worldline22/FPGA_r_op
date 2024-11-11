@@ -46,7 +46,7 @@ public:
     void realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet);  
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
     int tileHPWLdifference(STile* &inst, const std::pair<int, int> &newLoc, bool bank);
-    int instanceHPWLdifference(SInstance* &inst, const std::pair<int, int> &newLoc);
+    int instanceHPWLdifference(SInstance* &inst, SInstance* &new_inst, int Lib);
     bool isLUT(int Lib);
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
     bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
