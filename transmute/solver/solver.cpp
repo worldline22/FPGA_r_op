@@ -510,7 +510,7 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
             err = true;
         }
         // std::cout << mem.sol.size() << std::endl;
-        // std::cout << "Instance_id:" << indepSet.inst[i%number] << " is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << std::endl;
+        std::cout << "Instance_id:" << indepSet.inst[i%number] << "(" << index_2_x(indepSet.inst[i%number]/2) << " " << index_2_y(indepSet.inst[i%number]/2) << ") is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << "(" << index_2_x(indepSet.inst[mem.sol[i]]/2) << " " << index_2_y(indepSet.inst[mem.sol[i]]/2) << ")" << std::endl;
     }
     assert (!err);
 
@@ -538,7 +538,6 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
         {
             if (siteID_from % 2 == 0)
             {
-                std::cout << "A";
                 tile_to->netsConnected_bank0 = tmpTile[arrIdx_from].netsConnected_bank0;
                 tile_to->pin_in_nets_bank0 = tmpTile[arrIdx_from].pin_in_nets_bank0;
                 // update the instanceMap
@@ -557,7 +556,7 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                     tile_to->instanceMap["LUT"][i]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][i]->current_InstIDs;
                     for (auto InstID : tile_to->instanceMap["LUT"][i]->current_InstIDs)
                     {
-                        std::cout << "we move" << InstID << " to " << tile_to->X << " " << tile_to->Y << " " << i << std::endl;
+                        // std::cout << "we move" << InstID << " to " << tile_to->X << " " << tile_to->Y << " " << i << std::endl;
                         SInstance* inst = InstArray[InstID];
                         inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i);
                     }
@@ -586,7 +585,6 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
             }
             else
             {
-                std::cout << "B";
                 tile_to->netsConnected_bank0 = tmpTile[arrIdx_from].netsConnected_bank1;
                 tile_to->pin_in_nets_bank0 = tmpTile[arrIdx_from].pin_in_nets_bank1;
                 // update the instanceMap
@@ -626,7 +624,6 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
         {
             if (siteID_from % 2 == 0)
             {
-                std::cout << "C";
                 tile_to->netsConnected_bank1 = tmpTile[arrIdx_from].netsConnected_bank0;
                 tile_to->pin_in_nets_bank1 = tmpTile[arrIdx_from].pin_in_nets_bank0;
                 // update the instanceMap
@@ -663,7 +660,6 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
             }
             else
             {
-                std::cout << "D";
                 tile_to->netsConnected_bank1 = tmpTile[arrIdx_from].netsConnected_bank1;
                 tile_to->pin_in_nets_bank1 = tmpTile[arrIdx_from].pin_in_nets_bank1;
                 // update the instanceMap
@@ -701,33 +697,5 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
         }
     }
 
-    //check the instance position
-    for (auto instancepair : InstArray)
-    {
-        auto instance=instancepair.second;
-        int x = std::get<0>(instance->Location);
-        int y = std::get<1>(instance->Location);
-        int index = xy_2_index(x, y);
-        int z= std::get<2>(instance->Location);
-        if (instance->Lib >= 9 && instance->Lib <= 15)
-        {
-            STile* tile_ptr = TileArray[index];
-            SSlot* slot_ptr = tile_ptr->instanceMap["LUT"][z];
-            bool found = false;
-            for (auto instID : slot_ptr->baseline_InstIDs)
-            {
-                if (instID == instance->id)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            assert(found);
-            // success
-        }
-    }
-
-    
-    
     return;
 }

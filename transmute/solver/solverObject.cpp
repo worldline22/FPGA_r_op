@@ -76,7 +76,7 @@ void init_tiles()
                 {
                     SSlot* slot = new SSlot();
                     slot->baseline_InstIDs = slotArr[i]->getBaselineInstances();
-                    slot->current_InstIDs = slotArr[i]->getOptimizedInstances();
+                    slot->current_InstIDs = slotArr[i]->getBaselineInstances();
                     tmpSlotArr.push_back(slot);
                 }
                 tile->instanceMap[slotType] = tmpSlotArr;

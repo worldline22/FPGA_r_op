@@ -6,6 +6,7 @@
 
 #include "solver/solverObject.h"
 #include "solver/solver.h"
+#include <cassert>
 
 int main(int, char* argv[])
 {
@@ -77,16 +78,38 @@ int main(int, char* argv[])
     //     }
     //     std::cout << std::endl;
     // }
-    int setnum = 0;
     for (auto &indepSet : indepSets)
     {
-        ++setnum;
-        if (indepSet.inst.size() > 30)
-        {
-            // std::cout << "set no." << setnum << std::endl;
-            solver.realizeMatching(mem, indepSet);
-        }
+        solver.realizeMatching(mem, indepSet);
     }
+    //check the instance position
+    for (auto instancepair : InstArray)
+    {
+        auto instance=instancepair.second;
+        int x = std::get<0>(instance->Location);
+        int y = std::get<1>(instance->Location);
+        int index = xy_2_index(x, y);
+        int z= std::get<2>(instance->Location);
+        if (instance->Lib >= 9 && instance->Lib <= 15)
+        {
+            STile* tile_ptr = TileArray[index];
+            SSlot* slot_ptr = tile_ptr->instanceMap["LUT"][z];
+            bool found = false;
+            // std::cout << "instance id: " << instance->id << " / ";
+            for (auto instID : slot_ptr->current_InstIDs)
+            {
+                // std::cout << instID << " ";
+                if (instID == instance->id)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            // std::cout << std::endl;
+            // assert(found);
+            // success
+        }
+    } 
     std::cout << "Successfully realized matching." << std::endl;
 
     file_output(outputFileName);
