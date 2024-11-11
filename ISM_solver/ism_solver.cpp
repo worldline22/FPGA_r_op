@@ -161,7 +161,7 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, boo
     }
     else{//bank1
         dep[2 * xy_2_index(X, Y) + 1] = true;
-        indepSet.inst.push_back(xy_2_index(X, Y));
+        indepSet.inst.push_back(2 * xy_2_index(X, Y) + 1);
         for (auto &pinArr : tile->pin_in_nets_bank1){   //这里只遍历了bank0中的instance
             for (int i = 0; i < pinArr.size(); i++){
                 SPin* pin = PinArray[pinArr[i]];
@@ -202,23 +202,35 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
-    addInstToIndepSet(indepSet, initXY.first, initXY.second, false);
-    addInstToIndepSet(indepSet, initXY.first, initXY.second, true);
+    if (!dep[2 * xy_2_index(initXY.first, initXY.second)]){
+        addInstToIndepSet(indepSet, initXY.first, initXY.second, false);
+    }
+    if (!dep[2 * xy_2_index(initXY.first, initXY.second) + 1]){
+        addInstToIndepSet(indepSet, initXY.first, initXY.second, true);
+    }
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
+        int index = xy_2_index(x, y);
         int index1 = 2 * xy_2_index(x, y);
         int index2 = 2 * xy_2_index(x, y) + 1;
         if (index < 0 || index >= TileArray.size()){
             continue;
         }
-        if (*TileArray[index]->type.begin() == 0){  //0表示为PLB
-            if (!dep[index]){
-                addInstToIndepSet(indepSet, x, y);
-            }
-            if (indepSet.inst.size() >= maxIndepSetSize){
-                break;
-            }
+        if(TileArray[index]->type != 1){
+            continue;
+        }
+        if (!dep[index1]){
+            addInstToIndepSet(indepSet, x, y, false);
+        }
+        if (indepSet.inst.size() >= maxIndepSetSize){
+            return;
+        }
+        if (!dep[index2]){
+            addInstToIndepSet(indepSet, x, y, true);
+        }
+        if (indepSet.inst.size() >= maxIndepSetSize){
+            break;
         }
     }
     return;
@@ -354,13 +366,25 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 }
 
 void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
-    for (auto &inst : TileArray){
-        if (dep[xy_2_index(inst->X, inst->Y)]){
+    for (auto &inst : TileArray){   //遍历了所有的bank
+        if (dep[2 * xy_2_index(inst->X, inst->Y)]){
             continue;
         }
-        IndepSet indepSet;
-        buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
-        set.push_back(indepSet);
+        else {
+            if (inst->type != 1) continue;
+            IndepSet indepSet;
+            buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
+            set.push_back(indepSet);
+        }
+        if (dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
+            continue;
+        }
+        else {
+            if (inst->type != 1) continue;
+            IndepSet indepSet;
+            buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
+            set.push_back(indepSet);
+        }
     }
     return;
 }
@@ -369,7 +393,7 @@ int main(){
     ISMMemory mem;
     ISMSolver_matching solver;
     std::vector<IndepSet> indepSets;
-    solver.buildIndependentIndepSets(indepSets, 5, 10);
+    solver.buildIndependentIndepSets(indepSets, 10, 50);
     for (auto &indepSet : indepSets){
         solver.realizeMatching(mem, indepSet);
     }
