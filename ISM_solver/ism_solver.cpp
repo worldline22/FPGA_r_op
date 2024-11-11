@@ -27,7 +27,6 @@ struct ISMMemory {
 };
 
 std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
-std::map<std::pair<int, int>, int> xy_2_index_map;
 
 struct IndepSet{
     int type;
@@ -150,13 +149,18 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, boo
                     SInstance* inst = InstArray[*it];
                     int x = std::get<0>(inst->Location);
                     int y = std::get<1>(inst->Location);
-                    dep[xy_2_index(x, y)] = true;
+                    if (inst->bank == 0){
+                        dep[2 * xy_2_index(x, y)] = true;
+                    }
+                    else{
+                        dep[2 * xy_2_index(x, y) + 1] = true;
+                    }
                 }
             }
         }
     }
     else{//bank1
-        dep[xy_2_index(X, Y)] = true;
+        dep[2 * xy_2_index(X, Y) + 1] = true;
         indepSet.inst.push_back(xy_2_index(X, Y));
         for (auto &pinArr : tile->pin_in_nets_bank1){   //这里只遍历了bank0中的instance
             for (int i = 0; i < pinArr.size(); i++){
@@ -166,7 +170,12 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, boo
                     SInstance* inst = InstArray[*it];
                     int x = std::get<0>(inst->Location);
                     int y = std::get<1>(inst->Location);
-                    dep[xy_2_index(x, y)] = true;
+                    if (inst->bank == 0){
+                        dep[2 * xy_2_index(x, y)] = true;
+                    }
+                    else{
+                        dep[2 * xy_2_index(x, y) + 1] = true;
+                    }
                 }
             }
         }
@@ -193,11 +202,13 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
-    addInstToIndepSet(indepSet, initXY.first, initXY.second);
+    addInstToIndepSet(indepSet, initXY.first, initXY.second, false);
+    addInstToIndepSet(indepSet, initXY.first, initXY.second, true);
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
-        int index = xy_2_index(x, y);
+        int index1 = 2 * xy_2_index(x, y);
+        int index2 = 2 * xy_2_index(x, y) + 1;
         if (index < 0 || index >= TileArray.size()){
             continue;
         }
