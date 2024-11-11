@@ -29,25 +29,42 @@ void init_tiles()
     {
         for (int j = 0; j < 300; ++j)
         {
-                // std::cout << i << ", " << j << ": ";
+                // std::cout << i << ", " << j << "/ ";
             STile* tile = new STile();
             Tile* tileP = chip.getTile(i, j);
             tile->X = i;
             tile->Y = j;
+            tile->type_add.clear();
             auto tileTypes = tileP->getTileTypes();
-            for (auto type : tileTypes)
+            if (tileTypes.size() == 0) tile->type = 0;
+            else if (tileTypes.size() == 1)
             {
-                // std::cout << type << " ";
-                if (type == "PLB") tile->type.insert(0);
-                else if (type == "DSP") tile->type.insert(1);
-                else if (type == "RAMA") tile->type.insert(2);
-                else if (type == "RAMB") tile->type.insert(3);
-                else if (type == "GCLK") tile->type.insert(4);
-                else if (type == "IOA") tile->type.insert(5);
-                else if (type == "IOB") tile->type.insert(6);
-                else if (type == "IPPIN") tile->type.insert(7);
-                // else std::cout << "Error!";
+                std::string tileType = *tileTypes.begin();
+                if (tileType == "PLB") tile->type = 1;
+                else if (tileType == "DSP") tile->type = 2;
+                else if (tileType == "RAMA") tile->type = 3;
+                else if (tileType == "RAMB") tile->type = 4;
+                else if (tileType == "GCLK") tile->type = 5;
+                else if (tileType == "IOA") tile->type = 6;
+                else if (tileType == "IOB") tile->type = 7;
+                else if (tileType == "IPPIN") tile->type = 8;
             }
+            else
+            {
+                tile->type = 9;
+                for (auto type : tileTypes)
+                {
+                    if (type == "PLB") tile->type_add.push_back(1);
+                    else if (type == "DSP") tile->type_add.push_back(2);
+                    else if (type == "RAMA") tile->type_add.push_back(3);
+                    else if (type == "RAMB") tile->type_add.push_back(4);
+                    else if (type == "GCLK") tile->type_add.push_back(5);
+                    else if (type == "IOA") tile->type_add.push_back(6);
+                    else if (type == "IOB") tile->type_add.push_back(7);
+                    else if (type == "IPPIN") tile->type_add.push_back(8);
+                }
+            }
+            
             for (auto it = tileP->getInstanceMapBegin(); it != tileP->getInstanceMapEnd(); ++it)
             {
                 auto slotType = it->first;
@@ -70,6 +87,7 @@ void init_tiles()
             tile->pin_in_nets_bank1.clear();
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
+                // std::cout << index << ": " << tile->type << std::endl;
         }
     }
     for (int i = 0; i < 5; ++i)
@@ -359,15 +377,15 @@ void copy_instances()
     //     }
 
     // check clock region info
-    for (int i = 0; i < 25; ++i)
-    {
-        std::cout << "Clock Region " << i << " has " << ClockRegion_Info.clockNets[i].size() << " clock nets: ";
-        for (auto netID : ClockRegion_Info.clockNets[i])
-        {
-            std::cout << netID << " ";
-        }
-        std::cout << std::endl;
-    }
+    // for (int i = 0; i < 25; ++i)
+    // {
+    //     std::cout << "Clock Region " << i << " has " << ClockRegion_Info.clockNets[i].size() << " clock nets: ";
+    //     for (auto netID : ClockRegion_Info.clockNets[i])
+    //     {
+    //         std::cout << netID << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 }
 
 void connection_setup()

@@ -5,6 +5,7 @@
 #include "checker_legacy/netlist.h"
 
 #include "solver/solverObject.h"
+#include "solver/solver.h"
 
 int main(int, char* argv[])
 {
@@ -38,6 +39,15 @@ int main(int, char* argv[])
     std::cout << "Successfully copied instances." << std::endl;
     connection_setup();
     std::cout << "Successfully set up connections." << std::endl;
+
+    // solve start
+    // ISMMemory mem;
+    // ISMSolver_matching solver;
+    // std::vector<IndepSet> indepSets;
+    // solver.buildIndependentIndepSets(indepSets, 5, 10);
+    // for (auto &indepSet : indepSets){
+    //     solver.realizeMatching(mem, indepSet);
+    // }
     
 
     return 0;

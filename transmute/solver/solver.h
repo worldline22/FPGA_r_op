@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -26,4 +28,28 @@ struct ISMMemory {
     std::vector<std::vector<int> > netIds;
 };
 
-std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
+extern std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
+
+struct IndepSet{
+    int type;
+    std::vector<int> inst;
+    // int cksr;
+    // std::vector<int> ce;
+};
+
+class ISMSolver_matching {
+public:
+    bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
+    void computeMatching(ISMMemory &mem) const;
+    void buildIndepSet(IndepSet &indepSet, const STile & seed, const int maxR, const int maxIndepSetSize);
+    void addInstToIndepSet(IndepSet &indepSet, int X, int Y, bool bank);
+    void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
+    void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
+    int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+    int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc);
+    bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
+    bool checkPinInTile(STile* &tile, SPin* &thisPin);
+    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
+    void addAllsameBankInstToIndepSet();
+};
+
