@@ -5,6 +5,7 @@ std::map<int, SInstance*> InstArray;
 std::map<int, SNet*> NetArray;
 std::map<int, SPin*> PinArray;
 std::vector<STile*> TileArray; 
+SClockRegion ClockRegion_Info;
 
 extern int xy_2_index(int x, int y)
 {
@@ -63,11 +64,28 @@ void init_tiles()
                 tile->instanceMap[slotType] = tmpSlotArr;
             }
             // std::cout << std::endl;
-            tile->netsConnected.clear();
-            tile->pin_in_nets.clear();
+            tile->netsConnected_bank0.clear();
+            tile->pin_in_nets_bank0.clear();
+            tile->netsConnected_bank1.clear();
+            tile->pin_in_nets_bank1.clear();
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
         }
+    }
+    for (int i = 0; i < 5; ++i)
+    {
+        ClockRegion_Info.xline[i] = chip.getClockRegion(i, 0)->getXRight();
+        // std::cout << ClockRegion_Info.xline[i] << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < 5; ++i)
+    {
+        ClockRegion_Info.yline[i] = chip.getClockRegion(0, i)->getYTop();
+        // std::cout << ClockRegion_Info.yline[i] << " ";
+    }
+    for (int i = 0; i < 25; ++i)
+    {
+        ClockRegion_Info.clockNets[i].clear();
     }
 }
 
@@ -155,6 +173,11 @@ void copy_instances()
         //     assert(found);
         //     // success
         // }
+        if (instance->Lib >= 9 && instance->Lib <= 15 && std::get<2>(instance->Location) >= 4) instance->bank = true;
+        else if (instance->Lib == 19 && std::get<2>(instance->Location) >= 8) instance->bank = true;
+        else if (instance->Lib == 0 && std::get<2>(instance->Location) == 1) instance->bank = true;
+        else if (instance->Lib == 1 && std::get<2>(instance->Location) == 1) instance->bank = true;
+        else instance->bank = false;
         
         // pins and nets
         instance->inpins.clear();
@@ -164,6 +187,9 @@ void copy_instances()
             pin->pinID = PinArray.size();
             PinArray.insert(std::make_pair(pin->pinID, pin));
             Pin* pin_old = instanceP.second->getInpin(i);
+            pin->prop = pin_old->getProp();
+            pin->timingCritical = pin_old->getTimingCritical();
+            pin->instanceOwner = instance;
             pin->netID = pin_old->getNetID();
                 // caution! maybe -1
                 if (pin->netID != -1)
@@ -180,27 +206,43 @@ void copy_instances()
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
                     auto tile_ptr = TileArray[tileindex];
-                    int sizen = tile_ptr->netsConnected.size();
-                    for (findindex = 0; findindex < sizen; ++findindex)
+                    if (!instance->bank)
                     {
-                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        int sizen = tile_ptr->netsConnected_bank0.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                        if (findindex == sizen)
                         {
-                            break;
+                            tile_ptr->netsConnected_bank0.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{pin->pinID});
                         }
-                    }
-                    if (findindex == sizen)
-                    {
-                        tile_ptr->netsConnected.push_back(pin->netID);
-                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                        else
+                            tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
                     }
                     else
                     {
-                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                        int sizen = tile_ptr->netsConnected_bank1.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                        if (findindex == sizen)
+                        {
+                            tile_ptr->netsConnected_bank1.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{pin->pinID});
+                        }
+                        else
+                            tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
+                    }
+
+                    if (pin->prop == PinProp::PIN_PROP_CLOCK && pin->netID != -1)
+                    {
+                        // std::cout << "add";
+                        assert(NetArray[pin->netID]->clock);
+                        int x = std::get<0>(instance->Location);
+                        int y = std::get<1>(instance->Location);
+                        int CRID = ClockRegion_Info.getCRID(x, y);
+                        ClockRegion_Info.clockNets[CRID].insert(pin->netID);
                     }
                 }
-            pin->prop = pin_old->getProp();
-            pin->timingCritical = pin_old->getTimingCritical();
-            pin->instanceOwner = instance;
                 // std::cout << "in" << i << "(" << pin->netID << ", " << pin->prop << ", " << pin->timingCritical << ") ";
             instance->inpins.push_back(pin);
         }
@@ -228,22 +270,40 @@ void copy_instances()
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
                     auto tile_ptr = TileArray[tileindex];
-                    int sizen = tile_ptr->netsConnected.size();
-                    for (findindex = 0; findindex < sizen; ++findindex)
+                    if (!instance->bank)
                     {
-                        if (tile_ptr->netsConnected[findindex] == pin->netID)
+                        int sizen = tile_ptr->netsConnected_bank0.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                        if (findindex == sizen)
                         {
-                            break;
+                            tile_ptr->netsConnected_bank0.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{pin->pinID});
                         }
-                    }
-                    if (findindex == sizen)
-                    {
-                        tile_ptr->netsConnected.push_back(pin->netID);
-                        tile_ptr->pin_in_nets.push_back(std::vector<int>{pin->pinID});
+                        else
+                            tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
                     }
                     else
                     {
-                        tile_ptr->pin_in_nets[findindex].push_back(pin->pinID);
+                        int sizen = tile_ptr->netsConnected_bank1.size();
+                        for (findindex = 0; findindex < sizen; ++findindex)
+                            if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                        if (findindex == sizen)
+                        {
+                            tile_ptr->netsConnected_bank1.push_back(pin->netID);
+                            tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{pin->pinID});
+                        }
+                        else
+                            tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
+                    }
+
+                    if (pin->prop == PinProp::PIN_PROP_CLOCK && pin->netID != -1)
+                    {
+                        assert(NetArray[pin->netID]->clock);
+                        int x = std::get<0>(instance->Location);
+                        int y = std::get<1>(instance->Location);
+                        int CRID = ClockRegion_Info.getCRID(x, y);
+                        ClockRegion_Info.clockNets[CRID].insert(pin->netID);
                     }
                 }
             pin->prop = pin_old->getProp();
@@ -262,19 +322,42 @@ void copy_instances()
     //     {
     //         auto tile_ptr = TileArray[i]; 
     //         if (tile_ptr->type.find(0) == tile_ptr->type.end()) continue;
-    //         std::cout << "Tile " << i << " nets connected - ";
-    //         for (int j = 0; j < (int)tile_ptr->netsConnected.size(); ++j)
+    //         std::cout << "Tile " << i << " nets connected - \n";
+    //         std::cout << "bank0: ";
+    //         for (int j = 0; j < (int)tile_ptr->netsConnected_bank0.size(); ++j)
     //         {
-    //             int netID = tile_ptr->netsConnected[j];
+    //             int netID = tile_ptr->netsConnected_bank0[j];
     //             std::cout << "(net" << netID << ": ";
-    //             for (int k = 0; k < (int)tile_ptr->pin_in_nets[j].size(); ++k)
+    //             for (int k = 0; k < (int)tile_ptr->pin_in_nets_bank0[j].size(); ++k)
     //             {
-    //                 std::cout << tile_ptr->pin_in_nets[j][k] << " ";
+    //                 std::cout << tile_ptr->pin_in_nets_bank0[j][k] << " ";
+    //             }
+    //             std::cout << ")";
+    //         }
+    //         std::cout << std::endl << "bank1: ";
+    //         for (int j = 0; j < (int)tile_ptr->netsConnected_bank1.size(); ++j)
+    //         {
+    //             int netID = tile_ptr->netsConnected_bank1[j];
+    //             std::cout << "(net" << netID << ": ";
+    //             for (int k = 0; k < (int)tile_ptr->pin_in_nets_bank1[j].size(); ++k)
+    //             {
+    //                 std::cout << tile_ptr->pin_in_nets_bank1[j][k] << " ";
     //             }
     //             std::cout << ")";
     //         }
     //         std::cout << std::endl;
     //     }
+
+    // check clock region info
+    for (int i = 0; i < 25; ++i)
+    {
+        std::cout << "Clock Region " << i << " has " << ClockRegion_Info.clockNets[i].size() << " clock nets: ";
+        for (auto netID : ClockRegion_Info.clockNets[i])
+        {
+            std::cout << netID << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 void connection_setup()

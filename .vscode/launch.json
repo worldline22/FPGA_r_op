@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/worldline22/Desktop/FPGA_r_op",
-      "program": "/Users/worldline22/Desktop/FPGA_r_op/build/Debug/outDebug"
+      "cwd": "/Users/worldline22/Desktop/FPGA_r_op/ISM_solver",
+      "program": "/Users/worldline22/Desktop/FPGA_r_op/ISM_solver/build/Debug/outDebug"
     }
   ]
 }

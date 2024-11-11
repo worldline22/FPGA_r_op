@@ -41,7 +41,7 @@ public:
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
     void buildIndepSet(IndepSet &indepSet, const STile & seed, const int maxR, const int maxIndepSetSize);
-    void addInstToIndepSet(IndepSet &indepSet, int X, int Y);
+    void addInstToIndepSet(IndepSet &indepSet, int X, int Y, bool bank);
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
     void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
@@ -137,23 +137,40 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
 
 // 以bank为最小单位
 
-void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y){
-    dep[xy_2_index(X, Y)] = true;
+void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, bool bank){
     STile* tile = TileArray[xy_2_index(X, Y)];
-    for (auto &pinArr : tile->pin_in_nets_bank0){   //这里只遍历了bank0中的instance
-        for (int i = 0; i < pinArr.size(); i++){
-            SPin* pin = PinArray[pinArr[i]];
-            SInstance* inst = InstArray[pin->instanceOwner->id];
-            for(auto it = inst->conn.begin(); it != inst->conn.end(); ++it){
-                SInstance* inst = InstArray[*it];
-                int x = std::get<0>(inst->Location);
-                int y = std::get<1>(inst->Location);
-                dep[xy_2_index(x, y)] = true;
+    if (bank == false){  //bank0
+        dep[2 * xy_2_index(X, Y)] = true;
+        indepSet.inst.push_back(2 * xy_2_index(X, Y));
+        for (auto &pinArr : tile->pin_in_nets_bank0){   //这里只遍历了bank0中的instance
+            for (int i = 0; i < pinArr.size(); i++){
+                SPin* pin = PinArray[pinArr[i]];
+                SInstance* inst = InstArray[pin->instanceOwner->id];
+                for(auto it = inst->conn.begin(); it != inst->conn.end(); ++it){
+                    SInstance* inst = InstArray[*it];
+                    int x = std::get<0>(inst->Location);
+                    int y = std::get<1>(inst->Location);
+                    dep[xy_2_index(x, y)] = true;
+                }
             }
         }
-        
     }
-    indepSet.inst.push_back(xy_2_index(X, Y));
+    else{//bank1
+        dep[xy_2_index(X, Y)] = true;
+        indepSet.inst.push_back(xy_2_index(X, Y));
+        for (auto &pinArr : tile->pin_in_nets_bank1){   //这里只遍历了bank0中的instance
+            for (int i = 0; i < pinArr.size(); i++){
+                SPin* pin = PinArray[pinArr[i]];
+                SInstance* inst = InstArray[pin->instanceOwner->id];
+                for(auto it = inst->conn.begin(); it != inst->conn.end(); ++it){
+                    SInstance* inst = InstArray[*it];
+                    int x = std::get<0>(inst->Location);
+                    int y = std::get<1>(inst->Location);
+                    dep[xy_2_index(x, y)] = true;
+                }
+            }
+        }
+    }
     return;
 }
 
