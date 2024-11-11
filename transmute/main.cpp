@@ -93,10 +93,9 @@ int main(int, char* argv[])
         if (instance->Lib >= 9 && instance->Lib <= 15)
         {
             STile* tile_ptr = TileArray[index];
-            SSlot* slot_ptr = tile_ptr->instanceMap["LUT"][z];
             bool found = false;
             // std::cout << "instance id: " << instance->id << " / ";
-            for (auto instID : slot_ptr->current_InstIDs)
+            for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
             {
                 // std::cout << instID << " ";
                 if (instID == instance->id)
@@ -106,7 +105,11 @@ int main(int, char* argv[])
                 }
             }
             // std::cout << std::endl;
-            // assert(found);
+            if (!found)
+            {std::cout << "not";
+            std::cout << "found";
+            }
+            assert(found);
             // success
         }
     } 

@@ -510,7 +510,7 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
             err = true;
         }
         // std::cout << mem.sol.size() << std::endl;
-        std::cout << "Instance_id:" << indepSet.inst[i%number] << "(" << index_2_x(indepSet.inst[i%number]/2) << " " << index_2_y(indepSet.inst[i%number]/2) << ") is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << "(" << index_2_x(indepSet.inst[mem.sol[i]]/2) << " " << index_2_y(indepSet.inst[mem.sol[i]]/2) << ")" << std::endl;
+        // std::cout << "Instance_id:" << indepSet.inst[i%number] << "(" << index_2_x(indepSet.inst[i%number]/2) << " " << index_2_y(indepSet.inst[i%number]/2) << ") is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << "(" << index_2_x(indepSet.inst[mem.sol[i]]/2) << " " << index_2_y(indepSet.inst[mem.sol[i]]/2) << ")" << std::endl;
     }
     assert (!err);
 
@@ -524,7 +524,7 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
     tmpTile.resize(number);
     for (size_t i = 0; i < mem.sol.size(); ++i)
     {
-        tmpTile[i] = *TileArray[indepSet.inst[i]/2];
+        tmpTile[i] = STile(*TileArray[indepSet.inst[i]/2]);
     }
     for (size_t i = 0; i < mem.sol.size(); ++i)
     {
@@ -549,35 +549,35 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                 //     std::cout << slotarrp.first << std::endl;
                 // }
                 // assert(tile_to->instanceMap.size()==4);
-                assert(tile_to->instanceMap["F7MUX"][0]->current_InstIDs.size()==0);
-                assert(tile_to->instanceMap["F8MUX"][0]->current_InstIDs.size()==0);
-                for (int i = 0; i < 4; ++i)
+                assert(tile_to->instanceMap["F7MUX"][0].current_InstIDs.size()==0);
+                assert(tile_to->instanceMap["F8MUX"][0].current_InstIDs.size()==0);
+                for (int ii = 0; ii < 4; ++ii)
                 {
-                    tile_to->instanceMap["LUT"][i]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][i]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["LUT"][i]->current_InstIDs)
+                    tile_to->instanceMap["LUT"][ii].current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][ii].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["LUT"][ii].current_InstIDs)
                     {
-                        // std::cout << "we move" << InstID << " to " << tile_to->X << " " << tile_to->Y << " " << i << std::endl;
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i);
+                        // std::cout << "we move" << InstID << "(" << std::get<0>(inst->Location) << " " << std::get<1>(inst->Location) << " " << std::get<2>(inst->Location) << " to " << tile_to->X << " " << tile_to->Y << " " << ii << std::endl;
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii);
                     }
                 }
-                for (int i = 0; i < 8; ++i)
+                for (int ii = 0; ii < 8; ++ii)
                 {
-                    tile_to->instanceMap["SEQ"][i]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][i]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["SEQ"][i]->current_InstIDs)
+                    tile_to->instanceMap["SEQ"][ii].current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][ii].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["SEQ"][ii].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i);
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii);
                     }
                 }
                 tile_to->instanceMap["CARRY4"][0] = tmpTile[arrIdx_from].instanceMap["CARRY4"][0];
-                for (auto InstID : tile_to->instanceMap["CARRY4"][0]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["CARRY4"][0].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 0);
                 }
                 tile_to->instanceMap["DRAM"][0] = tmpTile[arrIdx_from].instanceMap["DRAM"][0];
-                for (auto InstID : tile_to->instanceMap["DRAM"][0]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["DRAM"][0].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 0);
@@ -588,32 +588,33 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                 tile_to->netsConnected_bank0 = tmpTile[arrIdx_from].netsConnected_bank1;
                 tile_to->pin_in_nets_bank0 = tmpTile[arrIdx_from].pin_in_nets_bank1;
                 // update the instanceMap
-                for (int i = 0; i < 4; ++i)
+                for (int ii = 0; ii < 4; ++ii)
                 {
-                    tile_to->instanceMap["LUT"][i]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][i+4]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["LUT"][i]->current_InstIDs)
+                    tile_to->instanceMap["LUT"][ii].current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][ii+4].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["LUT"][ii].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i);
+                        // std::cout << "we move" << InstID << "(" << std::get<0>(inst->Location) << " " << std::get<1>(inst->Location) << " " << std::get<2>(inst->Location) << " to " << tile_to->X << " " << tile_to->Y << " " << ii << std::endl;
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii);
                     }
                 }
-                for (int i = 0; i < 8; ++i)
+                for (int ii = 0; ii < 8; ++ii)
                 {
-                    tile_to->instanceMap["SEQ"][i]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][i+8]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["SEQ"][i]->current_InstIDs)
+                    tile_to->instanceMap["SEQ"][ii].current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][ii+8].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["SEQ"][ii].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i);
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii);
                     }
                 }
                 tile_to->instanceMap["CARRY4"][0] = tmpTile[arrIdx_from].instanceMap["CARRY4"][1];
-                for (auto InstID : tile_to->instanceMap["CARRY4"][0]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["CARRY4"][0].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 0);
                 }
                 tile_to->instanceMap["DRAM"][0] = tmpTile[arrIdx_from].instanceMap["DRAM"][1];
-                for (auto InstID : tile_to->instanceMap["DRAM"][0]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["DRAM"][0].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 0);
@@ -627,32 +628,33 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                 tile_to->netsConnected_bank1 = tmpTile[arrIdx_from].netsConnected_bank0;
                 tile_to->pin_in_nets_bank1 = tmpTile[arrIdx_from].pin_in_nets_bank0;
                 // update the instanceMap
-                for (int i = 0; i < 4; ++i)
+                for (int ii = 0; ii < 4; ++ii)
                 {
-                    tile_to->instanceMap["LUT"][i+4]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][i]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["LUT"][i+4]->current_InstIDs)
+                    tile_to->instanceMap["LUT"][ii+4].current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][ii].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["LUT"][ii+4].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i+4);
+                        // std::cout << "we move" << InstID << "(" << std::get<0>(inst->Location) << " " << std::get<1>(inst->Location) << " " << std::get<2>(inst->Location) << " to " << tile_to->X << " " << tile_to->Y << " " << ii+4 << std::endl;
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii+4);
                     }
                 }
-                for (int i = 0; i < 8; ++i)
+                for (int ii = 0; ii < 8; ++ii)
                 {
-                    tile_to->instanceMap["SEQ"][i+8]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][i]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["SEQ"][i+8]->current_InstIDs)
+                    tile_to->instanceMap["SEQ"][ii+8].current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][ii].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["SEQ"][ii+8].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i+8);
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii+8);
                     }
                 }
                 tile_to->instanceMap["CARRY4"][1] = tmpTile[arrIdx_from].instanceMap["CARRY4"][0];
-                for (auto InstID : tile_to->instanceMap["CARRY4"][1]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["CARRY4"][1].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 1);
                 }
                 tile_to->instanceMap["DRAM"][1] = tmpTile[arrIdx_from].instanceMap["DRAM"][0];
-                for (auto InstID : tile_to->instanceMap["DRAM"][1]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["DRAM"][1].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 1);
@@ -663,32 +665,33 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                 tile_to->netsConnected_bank1 = tmpTile[arrIdx_from].netsConnected_bank1;
                 tile_to->pin_in_nets_bank1 = tmpTile[arrIdx_from].pin_in_nets_bank1;
                 // update the instanceMap
-                for (int i = 0; i < 4; ++i)
+                for (int ii = 0; ii < 4; ++ii)
                 {
-                    tile_to->instanceMap["LUT"][i+4]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][i+4]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["LUT"][i+4]->current_InstIDs)
+                    tile_to->instanceMap["LUT"][ii+4].current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][ii+4].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["LUT"][ii+4].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i+4);
+                        // std::cout << "we move" << InstID << "(" << std::get<0>(inst->Location) << " " << std::get<1>(inst->Location) << " " << std::get<2>(inst->Location) << " to " << tile_to->X << " " << tile_to->Y << " " << ii+4 << std::endl;
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii+4);
                     }
                 }
-                for (int i = 0; i < 8; ++i)
+                for (int ii = 0; ii < 8; ++ii)
                 {
-                    tile_to->instanceMap["SEQ"][i+8]->current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][i+8]->current_InstIDs;
-                    for (auto InstID : tile_to->instanceMap["SEQ"][i+8]->current_InstIDs)
+                    tile_to->instanceMap["SEQ"][ii+8].current_InstIDs = tmpTile[arrIdx_from].instanceMap["SEQ"][ii+8].current_InstIDs;
+                    for (auto InstID : tile_to->instanceMap["SEQ"][ii+8].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, i+8);
+                        inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii+8);
                     }
                 }
                 tile_to->instanceMap["CARRY4"][1] = tmpTile[arrIdx_from].instanceMap["CARRY4"][1];
-                for (auto InstID : tile_to->instanceMap["CARRY4"][1]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["CARRY4"][1].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 1);
                 }
                 tile_to->instanceMap["DRAM"][1] = tmpTile[arrIdx_from].instanceMap["DRAM"][1];
-                for (auto InstID : tile_to->instanceMap["DRAM"][1]->current_InstIDs)
+                for (auto InstID : tile_to->instanceMap["DRAM"][1].current_InstIDs)
                 {
                     SInstance* inst = InstArray[InstID];
                     inst->Location = std::make_tuple(tile_to->X, tile_to->Y, 1);
