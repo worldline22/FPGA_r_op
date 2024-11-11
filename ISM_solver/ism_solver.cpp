@@ -416,25 +416,22 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 }
 
 void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize){
+    dep.resize(2 * TileArray.size(), false);
     for (auto &inst : TileArray){   //遍历了所有的bank
-        if (dep[2 * xy_2_index(inst->X, inst->Y)]){
-            // continue;
-        }
-        else {
-            if (inst->type == 1){
+        if (inst->type != 1) continue;
+        if (!dep[2 * xy_2_index(inst->X, inst->Y)]) {
+            if (inst->pin_in_nets_bank0.size() != 0) {
                 IndepSet indepSet;
                 buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
                 set.push_back(indepSet);
             }
         }
         if (dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
-            continue;
-        }
-        else {
-            if (inst->type != 1) continue;
-            IndepSet indepSet;
-            buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
-            set.push_back(indepSet);
+            if (inst->pin_in_nets_bank1.size() != 0) {
+                IndepSet indepSet;
+                buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
+                set.push_back(indepSet);
+            }
         }
     }
     return;
