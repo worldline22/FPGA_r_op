@@ -1,4 +1,5 @@
 #include "solver.h"
+#include <cassert>
 
 std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
 
@@ -86,13 +87,13 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
         if(TileArray[index]->type != 1){
             continue;
         }
-        if (!dep[index1]){
+        if (!dep[index1] && !TileArray[index]->has_fixed_bank0){
             addInstToIndepSet(indepSet, x, y, false);
         }
         if ((int)indepSet.inst.size() >= maxIndepSetSize){
             return;
         }
-        if (!dep[index2]){
+        if (!dep[index2] && !TileArray[index]->has_fixed_bank1){
             addInstToIndepSet(indepSet, x, y, true);
         }
         if ((int)indepSet.inst.size() >= maxIndepSetSize){
@@ -107,14 +108,14 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
     for (auto &inst : TileArray){   //遍历了所有的bank
         if (inst->type != 1) continue;
         if (!dep[2 * xy_2_index(inst->X, inst->Y)]) {
-            if (inst->pin_in_nets_bank0.size() != 0) {
+            if (inst->pin_in_nets_bank0.size() != 0 && !inst->has_fixed_bank0) {
                 IndepSet indepSet;
                 buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
                 set.push_back(indepSet);
             }
         }
         if (!dep[2 * xy_2_index(inst->X, inst->Y) + 1]){
-            if (inst->pin_in_nets_bank1.size() != 0) {
+            if (inst->pin_in_nets_bank1.size() != 0 && !inst->has_fixed_bank1) {
                 IndepSet indepSet;
                 buildIndepSet(indepSet, *inst, maxR, maxIndepSetSize);
                 set.push_back(indepSet);
@@ -519,7 +520,7 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
     // the bounding box of the net should be updated
     // CR maybe changed
 
-    vector<STile> tmpTile;
+    std::vector<STile> tmpTile;
     tmpTile.resize(number);
     for (size_t i = 0; i < mem.sol.size(); ++i){
         tmpTile[i] = *TileArray[indepSet.inst[i]/2];
@@ -530,19 +531,19 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
         int arrIdx_B = mem.sol[i];
         STile* tileA = TileArray[siteID_A/2];
         
-        if (siteID_A % 2 == 0)
-        {
-            if (siteID_B % 2 == 0)
-            {
-                tileA->netsConnected_bank0 = tmpTile[arrIdx_B].netsConnected_bank0;
-                tileA->pin_in_nets_bank0 = tmpTile[arrIdx_B].pin_in_nets_bank0;
-                // update the instanceMap
-                assert(tileA->type==1);
-                assert(tmpTile[arrIdx_B].type==1);
-                assert(instanceMap.size()==4);
-                for(int i=0; i<)
-            }
-        }
+        // if (siteID_A % 2 == 0)
+        // {
+        //     if (siteID_B % 2 == 0)
+        //     {
+        //         tileA->netsConnected_bank0 = tmpTile[arrIdx_B].netsConnected_bank0;
+        //         tileA->pin_in_nets_bank0 = tmpTile[arrIdx_B].pin_in_nets_bank0;
+        //         // update the instanceMap
+        //         assert(tileA->type==1);
+        //         assert(tmpTile[arrIdx_B].type==1);
+        //         assert(instanceMap.size()==4);
+        //         for(int i=0; i<)
+        //     }
+        // }
     }
     
     return;

@@ -85,6 +85,8 @@ void init_tiles()
             tile->pin_in_nets_bank0.clear();
             tile->netsConnected_bank1.clear();
             tile->pin_in_nets_bank1.clear();
+            tile->has_fixed_bank0 = false;
+            tile->has_fixed_bank1 = false;
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
                 // std::cout << index << ": " << tile->type << std::endl;
@@ -142,6 +144,7 @@ void copy_instances()
         instance->baseLocation = instanceP.second->getBaseLocation();
         instance->Location = instance->baseLocation;
             // std::cout << "baseLocation: " << std::get<0>(instance->baseLocation) << " " << std::get<1>(instance->baseLocation) << " " << std::get<2>(instance->baseLocation);
+            int tileIndex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
         instance->fixed = instanceP.second->isFixed();
         instance->id = instanceP.first;
             // std::cout << " id: " << instance->id << std::endl;
@@ -196,6 +199,15 @@ void copy_instances()
         else if (instance->Lib == 0 && std::get<2>(instance->Location) == 1) instance->bank = true;
         else if (instance->Lib == 1 && std::get<2>(instance->Location) == 1) instance->bank = true;
         else instance->bank = false;
+
+        if (instance->fixed){
+            if(instance->bank){
+                TileArray[tileIndex]->has_fixed_bank1 = true;
+            }
+            else{
+                TileArray[tileIndex]->has_fixed_bank0 = true;
+            }
+        }
         
         // pins and nets
         instance->inpins.clear();

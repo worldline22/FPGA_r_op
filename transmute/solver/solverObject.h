@@ -33,6 +33,8 @@ struct STile
     std::vector<std::vector<int>> pin_in_nets_bank0;
     std::vector<int> netsConnected_bank1;
     std::vector<std::vector<int>> pin_in_nets_bank1;
+    bool has_fixed_bank0;
+    bool has_fixed_bank1;
     // 如果默认是其他类，默认放在'bank0'里面，PLB里的CARRY4，DRAM，DFF和LUT类引脚则可能放在bank1里面
 };
 

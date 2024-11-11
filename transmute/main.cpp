@@ -67,28 +67,28 @@ int main(int, char* argv[])
     //     }
     // }
     // std::cout << "Used bank count: " << used_bank_cnt << std::endl;
-    // int i = 0;
-    // for (auto &indepSet : indepSets)
-    // {
-    //     ++i;
-    //     std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
-    //     for (auto instID : indepSet.inst)
-    //     {
-    //         std::cout << instID << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-    int setnum = 0;
+    int i = 0;
     for (auto &indepSet : indepSets)
     {
-        ++setnum;
-        if (indepSet.inst.size() > 30)
+        ++i;
+        std::cout << "Set" << i << " (" << indepSet.inst.size() << ") : ";
+        for (auto instID : indepSet.inst)
         {
-            // std::cout << "set no." << setnum << std::endl;
-            solver.realizeMatching(mem, indepSet);
+            std::cout << instID << " ";
         }
+        std::cout << std::endl;
     }
-    std::cout << "Successfully realized matching." << std::endl;
+    // int setnum = 0;
+    // for (auto &indepSet : indepSets)
+    // {
+    //     ++setnum;
+    //     if (indepSet.inst.size() > 30)
+    //     {
+    //         // std::cout << "set no." << setnum << std::endl;
+    //         solver.realizeMatching(mem, indepSet);
+    //     }
+    // }
+    // std::cout << "Successfully realized matching." << std::endl;
 
     return 0;
 }
