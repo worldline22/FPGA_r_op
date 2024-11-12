@@ -7,12 +7,16 @@ OBJ = $(SRC:.cpp=.o)
 
 INCLUDE_PATHS = -I. -Ichecker_legacy -Isolver
 LEMON = -I/usr/local/include -L/usr/local/lib -lemon
+PTHREAD = -lpthread  # add pthread
 
 default: $(OBJ)
-	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -o build $(OBJ)
+	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) -o build $(OBJ) $(LEMON) $(PTHREAD)
 
 %.o: %.cpp
 	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -c $< -o $@
 
 clean:
 	rm -f build.exe $(OBJ)
+
+run:
+	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out
