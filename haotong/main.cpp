@@ -75,26 +75,49 @@ int main(int, char* argv[])
         
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
 
-        // Control the maximum number of threads using a counting mechanism
         std::vector<std::thread> threads;
         std::mutex mtx;
         std::condition_variable cv;
         int active_threads = 0;
 
+        // for (auto &indepSet : indepSets)
+        // {   
+        //     {
+        //         // Wait until the number of active threads is below the maximum limit
+        //         std::unique_lock<std::mutex> lock(mtx);
+        //         cv.wait(lock, [&]() { return active_threads < max_threads; });
+
+        //         ++active_threads;
+        //     }
+
+        //     IndepSet thread_indepSet = indepSet; // copy of indepSet to prevent different threads from modifying the same object
+
+        //     threads.emplace_back([&solver, thread_indepSet, &mtx, &cv, &active_threads]() mutable {
+        //         ISMMemory thread_mem;  // create ISMMemory instance inside to prevent different threads from modifying the same object
+        //         solver.realizeMatching(thread_mem, thread_indepSet);
+
+        //         {
+        //             std::lock_guard<std::mutex> guard(mtx);
+        //             --active_threads;
+        //         }
+        //         cv.notify_one();
+        //     });
+        // }
+
         for (auto &indepSet : indepSets)
-        {
-            // Wait until the number of active threads is below the maximum limit
-            std::unique_lock<std::mutex> lock(mtx);
-            cv.wait(lock, [&]() { return active_threads < max_threads; });
+        {   
+            {
+                // Wait until the number of active threads is below the maximum limit
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [&]() { return active_threads < max_threads; });
 
-            ++active_threads;
+                ++active_threads;
+            }
 
-            // Create and start a new thread
             threads.emplace_back([&solver, &mem, &indepSet, &mtx, &cv, &active_threads]() {
-                solver.realizeMatching(mem, indepSet);
-                std::cout << "Matching realized." << std::endl;
+                ISMMemory thread_mem;
+                solver.realizeMatching(thread_mem, indepSet);
 
-                // After the thread completes, decrease the count of active threads and notify waiting threads
                 {
                     std::lock_guard<std::mutex> guard(mtx);
                     --active_threads;
