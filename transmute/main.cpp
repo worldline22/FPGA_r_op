@@ -41,8 +41,11 @@ int main(int, char* argv[])
     std::cout << "Successfully copied instances." << std::endl;
     connection_setup();
     std::cout << "Successfully set up connections." << std::endl;
-
-    
+    // for (auto tilep : TileArray)
+    // {
+    //     if (tilep->type != 1) continue;
+    //     std::cout << "Tile " << tilep->X << " " << tilep->Y << " " << tilep->netsConnected_bank0.size() << " " << tilep->netsConnected_bank1.size() << std::endl;
+    // }
     // solve start
     std::vector<int> priority;
     std::vector<std::vector<int>> movBuckets;
