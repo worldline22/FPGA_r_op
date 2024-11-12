@@ -64,7 +64,7 @@ int main(int, char* argv[])
         for (int i : priority)
         {
             movBuckets[InstArray[i]->numMov].push_back(i);
-            if(InstArray[i]->numMov>1)std::cout<<"mark";
+            // if(InstArray[i]->numMov>1)std::cout<<"mark";
         }
         auto it = priority.begin();
         for (const auto &bkt : movBuckets)
@@ -75,41 +75,47 @@ int main(int, char* argv[])
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
         for (auto &indepSet : indepSets)
         {
+            // std:: cout << "Independent set: " << cnt++;
+            // for (auto site : indepSet.inst)
+            // {
+            //     std::cout << site << " ";
+            // }
             solver.realizeMatching(mem, indepSet);
+            // std::cout << std::endl;
         }
+        // check the instance position
+        for (auto instancepair : InstArray)
+        {
+            auto instance=instancepair.second;
+            int x = std::get<0>(instance->Location);
+            int y = std::get<1>(instance->Location);
+            int index = xy_2_index(x, y);
+            int z= std::get<2>(instance->Location);
+            if (instance->Lib >= 9 && instance->Lib <= 15)
+            {
+                STile* tile_ptr = TileArray[index];
+                bool found = false;
+                // std::cout << "instance id: " << instance->id << " / ";
+                for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
+                {
+                    // std::cout << instID << " ";
+                    if (instID == instance->id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                // std::cout << std::endl;
+                if (!found)
+                {std::cout << "not";
+                std::cout << "found";
+                }
+                assert(found);
+                // success
+            }
+        } 
     }
-    
-    //check the instance position
-    // for (auto instancepair : InstArray)
-    // {
-    //     auto instance=instancepair.second;
-    //     int x = std::get<0>(instance->Location);
-    //     int y = std::get<1>(instance->Location);
-    //     int index = xy_2_index(x, y);
-    //     int z= std::get<2>(instance->Location);
-    //     if (instance->Lib >= 9 && instance->Lib <= 15)
-    //     {
-    //         STile* tile_ptr = TileArray[index];
-    //         bool found = false;
-    //         // std::cout << "instance id: " << instance->id << " / ";
-    //         for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
-    //         {
-    //             // std::cout << instID << " ";
-    //             if (instID == instance->id)
-    //             {
-    //                 found = true;
-    //                 break;
-    //             }
-    //         }
-    //         // std::cout << std::endl;
-    //         if (!found)
-    //         {std::cout << "not";
-    //         std::cout << "found";
-    //         }
-    //         assert(found);
-    //         // success
-    //     }
-    // } 
+
     std::cout << "Successfully realized matching." << std::endl;
 
     file_output(outputFileName);

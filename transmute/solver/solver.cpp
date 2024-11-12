@@ -69,10 +69,10 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const STile &seed, co
             seq.push_back(std::make_pair(initXY.first + x, initXY.second + y));
         }
     }
-    if (!dep[2 * xy_2_index(initXY.first, initXY.second)]){
+    if (!dep[2 * xy_2_index(initXY.first, initXY.second)] && !seed.has_fixed_bank0){
         addInstToIndepSet(indepSet, initXY.first, initXY.second, false);
     }
-    if (!dep[2 * xy_2_index(initXY.first, initXY.second) + 1]){
+    if (!dep[2 * xy_2_index(initXY.first, initXY.second) + 1] && !seed.has_fixed_bank1){
         addInstToIndepSet(indepSet, initXY.first, initXY.second, true);
     }
     for (auto &point : seq){
@@ -122,7 +122,10 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
     //         }
     //     }
     // }
-    dep.resize(2 * TileArray.size(), false);
+    dep.resize(2 * TileArray.size());
+    for (int i = 0; i < 2 * (int)TileArray.size(); i++){
+        dep[i] = false;
+    }
     for (int inst_id : priority)
     {
         int x = std::get<0>(InstArray[inst_id]->Location);
