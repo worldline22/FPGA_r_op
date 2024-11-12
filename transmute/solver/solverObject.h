@@ -12,7 +12,6 @@
 extern int xy_2_index(int x, int y);
 extern int index_2_x(int index);
 extern int index_2_y(int index);
-extern int xyz_2_index(int x, int y, int z, bool isLUT);    //默认所有的instance都是从偶数开始数的
 extern int index_2_x_inst(int index);
 extern int index_2_y_inst(int index);
 extern int index_2_z_inst(int index);
