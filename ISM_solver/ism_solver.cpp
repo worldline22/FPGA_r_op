@@ -11,6 +11,7 @@
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
 #include "../transmute/solver/solverObject.h"
+#include "../transmute/checker_legacy/object.h"
 #include "ism_solver.h"
 
 
@@ -122,16 +123,36 @@ void ISMSolver_matching::realizeMatching_Instance(ISMMemory &mem, IndepSet &inde
 
 
 
-void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib){
+void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority){
     dep_inst.resize(45000 * 16, false);
     // 编码方式SEQ：（y * 150 + x）* 16 + z，z from 0 to 15
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
-    for (int i = 0; i < 45000 * 16 ;i++){
-        if(!dep_inst[i]){
-            IndepSet indepSet;
-            // 这是在一个tile内部最多可以选择的最多的space的个数
-            int Spacechoose = 2;
-            buildIndepSet(indepSet, i, maxR, maxIndepSetSize, Lib, Spacechoose);
+    if (isLUT(Lib)){
+        for (auto instId : priority){
+            int inst_x = InstArray[instId]->Location.first;
+            int inst_y = InstArray[instId]->Location.second;
+            int inst_z = InstArray[instId]->Location.third;
+            int index = (inst_y * 150 + inst_x) * 8 * 2 + inst_z * 2;
+            if(!dep_inst[index]&&!dep_inst[index+1]){
+                IndepSet indepSet;
+                int Spacechoose = 2;
+                buildIndepSet(indepSet, instId, maxR, maxIndepSetSize, Lib, Spacechoose);
+                set.push_back(indepSet);
+            }
+        }
+    }
+    else {
+        for (auto instId : priority){
+            int inst_x = InstArray[instId]->Location.first;
+            int inst_y = InstArray[instId]->Location.second;
+            int inst_z = InstArray[instId]->Location.third;
+            int index = (inst_y * 150 + inst_x) * 16 + inst_z;
+            if(!dep_inst[index]){
+                IndepSet indepSet;
+                int Spacechoose = 0;
+                buildIndepSet(indepSet, instId, maxR, maxIndepSetSize, Lib, Spacechoose);
+                set.push_back(indepSet);
+            }
         }
     }
     return;
@@ -178,7 +199,7 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const int seed, const
     return;
 }
 
-void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib){
+void ISMSolver_matching::addLUTToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib){
     int x = index_2_x_inst(index);
     int y = index_2_y_inst(index);
     int z = index_2_z_inst(index);
@@ -197,27 +218,42 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, const int index, 
     STile* tile = TileArray[xy_2_index(x, y)];
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
-    if (isLUT(Lib)){
-        for (auto &instId : Inst->conn){
-            SInstance* inst = InstArray[instId];
-            if(isLUT(inst->Lib)){   //如果都是LUT，那么就要把两个位置都占用
-                int x_conn = std::get<0>(inst->Location);
-                int y_conn = std::get<1>(inst->Location);
-                int z_conn = std::get<2>(inst->Location);
-                dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn * 2] = true;
-                dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn * 2 + 1] = true;
-                //相当于两个都要编码成true
-            }
-        }
-    }
-    else {
-        for (auto &instId : Inst->conn){
-            SInstance* inst = InstArray[instId];
+    for (auto &instId : Inst->conn){
+        SInstance* inst = InstArray[instId];
+        if(isLUT(inst->Lib)){   //如果都是LUT，那么就要把两个位置都占用
             int x_conn = std::get<0>(inst->Location);
             int y_conn = std::get<1>(inst->Location);
             int z_conn = std::get<2>(inst->Location);
-            dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn] = true;
+            dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn * 2] = true;
+            dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn * 2 + 1] = true;
+            //相当于两个都要编码成true
         }
+    }
+    return;
+}
+
+void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib){
+    int x = index_2_x_inst(index);
+    int y = index_2_y_inst(index);
+    int z = index_2_z_inst(index);
+    indepSet.inst.push_back(index);
+    // LUT和SEQ的编码方式不同，因此要分开讨论
+    dep_inst[xy_2_index(x, y) * 16 + z] = true;
+    if(isSpace){
+        return;
+    }
+    STile* tile = TileArray[xy_2_index(x, y)];
+    std::list<int> instIDs = findSlotInstIds(index, Lib);
+    SInstance* Inst = fromListToInst(instIDs, index);
+    if(Inst == nullptr){    //判断是不是空的
+        return;
+    }
+    for (auto &instId : Inst->conn){
+        SInstance* inst = InstArray[instId];
+        int x_conn = std::get<0>(inst->Location);
+        int y_conn = std::get<1>(inst->Location);
+        int z_conn = std::get<2>(inst->Location);
+        dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn] = true;
     }
     return;
 }
@@ -234,7 +270,7 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
                         if (SpaceCount == Spacechoose){
                             SpaceChooseEnough = true;
                         }
-                        addInstToIndepSet(indepSet, tile_id * 16 + i * 2 + j, true, 9);
+                        addLUTToIndepSet(indepSet, tile_id * 16 + i * 2 + j, true, 9);
                         SetNum++;
                     }
                 }
@@ -245,19 +281,19 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
                             if (SpaceCount == Spacechoose){
                                 SpaceChooseEnough = true;
                             }
-                            addInstToIndepSet(indepSet, tile_id * 16 + i * 2 + j, true, 9);
+                            addLUTToIndepSet(indepSet, tile_id * 16 + i * 2 + j, true, 9);
                             SetNum++;
                         }
                     }
                     else {
                         SInstance* inst = fromListToInst(tile->instanceMap["LUT"][i].current_InstIDs, tile_id * 16 + i * 2 + j);
-                        addInstToIndepSet(indepSet, tile_id * 16 + i * 2 + j, false, inst->Lib);
+                        addLUTToIndepSet(indepSet, tile_id * 16 + i * 2 + j, false, inst->Lib);
                         SetNum++;
                     }
                 }
                 else {
                     SInstance* inst = fromListToInst(tile->instanceMap["LUT"][i].current_InstIDs, tile_id * 16 + i * 2 + j);
-                    addInstToIndepSet(indepSet, tile_id * 16 + i * 2 + j, false, inst->Lib);
+                    addLUTToIndepSet(indepSet, tile_id * 16 + i * 2 + j, false, inst->Lib);
                     SetNum++;
                 }  
             }
@@ -267,22 +303,37 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
 }
 
 void ISMSolver_matching::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&tile, int Spacechoose, const int tile_id, int &SetNum){
-    int SpaceCount = 0;
-    for (int i = 0; i < tile->instanceMap["SEQ"].size(); i++){
+    int min_index = -1;
+    int min_value = 10000000;
+
+    for (int i = 0; i < 8; i++){
         if (!dep_inst[tile_id * 16 + i]){
-            if (tile->instanceMap["SEQ"][i].current_InstIDs.size() == 0){
-                SpaceCount++;
-                if (SpaceCount <= Spacechoose){
-                    addInstToIndepSet(indepSet, tile_id * 16 + i, true, 19);
-                    SetNum++;
-                }
-            }
-            else{
-                SInstance* inst = fromListToInst(tile->instanceMap["SEQ"][i].current_InstIDs, tile_id * 16 + i);
-                addInstToIndepSet(indepSet, tile_id * 16 + i, false, 19);
-                SetNum++;
+            if (min_value > tile->seq_choose_num_bank0[i]){
+                min_value = tile->seq_choose_num_bank0[i];
+                min_index = i;
             }
         }
+    }
+    if (min_index != -1){
+        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
+        tile->seq_choose_num_bank0[min_index]++;
+        SetNum++;
+    }
+    
+    min_index = -1;
+    min_value = 10000000;
+    for (int i = 8; i < 16; i++){
+        if (!dep_inst[tile_id * 16 + i]){
+            if (min_value > tile->seq_choose_num_bank1[i - 8]){
+                min_value = tile->seq_choose_num_bank1[i - 8];
+                min_index = i;
+            }
+        }
+    }
+    if (min_index != -1){
+        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
+        tile->seq_choose_num_bank1[min_index - 8]++;
+        SetNum++;
     }
     return;
 }
@@ -346,6 +397,13 @@ int ISMSolver_matching::instanceHPWLdifference(const int old_index, const int ne
         old_isSpace = (old_instIDs.size() == 0);
         if (old_isSpace) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
+
+        bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        STile* tile_new = TileArray[xy_2_index(x, y)];
+
+        if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
     }
     // 通过上面的操作，可以保证得到old_inst
     int old_clockregion = clockRegion.getCRID(get<0>(old_inst->Location), get<1>(old_inst->Location));
@@ -425,4 +483,73 @@ SInstance* ISMSolver_matching::fromListToInst(std::list<int> &instIDs, int index
 
 
 
+bool ISMSolver_matching::isControlSetCondition(SInstance *&old_inst, STile *&new_tile, bool new_bank){
+    std::set<int> old_inst_ce;
+    std::set<int> old_inst_ck;
+    std::set<int> old_inst_rs;
 
+    for (int i = 0; i < old_inst->inpins.size(); i++){
+        SNet *net = NetArray[old_inst->inpins[i]->netID];
+        if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CE){
+            old_inst_ce.insert(net->id);
+        }
+        else if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CLOCK){
+            old_inst_ck.insert(net->id);
+        }
+        else if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_RESET){
+            old_inst_rs.insert(net->id);
+        }
+    }
+
+    for (int i = 0; i < old_inst->outpins.size(); i++){
+        SNet *net = NetArray[old_inst->outpins[i]->netID];
+        if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_CE){
+            old_inst_ce.insert(net->id);
+        }
+        else if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_CLOCK){
+            old_inst_ck.insert(net->id);
+        }
+        else if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_RESET){
+            old_inst_rs.insert(net->id);
+        }
+    }
+
+    /*------checker-------*/
+    if (!new_bank){ //新的位置的bank是0
+        if (new_tile->CE_bank0.size() == 2){
+            if (new_tile->CE_bank0.find(*old_inst_ce.begin()) == new_tile->CE_bank0.end()){ //没找到，超过2的要求
+                return false;
+            }
+        }
+        if (new_tile->RESET_bank0.size() == 1){
+            if (*new_tile->RESET_bank0.begin() != *old_inst_rs.begin()){ //没找到，超过1的要求
+                return false;
+            }
+        }
+        if (new_tile->CLOCK_bank0.size() == 1){
+            if (*new_tile->CLOCK_bank0.begin() != *old_inst_ck.begin()){ //没找到，超过1的要求
+                return false;
+            }
+        }
+    }
+    else{
+        if (new_tile->CE_bank1.size() == 2){
+            if (new_tile->CE_bank1.find(*old_inst_ce.begin()) == new_tile->CE_bank1.end()){ //没找到，超过2的要求
+                return false;
+            }
+        }
+        if (new_tile->RESET_bank1.size() == 1){
+            if (*new_tile->RESET_bank1.begin() != *old_inst_rs.begin()){ //没找到，超过1的要求
+                return false;
+            }
+        }
+        if (new_tile->CLOCK_bank1.size() == 1){
+            if (*new_tile->CLOCK_bank1.begin() != *old_inst_ck.begin()){ //没找到，超过1的要求
+                return false;
+            }
+        }
+    }
+
+    /*------checker_successful-------*/
+    return true;
+}

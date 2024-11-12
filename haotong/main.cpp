@@ -119,6 +119,7 @@ int main(int, char* argv[])
         std::cout << "Matching Complete." << std::endl;
         for (auto &indepSet : indepSets)
         {
+<<<<<<< HEAD
             update_instance(indepSet);
         }
         std::cout << "instance updates complete." << std::endl;
@@ -155,6 +156,36 @@ int main(int, char* argv[])
         //         // success
         //     }
         // } 
+=======
+            auto instance=instancepair.second;
+            int x = std::get<0>(instance->Location);
+            int y = std::get<1>(instance->Location);
+            int index = xy_2_index(x, y);
+            int z = std::get<2>(instance->Location);
+            if (instance->Lib >= 9 && instance->Lib <= 15)
+            {
+                STile* tile_ptr = TileArray[index];
+                bool found = false;
+                // std::cout << "instance id: " << instance->id << " / ";
+                for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
+                {
+                    // std::cout << instID << " ";
+                    if (instID == instance->id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                // std::cout << std::endl;
+                if (!found)
+                {std::cout << "not";
+                std::cout << "found";
+                }
+                assert(found);
+                // success
+            }
+        } 
+>>>>>>> 0fae4bf5778ee38aa0e40b37f94bf379123c6039
     }
 
     std::cout << "Successfully realized matching." << std::endl;

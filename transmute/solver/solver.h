@@ -56,5 +56,5 @@ public:
 };
 
 void update_instance(IndepSet &ids);
-void update_net();
+int update_net();
 
