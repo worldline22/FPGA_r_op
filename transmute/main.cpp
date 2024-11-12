@@ -130,6 +130,11 @@ int main(int, char* argv[])
     }
     std::cout << "Successfully realized matching." << std::endl;
 
+    // after instanceISM:
+    // for, update_instance_I
+    // update_tiles_I
+    // update_net
+
     file_output(outputFileName);
 
     return 0;

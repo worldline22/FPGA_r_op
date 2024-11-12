@@ -56,5 +56,7 @@ public:
 };
 
 void update_instance(IndepSet &ids);
+void update_instance_I(IndepSet &ids);
+void update_tile_I();
 int update_net();
 

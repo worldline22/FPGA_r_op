@@ -847,3 +847,336 @@ int update_net()
     }
     return totalHPWL;
 }
+
+void update_instance_I(IndepSet &ids)
+{
+
+    int size = ids.inst.size();
+    assert(ids.inst.size() == ids.solution.size());
+    std::vector<STile> tmpTile;
+    tmpTile.resize(size);
+    for (int i = 0; i < size; ++i)
+    {
+        tmpTile[i] = STile(*TileArray[ids.inst[i]/16]);
+    }
+    // (150 * y + x) * 16 + z
+    // 先挪instance坐标，然后记录哪些tile发生了变化，然后直接重新计算这些tile的基本信息
+    // std::set<int> changed_tiles;
+    for (int i = 0; i < size; ++i)
+    {
+        int siteID_from = ids.inst[i];
+        int siteID_to = ids.inst[ids.solution[i]];
+        // type = 1, LUT;
+        // type = 2, DFF;
+
+        int tileID_from = siteID_from / 16;
+        // changed_tiles.insert(tileID_from);
+        STile& tile_from = tmpTile[i];
+        int detail_from = siteID_from % 16;
+        int inst_from = -1;
+        if (ids.type == 1) // LUT
+        {
+            int z = detail_from / 2;
+            int zz = detail_from % 2;
+            std::list &from_inst = tile_from->instanceMap["LUT"][z];
+            if (from_inst.size()==0) {
+                inst_from = -1;
+            }
+            else if(from_inst.size()==1) {
+                if (zz == 1) inst_from = -1;
+                else inst_from = *(from_inst.begin());
+            }
+            else if(from_inst.size()==2) {
+                if (zz == 1) inst_from = *(from_inst.rbegin());
+                else inst_from = *(from_inst.begin());
+            }
+        }
+        else if (ids.type == 2)
+        {
+            inst_from = *(tile_from->instanceMap["SEQ"][z].begin());
+        }
+
+        int tileID_to = siteID_to / 16;
+        // changed_tiles.insert(tileID_to);
+        STile* tile_to = TileArray[tileID_to];
+        int detail_to = siteID_from % 16;
+
+        // 无论当前位置有没有instance，都先塞过去
+        if (ids.type == 1)
+        {
+            if (inst_from != 1)
+            {
+                InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to / 2)
+                InstArray[inst_from]->numMov++;
+            }
+            int z = detail_to / 2;
+            int zz = detail_to % 2;
+            std::list &to_list = tile_to->instanceMap["LUT"][z].current_InstIDs;
+            if (to_list.size() == 0)
+            {
+                to_list.insert(tolist.begin(), inst_from);
+            }
+            if (to_list.size() == 1)
+            {
+                if (zz == 1) to_list.insert(++to_list.begin(), inst_from);
+                else *(to_list.begin()) = inst_from;
+            }
+            if (to_list.size() == 2)
+            {
+                if (zz == 1) *(to_list.rbegin()) = inst_from;
+                else *(to_list.begin()) = inst_from;
+            }
+        }
+        else if (ids.type == 2)
+        {
+            if (inst_from != 1)
+            {
+                InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to);
+                InstArray[inst_from]->numMov++;
+            }
+            *(tile_to->instanceMap["SEQ"][z].current_IDs.begin()) = inst_from;
+        }
+    }
+}
+
+void update_tile_I()
+{
+    //全部挪完之后最后再全局更新一次
+    for (tileID : changed_tiles)
+    {
+        if (tileID != 1) continue;
+        STile* tile_ptr = TileArray[tileID];
+        tile->netsConnected_bank0.clear();
+        tile->netsConnected_bank1.clear();
+        tile->pin_in_nets_bank0.clear();
+        tile->pin_in_nets_bank1.clear();
+        tile->CE_bank0.clear();
+        tile->CE_bank1.clear();
+        tile->RESET_bank0.clear();
+        tile->RESET_bank1.clear();
+        tile->CLOCK_bank0.clear();
+        tile->CLOCK_bank1.clear();
+        int findindex;
+        for (int i = 0; i < 4; ++i)
+        {
+            for (instID : tile->instanceMap["LUT"][i].current_InstIDs) {
+                if (instID == -1)
+                {
+                    auto it = std::find(tile->instanceMap["LUT"][i].current_InstIDs.begin(), tile->instanceMap["LUT"][i].current_InstIDs.end(), -1);
+                    tile->instanceMap["LUT"][i].current_InstIDs.erase();
+                }
+                SInstance* inst = InstArray[instID];
+                for (auto inpinp : inst->inpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank0.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank0.push_back(inpinp->netID);
+                        tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{inpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank0[findindex].push_back(inpinp->pinID);
+                    if (inpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank0.find(inpinp->netID) == tile_ptr->CLOCK_bank0.end())
+                            tile_ptr->CLOCK_bank0.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank0.find(inpinp->netID) == tile_ptr->CE_bank0.end())
+                            tile_ptr->CE_bank0.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank0.find(inpinp->netID) == tile->ptr->RESET_bank0.end())
+                            tile_ptr->RESET_bank0.insert(inpinp->netID);
+                }
+                for (auto outpinp : inst->outpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank0.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank0.push_back(outpinp->netID);
+                        tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{outpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank0[findindex].push_back(outpinp->pinID);
+                    if (outpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank0.find(outpinp->netID) == tile_ptr->CLOCK_bank0.end())
+                            tile_ptr->CLOCK_bank0.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank0.find(outpinp->netID) == tile_ptr->CE_bank0.end())
+                            tile_ptr->CE_bank0.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank0.find(outpinp->netID) == tile->ptr->RESET_bank0.end())
+                            tile_ptr->RESET_bank0.insert(outpinp->netID);
+                }
+            }
+        }
+        for (int i = 4; i < 8; ++i)
+        {
+            for (instID : tile->instanceMap["LUT"][i].current_InstIDs) {
+                if (instID == -1)
+                {
+                    auto it = std::find(tile->instanceMap["LUT"][i].current_InstIDs.begin(), tile->instanceMap["LUT"][i].current_InstIDs.end(), -1);
+                    tile->instanceMap["LUT"][i].current_InstIDs.erase();
+                }
+                SInstance* inst = InstArray[instID];
+                for (auto inpinp : inst->inpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank1.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank1.push_back(inpinp->netID);
+                        tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{inpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank1[findindex].push_back(inpinp->pinID);
+                    if (inpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank1.find(inpinp->netID) == tile_ptr->CLOCK_bank1.end())
+                            tile_ptr->CLOCK_bank1.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank1.find(inpinp->netID) == tile_ptr->CE_bank1.end())
+                            tile_ptr->CE_bank1.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank1.find(inpinp->netID) == tile->ptr->RESET_bank1.end())
+                            tile_ptr->RESET_bank1.insert(inpinp->netID);
+                }
+                for (auto outpinp : inst->outpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank1.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank1.push_back(outpinp->netID);
+                        tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{outpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank1[findindex].push_back(outpinp->pinID);
+                    if (outpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank1.find(outpinp->netID) == tile_ptr->CLOCK_bank1.end())
+                            tile_ptr->CLOCK_bank1.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank1.find(outpinp->netID) == tile_ptr->CE_bank1.end())
+                            tile_ptr->CE_bank1.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank1.find(outpinp->netID) == tile->ptr->RESET_bank1.end())
+                            tile_ptr->RESET_bank1.insert(outpinp->netID);
+                }
+            }
+        }
+        for (int i = 0; i < 8; ++i)
+        {
+            for (instID : tile->instanceMap["SEQ"][i].current_InstIDs) {
+                if (instID == -1)
+                {
+                    auto it = std::find(tile->instanceMap["SEQ"][i].current_InstIDs.begin(), tile->instanceMap["SEQ"][i].current_InstIDs.end(), -1);
+                    tile->instanceMap["SEQ"][i].current_InstIDs.erase();
+                }
+                SInstance* inst = InstArray[instID];
+                for (auto inpinp : inst->inpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank0.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank0.push_back(inpinp->netID);
+                        tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{inpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank0[findindex].push_back(inpinp->pinID);
+                    if (inpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank0.find(inpinp->netID) == tile_ptr->CLOCK_bank0.end())
+                            tile_ptr->CLOCK_bank0.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank0.find(inpinp->netID) == tile_ptr->CE_bank0.end())
+                            tile_ptr->CE_bank0.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank0.find(inpinp->netID) == tile->ptr->RESET_bank0.end())
+                            tile_ptr->RESET_bank0.insert(inpinp->netID);
+                }
+                for (auto outpinp : inst->outpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank0.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank0.push_back(outpinp->netID);
+                        tile_ptr->pin_in_nets_bank0.push_back(std::vector<int>{outpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank0[findindex].push_back(outpinp->pinID);
+                    if (outpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank0.find(outpinp->netID) == tile_ptr->CLOCK_bank0.end())
+                            tile_ptr->CLOCK_bank0.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank0.find(outpinp->netID) == tile_ptr->CE_bank0.end())
+                            tile_ptr->CE_bank0.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank0.find(outpinp->netID) == tile->ptr->RESET_bank0.end())
+                            tile_ptr->RESET_bank0.insert(outpinp->netID);
+                }
+            }
+        }
+        for (int i = 8; i < 16; ++i)
+        {
+            for (instID : tile->instanceMap["LUT"][i].current_InstIDs) {
+                if (instID == -1)
+                {
+                    auto it = std::find(tile->instanceMap["LUT"][i].current_InstIDs.begin(), tile->instanceMap["LUT"][i].current_InstIDs.end(), -1);
+                    tile->instanceMap["LUT"][i].current_InstIDs.erase();
+                }
+                SInstance* inst = InstArray[instID];
+                for (auto inpinp : inst->inpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank1.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank1.push_back(inpinp->netID);
+                        tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{inpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank1[findindex].push_back(inpinp->pinID);
+                    if (inpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank1.find(inpinp->netID) == tile_ptr->CLOCK_bank1.end())
+                            tile_ptr->CLOCK_bank1.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank1.find(inpinp->netID) == tile_ptr->CE_bank1.end())
+                            tile_ptr->CE_bank1.insert(inpinp->netID);
+                    else if (inpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank1.find(inpinp->netID) == tile->ptr->RESET_bank1.end())
+                            tile_ptr->RESET_bank1.insert(inpinp->netID);
+                }
+                for (auto outpinp : inst->outpins)
+                {
+                    if (inpinp->netID == -1) continue;
+                    int sizen = netsConnected_bank1.size();
+                    for (int findindex = 0; findindex < sizen; ++findindex)
+                        if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
+                    if (findindex == sizen)
+                    {
+                        tile_ptr->netsConnect_bank1.push_back(outpinp->netID);
+                        tile_ptr->pin_in_nets_bank1.push_back(std::vector<int>{outpinp->pinID})
+                    }
+                    else tile_ptr->pin_in_nets_bank1[findindex].push_back(outpinp->pinID);
+                    if (outpinp->prop == PinProp::PIN_PROP_CLOCK)
+                        if (tile_ptr->CLOCK_bank1.find(outpinp->netID) == tile_ptr->CLOCK_bank1.end())
+                            tile_ptr->CLOCK_bank1.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_CE)
+                        if (tile_ptr->CE_bank1.find(outpinp->netID) == tile_ptr->CE_bank1.end())
+                            tile_ptr->CE_bank1.insert(outpinp->netID);
+                    else if (outpinp->prop == PinProp::PIN_PROP_RESET)
+                        if (tile_ptr->RESET_bank1.find(outpinp->netID) == tile->ptr->RESET_bank1.end())
+                            tile_ptr->RESET_bank1.insert(outpinp->netID);
+                }
+            }
+        }
+    }
+}
+
