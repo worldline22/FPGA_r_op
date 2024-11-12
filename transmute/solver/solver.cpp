@@ -282,139 +282,151 @@ int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, in
     if (bank == false){
         for (int i = 0 ; i < (int)tile->netsConnected_bank0.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank0[i]];
-            if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
-                continue;
-            }
-            if ((net->outpins.size() + 1) > 10){
-                if(x < net->BBox_L){
-                    if(y > net->BBox_U){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
-                    }
-                    else if (y < net->BBox_D){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
-                    }
-                    else{
-                        totalHPWL += std::abs(x - net->BBox_L);
-                    }
-                    continue;
-                }
-                if (x > net->BBox_R){
-                    if (y > net->BBox_U){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
-                    }
-                    else if (y < net->BBox_D){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
-                    }
-                    else{
-                        totalHPWL += std::abs(x - net->BBox_R);
-                    }
-                    continue;
-                }
-                if (y > net->BBox_U){
-                    totalHPWL += std::abs(y - net->BBox_U);
-                    continue;
-                }
-                if (y < net->BBox_D){
-                    totalHPWL += std::abs(y - net->BBox_D);
-                    continue;
-                }
-            }
-            else{
-                int newBBox_R = net->BBox_R;
-                int newBBox_L = net->BBox_L;
-                int newBBox_U = net->BBox_U;
-                int newBBox_D = net->BBox_D;
-                if (checkPinInTile(tile, net->inpin, bank)){
-                    newBBox_R = std::max(newBBox_R, x);
-                    newBBox_L = std::min(newBBox_L, x);
-                    newBBox_U = std::max(newBBox_U, y);
-                    newBBox_D = std::min(newBBox_D, y);
-                }
-                for (auto &pin : net->outpins){
-                    if (!checkPinInTile(tile, pin, bank)){
-                        newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
-                        newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
-                        newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
-                        newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
-                    }else{
-                        newBBox_R = std::max(newBBox_R, x);
-                        newBBox_L = std::min(newBBox_L, x);
-                        newBBox_U = std::max(newBBox_U, y);
-                        newBBox_D = std::min(newBBox_D, y);
-                    }
-                }
-                totalHPWL += (HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U)) 
-                - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U)));
-            }
+            // if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
+            //     continue;
+            // }
+            // if ((net->outpins.size() + 1) > 0){
+                int tmp = std::max(x - net->BBox_R, net->BBox_L - x);
+                tmp = std::max(tmp, 0);
+                totalHPWL += tmp;
+                tmp = std::max(y - net->BBox_U, net->BBox_D - y);
+                tmp = std::max(tmp, 0);
+                totalHPWL += tmp;
+                // if(x < net->BBox_L){
+                //     if(y > net->BBox_U){
+                //         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
+                //     }
+                //     else if (y < net->BBox_D){
+                //         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
+                //     }
+                //     else{
+                //         totalHPWL += std::abs(x - net->BBox_L);
+                //     }
+                //     continue;
+                // }
+                // if (x > net->BBox_R){
+                //     if (y > net->BBox_U){
+                //         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
+                //     }
+                //     else if (y < net->BBox_D){
+                //         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
+                //     }
+                //     else{
+                //         totalHPWL += std::abs(x - net->BBox_R);
+                //     }
+                //     continue;
+                // }
+                // if (y > net->BBox_U){
+                //     totalHPWL += std::abs(y - net->BBox_U);
+                //     continue;
+                // }
+                // if (y < net->BBox_D){
+                //     totalHPWL += std::abs(y - net->BBox_D);
+                //     continue;
+                // }
+            // }
+            // else{
+            //     int newBBox_R = net->BBox_R;
+            //     int newBBox_L = net->BBox_L;
+            //     int newBBox_U = net->BBox_U;
+            //     int newBBox_D = net->BBox_D;
+            //     if (checkPinInTile(tile, net->inpin, bank)){
+            //         newBBox_R = std::max(newBBox_R, x);
+            //         newBBox_L = std::min(newBBox_L, x);
+            //         newBBox_U = std::max(newBBox_U, y);
+            //         newBBox_D = std::min(newBBox_D, y);
+            //     }
+            //     for (auto &pin : net->outpins){
+            //         if (!checkPinInTile(tile, pin, bank)){
+            //             newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
+            //             newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
+            //             newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
+            //             newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
+            //         }else{
+            //             newBBox_R = std::max(newBBox_R, x);
+            //             newBBox_L = std::min(newBBox_L, x);
+            //             newBBox_U = std::max(newBBox_U, y);
+            //             newBBox_D = std::min(newBBox_D, y);
+            //         }
+            //     }
+            //     totalHPWL += (HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U)) 
+            //     - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U)));
+            // }
         }
     }
     else{
         for (int i = 0 ; i < (int)tile->netsConnected_bank1.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank1[i]];
-            if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
-                continue;
-            }
-            if ((net->outpins.size() + 1) > 10){
-                if(x < net->BBox_L){
-                    if(y > net->BBox_U){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
-                    }
-                    else if (y < net->BBox_D){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
-                    }
-                    else{
-                        totalHPWL += std::abs(x - net->BBox_L);
-                    }
-                    continue;
-                }
-                if (x > net->BBox_R){
-                    if (y > net->BBox_U){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
-                    }
-                    else if (y < net->BBox_D){
-                        totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
-                    }
-                    else{
-                        totalHPWL += std::abs(x - net->BBox_R);
-                    }
-                    continue;
-                }
-                if (y > net->BBox_U){
-                    totalHPWL += std::abs(y - net->BBox_U);
-                    continue;
-                }
-                if (y < net->BBox_D){
-                    totalHPWL += std::abs(y - net->BBox_D);
-                    continue;
-                }
-            }
-            else{
-                int newBBox_R = net->BBox_R;
-                int newBBox_L = net->BBox_L;
-                int newBBox_U = net->BBox_U;
-                int newBBox_D = net->BBox_D;
-                if (checkPinInTile(tile, net->inpin, bank)){
-                    newBBox_R = std::max(newBBox_R, x);
-                    newBBox_L = std::min(newBBox_L, x);
-                    newBBox_U = std::max(newBBox_U, y);
-                    newBBox_D = std::min(newBBox_D, y);
-                }
-                for (auto &pin : net->outpins){
-                    if (!checkPinInTile(tile, pin, bank)){
-                        newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
-                        newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
-                        newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
-                        newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
-                    }else{
-                        newBBox_R = std::max(newBBox_R, x);
-                        newBBox_L = std::min(newBBox_L, x);
-                        newBBox_U = std::max(newBBox_U, y);
-                        newBBox_D = std::min(newBBox_D, y);
-                    }
-                }
-                totalHPWL += (HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U))
-                - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U)));
-            }
+            // if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
+            //     continue;
+            // }
+            int tmp = std::max(x - net->BBox_R, net->BBox_L - x);
+                tmp = std::max(tmp, 0);
+                totalHPWL += tmp;
+                tmp = std::max(y - net->BBox_U, net->BBox_D - y);
+                tmp = std::max(tmp, 0);
+                totalHPWL += tmp;
+            // if ((net->outpins.size() + 1) > 10){
+            //     if(x < net->BBox_L){
+            //         if(y > net->BBox_U){
+            //             totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
+            //         }
+            //         else if (y < net->BBox_D){
+            //             totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_D));
+            //         }
+            //         else{
+            //             totalHPWL += std::abs(x - net->BBox_L);
+            //         }
+            //         continue;
+            //     }
+            //     if (x > net->BBox_R){
+            //         if (y > net->BBox_U){
+            //             totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_U));
+            //         }
+            //         else if (y < net->BBox_D){
+            //             totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_R, net->BBox_D));
+            //         }
+            //         else{
+            //             totalHPWL += std::abs(x - net->BBox_R);
+            //         }
+            //         continue;
+            //     }
+            //     if (y > net->BBox_U){
+            //         totalHPWL += std::abs(y - net->BBox_U);
+            //         continue;
+            //     }
+            //     if (y < net->BBox_D){
+            //         totalHPWL += std::abs(y - net->BBox_D);
+            //         continue;
+            //     }
+            // }
+            // else{
+            //     int newBBox_R = net->BBox_R;
+            //     int newBBox_L = net->BBox_L;
+            //     int newBBox_U = net->BBox_U;
+            //     int newBBox_D = net->BBox_D;
+            //     if (checkPinInTile(tile, net->inpin, bank)){
+            //         newBBox_R = std::max(newBBox_R, x);
+            //         newBBox_L = std::min(newBBox_L, x);
+            //         newBBox_U = std::max(newBBox_U, y);
+            //         newBBox_D = std::min(newBBox_D, y);
+            //     }
+            //     for (auto &pin : net->outpins){
+            //         if (!checkPinInTile(tile, pin, bank)){
+            //             newBBox_R = std::max(newBBox_R, std::get<0>(pin->instanceOwner->Location));
+            //             newBBox_L = std::min(newBBox_L, std::get<0>(pin->instanceOwner->Location));
+            //             newBBox_U = std::max(newBBox_U, std::get<1>(pin->instanceOwner->Location));
+            //             newBBox_D = std::min(newBBox_D, std::get<1>(pin->instanceOwner->Location));
+            //         }else{
+            //             newBBox_R = std::max(newBBox_R, x);
+            //             newBBox_L = std::min(newBBox_L, x);
+            //             newBBox_U = std::max(newBBox_U, y);
+            //             newBBox_D = std::min(newBBox_D, y);
+            //         }
+            //     }
+            //     totalHPWL += (HPWL(std::make_pair(newBBox_L, newBBox_D), std::make_pair(newBBox_R, newBBox_U))
+            //     - HPWL(std::make_pair(net->BBox_L, net->BBox_D), std::make_pair(net->BBox_R, net->BBox_U)));
+            // }
         }
     }
     return totalHPWL;
@@ -528,38 +540,43 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
 
 }
 
-void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
+std::vector<size_t> ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
     computeCostMatrix(mem, indepSet.inst);
     computeMatching(mem);
-    int number = indepSet.inst.size();
-    size_t noMatch = -1;
-
-    bool err = false;
-    for (size_t i = 0; i < mem.sol.size(); ++i){
-        if(mem.sol[i] == noMatch){
-            err = true;
-        }
+    // int number = indepSet.inst.size();
+    // size_t noMatch = -1;
+    return mem.sol;
+    // bool err = false;
+    // for (size_t i = 0; i < mem.sol.size(); ++i){
+    //     if(mem.sol[i] == noMatch){
+    //         err = true;
+    //     }
         // std::cout << mem.sol.size() << std::endl;
         // std::cout << "Instance_id:" << indepSet.inst[i%number] << "(" << index_2_x(indepSet.inst[i%number]/2) << " " << index_2_y(indepSet.inst[i%number]/2) << ") is matched to Tile_id:" << indepSet.inst[mem.sol[i]] << "(" << index_2_x(indepSet.inst[mem.sol[i]]/2) << " " << index_2_y(indepSet.inst[mem.sol[i]]/2) << ")" << std::endl;
-    }
-    assert (!err);
+    // }
+    // assert (!err);
 
     // update the instance and tile...
     // the instanceMap, nets_Connected, and pin_in_nets will be updated
     // the location of instance will be updated
     // the bounding box of the net should be updated
     // CR maybe changed
+}
 
+void update_instance(IndepSet &ids)
+{
+    int size = ids.inst.size();
+    assert(ids.inst.size() == ids.solution.size());
     std::vector<STile> tmpTile;
-    tmpTile.resize(number);
-    for (size_t i = 0; i < mem.sol.size(); ++i)
+    tmpTile.resize(size);
+    for (int i = 0; i < size; ++i)
     {
-        tmpTile[i] = STile(*TileArray[indepSet.inst[i]/2]);
+        tmpTile[i] = STile(*TileArray[ids.inst[i]/2]);
     }
-    for (size_t i = 0; i < mem.sol.size(); ++i)
+    for (int i = 0; i < size; ++i)
     {
-        int siteID_from = indepSet.inst[i];
-        int siteID_to = indepSet.inst[mem.sol[i]];
+        int siteID_from = ids.inst[i];
+        int siteID_to = ids.inst[ids.solution[i]];
         int arrIdx_from = i;
         STile* tile_to = TileArray[siteID_to/2];
         // 被更新的东西，应该是inst[mem.sol[i]]，而从tempArray中找inst[i]的信息
@@ -571,23 +588,22 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
                 tile_to->netsConnected_bank0 = tmpTile[arrIdx_from].netsConnected_bank0;
                 tile_to->pin_in_nets_bank0 = tmpTile[arrIdx_from].pin_in_nets_bank0;
                 // update the instanceMap
-                assert(tile_to->type==1);
-                assert(tmpTile[arrIdx_from].type==1);
+                // assert(tile_to->type==1);
+                // assert(tmpTile[arrIdx_from].type==1);
                 // std::cout << tile_to->instanceMap.size() << std::endl;
                 // for (auto slotarrp : tile_to->instanceMap)
                 // {
                 //     std::cout << slotarrp.first << std::endl;
                 // }
                 // assert(tile_to->instanceMap.size()==4);
-                assert(tile_to->instanceMap["F7MUX"][0].current_InstIDs.size()==0);
-                assert(tile_to->instanceMap["F8MUX"][0].current_InstIDs.size()==0);
+                // assert(tile_to->instanceMap["F7MUX"][0].current_InstIDs.size()==0);
+                // assert(tile_to->instanceMap["F8MUX"][0].current_InstIDs.size()==0);
                 for (int ii = 0; ii < 4; ++ii)
                 {
                     tile_to->instanceMap["LUT"][ii].current_InstIDs = tmpTile[arrIdx_from].instanceMap["LUT"][ii].current_InstIDs;
                     for (auto InstID : tile_to->instanceMap["LUT"][ii].current_InstIDs)
                     {
                         SInstance* inst = InstArray[InstID];
-                        // std::cout << "we move" << InstID << "(" << std::get<0>(inst->Location) << " " << std::get<1>(inst->Location) << " " << std::get<2>(inst->Location) << " to " << tile_to->X << " " << tile_to->Y << " " << ii << std::endl;
                         inst->Location = std::make_tuple(tile_to->X, tile_to->Y, ii);
                         inst->numMov++;
                     }
@@ -748,6 +764,23 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
 
     // update the bounding box of the net
 
+    // for (auto instanceP : glbInstMap)
+    // {
+    //     SInstance* inst = instanceP.second;
+    //     for (auto pinp : inst->inpins)
+    //     {
+    //         if (pinp->pinID != -1)
+    //         {
+    //             auto netp = NetArry[pinp->netID];
+
+    //         }
+    //     }
+    // }
+    // update the CR
+}
+
+void update_net()
+{
     for (auto netpair : NetArray)
     {
         auto netp = netpair.second;
@@ -774,19 +807,4 @@ void ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
             netp->BBox_D = std::min(netp->BBox_D, y);
         }
     }
-    // for (auto instanceP : glbInstMap)
-    // {
-    //     SInstance* inst = instanceP.second;
-    //     for (auto pinp : inst->inpins)
-    //     {
-    //         if (pinp->pinID != -1)
-    //         {
-    //             auto netp = NetArry[pinp->netID];
-
-    //         }
-    //     }
-    // }
-    // update the CR
-
-    return;
 }

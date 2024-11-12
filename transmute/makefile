@@ -20,6 +20,7 @@ run:
 	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out
 
 runall:
+	./build ../benchmark/case_2.nodes ../benchmark/case_2.nets ../benchmark/case_2.timing ../../public/Test/MRes/case_2.nodes.out
 	./build ../benchmark/case_3.nodes ../benchmark/case_3.nets ../benchmark/case_3.timing ../../public/Test/MRes/case_3.nodes.out
 	./build ../benchmark/case_4.nodes ../benchmark/case_4.nets ../benchmark/case_4.timing ../../public/Test/MRes/case_4.nodes.out
 	./build ../benchmark/case_5.nodes ../benchmark/case_5.nets ../benchmark/case_5.timing ../../public/Test/MRes/case_5.nodes.out
