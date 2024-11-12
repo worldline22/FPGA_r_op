@@ -179,7 +179,8 @@ struct SClockRegion
 extern std::map<int, SInstance*> InstArray;
 extern std::map<int, SNet*> NetArray;
 extern std::map<int, SPin*> PinArray;
-extern std::vector<STile*> TileArray;  
+extern std::vector<STile*> TileArray;
+extern SClockRegion ClockRegion_Info;
 // Tile Map 的索引规则: X是列有150个，Y是行有300个，这样子会产生150*300=45000个位置
 // 45000*30
 

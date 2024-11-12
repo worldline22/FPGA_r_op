@@ -141,7 +141,7 @@ int main(int, char* argv[])
             int x = std::get<0>(instance->Location);
             int y = std::get<1>(instance->Location);
             int index = xy_2_index(x, y);
-            int z= std::get<2>(instance->Location);
+            int z = std::get<2>(instance->Location);
             if (instance->Lib >= 9 && instance->Lib <= 15)
             {
                 STile* tile_ptr = TileArray[index];
