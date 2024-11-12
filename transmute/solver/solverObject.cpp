@@ -101,6 +101,14 @@ void init_tiles()
             tile->pin_in_nets_bank1.clear();
             tile->has_fixed_bank0 = false;
             tile->has_fixed_bank1 = false;
+            tile->CE_bank0.clear();
+            tile->CE_bank1.clear();
+            tile->RESET_bank0.clear();
+            tile->RESET_bank1.clear();
+            tile->CLOCK_bank0.clear();
+            tile->CLOCK_bank1.clear();
+            tile->seq_choose_num_bank0.resize(8, 0);
+            tile->seq_choose_num_bank1.resize(8, 0);
             int index = xy_2_index(i, j);
             TileArray[index] = tile;
                 // std::cout << index << ": " << tile->type << std::endl;
@@ -246,7 +254,7 @@ void copy_instances()
                     netp->BBox_U = std::max(netp->BBox_U, std::get<1>(instance->Location));
                     netp->BBox_D = std::min(netp->BBox_D, std::get<1>(instance->Location));
 
-                    // process related to netsConneted and pin_in_nets
+                    // process related to netsConneted and pin_in_nets, control set
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
                     auto tile_ptr = TileArray[tileindex];
@@ -262,6 +270,28 @@ void copy_instances()
                         }
                         else
                             tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
+
+                        if (pin->prop == PinProp::PIN_PROP_CLOCK)
+                        {
+                            if (tile_ptr->CLOCK_bank0.find(pin->netID) == tile_ptr->CLOCK_bank0.end())
+                            {
+                                tile_ptr->CLOCK_bank0.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_CE)
+                        {
+                            if (tile_ptr->CE_bank0.find(pin->netID) == tile_ptr->CE_bank0.end())
+                            {
+                                tile_ptr->CE_bank0.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_RESET)
+                        {
+                            if (tile_ptr->RESET_bank0.find(pin->netID) == tile_ptr->RESET_bank0.end())
+                            {
+                                tile_ptr->RESET_bank0.insert(pin->netID);
+                            }
+                        }
                     }
                     else
                     {
@@ -275,6 +305,28 @@ void copy_instances()
                         }
                         else
                             tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
+
+                        if (pin->prop == PinProp::PIN_PROP_CLOCK)
+                        {
+                            if (tile_ptr->CLOCK_bank1.find(pin->netID) == tile_ptr->CLOCK_bank1.end())
+                            {
+                                tile_ptr->CLOCK_bank1.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_CE)
+                        {
+                            if (tile_ptr->CE_bank1.find(pin->netID) == tile_ptr->CE_bank1.end())
+                            {
+                                tile_ptr->CE_bank1.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_RESET)
+                        {
+                            if (tile_ptr->RESET_bank1.find(pin->netID) == tile_ptr->RESET_bank1.end())
+                            {
+                                tile_ptr->RESET_bank1.insert(pin->netID);
+                            }
+                        }
                     }
 
                     if (pin->prop == PinProp::PIN_PROP_CLOCK && NetArray[pin->netID]->clock)
@@ -331,6 +383,28 @@ void copy_instances()
                         }
                         else
                             tile_ptr->pin_in_nets_bank0[findindex].push_back(pin->pinID);
+
+                        if (pin->prop == PinProp::PIN_PROP_CLOCK)
+                        {
+                            if (tile_ptr->CLOCK_bank0.find(pin->netID) == tile_ptr->CLOCK_bank0.end())
+                            {
+                                tile_ptr->CLOCK_bank0.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_CE)
+                        {
+                            if (tile_ptr->CE_bank0.find(pin->netID) == tile_ptr->CE_bank0.end())
+                            {
+                                tile_ptr->CE_bank0.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_RESET)
+                        {
+                            if (tile_ptr->RESET_bank0.find(pin->netID) == tile_ptr->RESET_bank0.end())
+                            {
+                                tile_ptr->RESET_bank0.insert(pin->netID);
+                            }
+                        }
                     }
                     else
                     {
@@ -344,6 +418,28 @@ void copy_instances()
                         }
                         else
                             tile_ptr->pin_in_nets_bank1[findindex].push_back(pin->pinID);
+
+                        if (pin->prop == PinProp::PIN_PROP_CLOCK)
+                        {
+                            if (tile_ptr->CLOCK_bank1.find(pin->netID) == tile_ptr->CLOCK_bank1.end())
+                            {
+                                tile_ptr->CLOCK_bank1.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_CE)
+                        {
+                            if (tile_ptr->CE_bank1.find(pin->netID) == tile_ptr->CE_bank1.end())
+                            {
+                                tile_ptr->CE_bank1.insert(pin->netID);
+                            }
+                        }
+                        else if (pin->prop == PinProp::PIN_PROP_RESET)
+                        {
+                            if (tile_ptr->RESET_bank1.find(pin->netID) == tile_ptr->RESET_bank1.end())
+                            {
+                                tile_ptr->RESET_bank1.insert(pin->netID);
+                            }
+                        }
                     }
 
                     if (pin->prop == PinProp::PIN_PROP_CLOCK && NetArray[pin->netID]->clock)
