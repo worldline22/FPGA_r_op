@@ -14,10 +14,10 @@ default: $(OBJ)
 	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -c $< -o $@
 
 clean:
-	rm -f build.exe $(OBJ)
+	rm -f build $(OBJ)
 
 run:
-	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out
+	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing case_1.nodes.out
 
 runall:
 	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out

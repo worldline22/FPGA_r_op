@@ -33,8 +33,6 @@ struct ISMMemory {
 // 放入的是全局的dep数组，数组的大小是45000*16，然后算SEQ和算LUT的时候都会用到，且共用的是一个dep（算另一个多时候直接清空）
 extern std::vector<bool> dep_inst;  
 
-extern SClockRegion clockRegion;
-
 // 算独立集，其中inst是instance的id，这个id是我自行编码的，不是cz给的InstArray的id
 
 struct IndepSet{

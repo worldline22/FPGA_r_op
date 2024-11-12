@@ -13,6 +13,7 @@
 #include "solverObject.h"
 #include "../checker_legacy/object.h"
 #include "solver.h"
+#include <cassert>
 
 std::vector<bool> dep_inst;
 
@@ -116,10 +117,10 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
     if (isLUT(Lib)){
         for (auto instId : priority){
-            int inst_x = InstArray[instId]->Location.first;
-            int inst_y = InstArray[instId]->Location.second;
-            int inst_z = InstArray[instId]->Location.third;
-            int index = (inst_y * 150 + inst_x) * 8 * 2 + inst_z * 2;
+            int inst_x = std::get<0>(InstArray[instId]->Location);
+            int inst_y = std::get<1>(InstArray[instId]->Location);
+            int inst_z = std::get<2>(InstArray[instId]->Location);
+            int index = ((inst_y * 150 + inst_x) * 8 * 2) + (inst_z * 2);
             if(!dep_inst[index]&&!dep_inst[index+1]&&!InstArray[instId]->fixed){
                 IndepSet indepSet;
                 int Spacechoose = 2;
@@ -130,9 +131,9 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
     }
     else {
         for (auto instId : priority){
-            int inst_x = InstArray[instId]->Location.first;
-            int inst_y = InstArray[instId]->Location.second;
-            int inst_z = InstArray[instId]->Location.third;
+            int inst_x = std::get<0>(InstArray[instId]->Location);
+            int inst_y = std::get<1>(InstArray[instId]->Location);
+            int inst_z = std::get<2>(InstArray[instId]->Location);
             int index = (inst_y * 150 + inst_x) * 16 + inst_z;
             if(!dep_inst[index]&&!InstArray[instId]->fixed){
                 IndepSet indepSet;
@@ -167,11 +168,15 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const int seed, const
             seq.push_back(std::make_pair(initX + x, initY + y));
         }
     }
-    int SetNum = 0;
+    int SetNum = 1;
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
-        STile* tile = TileArray[xy_2_index(x, y)];
+        int index_tile = xy_2_index(x, y);
+        if (index_tile < 0 || index_tile >= TileArray.size()){
+            continue;
+        }
+        STile* tile = TileArray[index_tile];
         if (isLUT(Lib)){
             buildLUTIndepSetPerTile(indepSet, tile, Spacechoose, xy_2_index(x, y), SetNum);
         }
@@ -192,19 +197,14 @@ void ISMSolver_matching::addLUTToIndepSet(IndepSet &indepSet, const int index, b
     int z = index_2_z_inst(index);
     indepSet.inst.push_back(index);
     // LUT和SEQ的编码方式不同，因此要分开讨论
-    if (isLUT(Lib)){
-        dep_inst[xy_2_index(x, y) * 16 + z * 2] = true;
-        dep_inst[xy_2_index(x, y) * 16 + z * 2 + 1] = true;
-    }
-    else if (Lib == 19){
-        dep_inst[xy_2_index(x, y) * 16 + z] = true;
-    }
-    if(isSpace){
-        return;
-    }
+    dep_inst[xy_2_index(x, y) * 16 + z * 2] = true;
+    dep_inst[xy_2_index(x, y) * 16 + z * 2 + 1] = true;
     STile* tile = TileArray[xy_2_index(x, y)];
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
+    if (Inst == nullptr){
+        return;
+    }
     for (auto &instId : Inst->conn){
         SInstance* inst = InstArray[instId];
         if(isLUT(inst->Lib)){   //如果都是LUT，那么就要把两个位置都占用
@@ -248,7 +248,7 @@ void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, b
 void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&tile, int Spacechoose, const int tile_id, int &SetNum){
     bool SpaceChooseEnough = false;
     int SpaceCount = 0;
-    for (int i = 0; i < tile->instanceMap["LUT"].size(); i++){
+    for (int i = 0; i < 8; i++){
         for (int j = 0; j < 2; j++){
             if (!dep_inst[tile_id * 16 + i * 2 + j]){
                 if(tile->instanceMap["LUT"][i].current_InstIDs.size() == 0){
@@ -397,13 +397,13 @@ int ISMSolver_matching::instanceHPWLdifference(const int old_index, const int ne
         }
     }
     // 通过上面的操作，可以保证得到old_inst
-    int old_clockregion = clockRegion.getCRID(get<0>(old_inst->Location), get<1>(old_inst->Location));
-    int new_clockregion = clockRegion.getCRID(x, y);
+    int old_clockregion = ClockRegion_Info.getCRID(std::get<0>(old_inst->Location), std::get<1>(old_inst->Location));
+    int new_clockregion = ClockRegion_Info.getCRID(x, y);
     for (int i = 0; i < old_inst->inpins.size(); i++){
         SNet *net = NetArray[old_inst->inpins[i]->netID];
-        if(net->clock && clockRegion.clockNets[clockRegion.getCRID(x, y)].find(net->id) != clockRegion.clockNets[clockRegion.getCRID(x, y)].end()){
+        if(net->clock && ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].find(net->id) != ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].end()){
             if(old_clockregion != new_clockregion){
-                if(clockRegion.clockNets[new_clockregion].size() + 1 > 28){
+                if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28){
                     return std::numeric_limits<int>::max();
                 }
             }
@@ -417,9 +417,9 @@ int ISMSolver_matching::instanceHPWLdifference(const int old_index, const int ne
     }
     for (int i = 0; i < old_inst->outpins.size(); i++){
         SNet *net = NetArray[old_inst->inpins[i]->netID];
-        if(net->clock && clockRegion.clockNets[clockRegion.getCRID(x, y)].find(net->id) != clockRegion.clockNets[clockRegion.getCRID(x, y)].end()){
+        if(net->clock && ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].find(net->id) != ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].end()){
             if(old_clockregion != new_clockregion){
-                if(clockRegion.clockNets[new_clockregion].size() + 1 > 28){
+                if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28){
                     return std::numeric_limits<int>::max();
                 }
             }
