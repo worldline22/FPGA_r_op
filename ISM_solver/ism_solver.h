@@ -48,7 +48,8 @@ public:
     // 用于求解独立集问题
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority);
     void buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose);
-    void addInstToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
+    void addLUTToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
+    void addSEQToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
     void buildLUTIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
     void buildSEQIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
 
