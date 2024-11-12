@@ -7,6 +7,11 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, boo
     STile* tile = TileArray[xy_2_index(X, Y)];
     if (bank == false){  //bank0
         dep[2 * xy_2_index(X, Y)] = true;
+        // if (tile->netsConnected_bank0.size() == 0)
+        // {
+        //     if (indepSet.space_cnt >= 20) return;
+        //     else indepSet.space_cnt++;
+        // }
         indepSet.inst.push_back(2 * xy_2_index(X, Y));
         for (auto &pinArr : tile->pin_in_nets_bank0){   //这里只遍历了bank0中的instance
             for (int i = 0; i < (int)pinArr.size(); i++){
@@ -28,6 +33,11 @@ void ISMSolver_matching::addInstToIndepSet(IndepSet &indepSet, int X, int Y, boo
     }
     else{//bank1
         dep[2 * xy_2_index(X, Y) + 1] = true;
+        // if (tile->netsConnected_bank1.size() == 0)
+        // {
+        //     if (indepSet.space_cnt >= 20) return;
+        //     else indepSet.space_cnt++;
+        // }
         indepSet.inst.push_back(2 * xy_2_index(X, Y) + 1);
         for (auto &pinArr : tile->pin_in_nets_bank1){   //这里只遍历了bank0中的instance
             for (int i = 0; i < (int)pinArr.size(); i++){
@@ -137,6 +147,8 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
         if (bank == false && TileArray[xy_2_index(x, y)]->has_fixed_bank0) continue;
         if (bank == true && TileArray[xy_2_index(x, y)]->has_fixed_bank1) continue;
         IndepSet indepSet;
+        indepSet.inst.clear();
+        indepSet.space_cnt = 0;
         buildIndepSet(indepSet, *TileArray[xy_2_index(x, y)], maxR, maxIndepSetSize);
         set.push_back(indepSet);
     }
@@ -273,7 +285,7 @@ int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, in
             if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
                 continue;
             }
-            if ((net->outpins.size() + 1) > 16){
+            if ((net->outpins.size() + 1) > 10){
                 if(x < net->BBox_L){
                     if(y > net->BBox_U){
                         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));
@@ -342,7 +354,7 @@ int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, in
             if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
                 continue;
             }
-            if ((net->outpins.size() + 1) > 16){
+            if ((net->outpins.size() + 1) > 10){
                 if(x < net->BBox_L){
                     if(y > net->BBox_U){
                         totalHPWL += HPWL(std::make_pair(x, y), std::make_pair(net->BBox_L, net->BBox_U));

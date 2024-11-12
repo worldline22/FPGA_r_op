@@ -33,6 +33,7 @@ extern std::vector<bool> dep;  //全局的dep数组，用于记录instance是否
 struct IndepSet{
     int type;
     std::vector<int> inst;
+    int space_cnt;
     // int cksr;
     // std::vector<int> ce;
 };

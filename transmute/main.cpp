@@ -53,7 +53,6 @@ int main(int, char* argv[])
     int num_iter = 10;
     for (int i = 0; i < num_iter; ++i)
     {
-        ISMMemory mem;
         std::cout << "Iteration " << i << std::endl;
         ISMSolver_matching solver;
         std::vector<IndepSet> indepSets;
@@ -73,6 +72,7 @@ int main(int, char* argv[])
             it += bkt.size();
         }
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
+        std::cout << indepSets.size() << " independent sets." << std::endl;
         for (auto &indepSet : indepSets)
         {
             // std:: cout << "Independent set: " << cnt++;
@@ -80,6 +80,7 @@ int main(int, char* argv[])
             // {
             //     std::cout << site << " ";
             // }
+            ISMMemory mem;
             solver.realizeMatching(mem, indepSet);
             // std::cout << std::endl;
         }
