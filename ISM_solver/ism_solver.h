@@ -26,27 +26,40 @@ struct ISMMemory {
     std::vector<std::vector<int> > netIds;
 };
 
-extern std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
+// 放入的是全局的dep数组，数组的大小是45000*16，然后算SEQ和算LUT的时候都会用到，且共用的是一个dep（算另一个多时候直接清空）
+extern std::vector<bool> dep_inst;  
+
+extern SClockRegion clockRegion;
+
+// 算独立集，其中inst是instance的id，这个id是我自行编码的，不是cz给的InstArray的id
 
 struct IndepSet{
     int type;
     std::vector<int> inst;
-    // int cksr;
-    // std::vector<int> ce;
 };
 
 class ISMSolver_matching {
 public:
+    // 用于求解匹配问题
     bool runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const; // supply是有多少个instance or space的意思
     void computeMatching(ISMMemory &mem) const;
-    void buildIndepSet(IndepSet &indepSet, const STile & seed, const int maxR, const int maxIndepSetSize);
-    void addInstToIndepSet(IndepSet &indepSet, int X, int Y, bool bank);
-    void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set);
-    void realizeMatching(ISMMemory &mem, IndepSet &indepSet);
-    int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-    int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank);
-    bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
-    bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
-    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize);
-    void addAllsameBankInstToIndepSet();
+    void realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet, const int Lib);  
+
+    // 用于求解独立集问题
+    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib);
+    void buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose);
+    void addInstToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
+    void buildLUTIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
+    void buildSEQIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
+
+    // 用于计算权重矩阵
+    void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib);
+    int instanceHPWLdifference(const int old_index, const int new_index, const int Lib);
+
+    // 判断是否是LUT
+    bool isLUT(int Lib);
+
+    // 通过index找到current_InstIDs
+    std::list<int> findSlotInstIds(int index, const int Lib);
+    SInstance* fromListToInst(std::list<int> &instIDs, int index);
 };
