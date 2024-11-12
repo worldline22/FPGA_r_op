@@ -10,7 +10,7 @@
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
 #include "../transmute/solver/solverObject.h"
-#include "ism_solver.h"
+#include "ism_solver_PLB.h"
 
 SClockRegion clockRegion;
 

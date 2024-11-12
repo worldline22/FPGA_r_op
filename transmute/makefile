@@ -17,7 +17,7 @@ clean:
 	rm -f build.exe $(OBJ)
 
 run:
-	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out
+	./build ../benchmark/case_9.nodes ../benchmark/case_9.nets ../benchmark/case_9.timing ../../public/Test/MRes/case_9.nodes.out
 
 runall:
 	./build ../benchmark/case_2.nodes ../benchmark/case_2.nets ../benchmark/case_2.timing ../../public/Test/MRes/case_2.nodes.out
