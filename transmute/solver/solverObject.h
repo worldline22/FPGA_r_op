@@ -49,6 +49,7 @@ struct STile
     std::set<int> RESET_bank1;
     std::set<int> CLOCK_bank0;
     std::set<int> CLOCK_bank1;
+    std::vector<int> seq_choose_num;
     // 需要一个getControlSet()
     // 如果默认是其他类，默认放在'bank0'里面，PLB里的CARRY4，DRAM，DFF和LUT类引脚则可能放在bank1里面
 
