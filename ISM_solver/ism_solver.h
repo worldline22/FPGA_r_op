@@ -46,7 +46,7 @@ public:
     void realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet, const int Lib);  
 
     // 用于求解独立集问题
-    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib);
+    void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority);
     void buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose);
     void addInstToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
     void buildLUTIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
@@ -62,4 +62,7 @@ public:
     // 通过index找到current_InstIDs
     std::list<int> findSlotInstIds(int index, const int Lib);
     SInstance* fromListToInst(std::list<int> &instIDs, int index);
+
+    // ControlSet的判断
+    bool isControlSetCondition(SInstance* &old_inst, STile* &new_tile, bool new_bank);
 };

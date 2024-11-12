@@ -11,6 +11,7 @@
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
 #include "../transmute/solver/solverObject.h"
+#include "../transmute/checker_legacy/object.h"
 #include "ism_solver.h"
 
 
@@ -346,6 +347,13 @@ int ISMSolver_matching::instanceHPWLdifference(const int old_index, const int ne
         old_isSpace = (old_instIDs.size() == 0);
         if (old_isSpace) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
+
+        bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        STile* tile_new = TileArray[xy_2_index(x, y)];
+
+        if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
     }
     // 通过上面的操作，可以保证得到old_inst
     int old_clockregion = clockRegion.getCRID(get<0>(old_inst->Location), get<1>(old_inst->Location));
@@ -425,4 +433,40 @@ SInstance* ISMSolver_matching::fromListToInst(std::list<int> &instIDs, int index
 
 
 
+bool ISMSolver_matching::isControlSetCondition(SInstance *&old_inst, STile *&new_tile, bool new_bank){
+    std::set<int> old_inst_ce;
+    std::set<int> old_inst_ck;
+    std::set<int> old_inst_rs;
 
+    for (int i = 0; i < old_inst->inpins.size(); i++){
+        SNet *net = NetArray[old_inst->inpins[i]->netID];
+        if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CE){
+            old_inst_ce.insert(net->id);
+        }
+        else if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CLOCK){
+            old_inst_ck.insert(net->id);
+        }
+        else if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_RESET){
+            old_inst_rs.insert(net->id);
+        }
+    }
+
+    for (int i = 0; i < old_inst->outpins.size(); i++){
+        SNet *net = NetArray[old_inst->outpins[i]->netID];
+        if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_CE){
+            old_inst_ce.insert(net->id);
+        }
+        else if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_CLOCK){
+            old_inst_ck.insert(net->id);
+        }
+        else if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_RESET){
+            old_inst_rs.insert(net->id);
+        }
+    }
+
+    if (!new_bank){
+        if (new_tile->CE_bank0.size() == 2){
+            bool 
+        }
+    }
+}

@@ -43,6 +43,13 @@ struct STile
     std::vector<std::vector<int>> pin_in_nets_bank1;
     bool has_fixed_bank0;
     bool has_fixed_bank1;
+    std::set<int> CE_bank0;
+    std::set<int> CE_bank1;
+    std::set<int> RESET_bank0;
+    std::set<int> RESET_bank1;
+    std::set<int> CLOCK_bank0;
+    std::set<int> CLOCK_bank1;
+    // 需要一个getControlSet()
     // 如果默认是其他类，默认放在'bank0'里面，PLB里的CARRY4，DRAM，DFF和LUT类引脚则可能放在bank1里面
 
     // 深复制构造函数
