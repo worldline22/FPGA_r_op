@@ -7,6 +7,9 @@
 #include "solver/solverObject.h"
 #include "solver/solver.h"
 #include <cassert>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 int main(int, char* argv[])
 {
@@ -51,6 +54,7 @@ int main(int, char* argv[])
     }
 
     int num_iter = 10;
+    int max_threads = 7;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "Iteration " << i << std::endl;
@@ -73,17 +77,45 @@ int main(int, char* argv[])
         }
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
+
+        std::vector<std::thread> threads;
+        std::mutex mtx;
+        std::condition_variable cv;
+        int active_threads = 0;
         for (auto &indepSet : indepSets)
         {
-            // std:: cout << "Independent set: " << cnt++;
-            // for (auto site : indepSet.inst)
-            // {
-            //     std::cout << site << " ";
-            // }
-            ISMMemory mem;
-            indepSet.solution = solver.realizeMatching(mem, indepSet);
-            // std::cout << std::endl;
+            {
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [&]() { return active_threads < max_threads; });
+                ++active_threads;
+            }
+
+            threads.emplace_back(
+                [&solver, &indepSet, &mtx, &cv, &active_threads]()
+            {
+                ISMMemory mem;
+                indepSet.solution = solver.realizeMatching(mem, indepSet);
+                {
+                    std::lock_guard<std::mutex> guard(mtx);
+                    --active_threads;
+                }
+                cv.notify_one();
+            }
+            );
+
+
+            // the fuction to be executed in non-parellel way :
+            // ISMMemory mem;
+            // indepSet.solution = solver.realizeMatching(mem, indepSet);
         }
+
+        for (auto &thread : threads)
+        {
+            if (thread.joinable()) {
+                thread.join();
+            }
+        }
+        
         std::cout << "Matching Complete." << std::endl;
         for (auto &indepSet : indepSets)
         {
