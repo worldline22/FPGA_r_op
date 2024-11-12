@@ -31,7 +31,6 @@ int main(int, char* argv[])
     readInputNodes(nodeFileName);
     readInputNets(netFileName);
     readInputTiming(timingFileName);
-    std::cout << "  Successfully read design files." << std::endl;
     // reportDesignStatistics();   // from netlist.cpp
 
     init_tiles();
@@ -53,8 +52,9 @@ int main(int, char* argv[])
         inst.second->numMov = 0;
     }
 
-    int num_iter = 10;
+    int num_iter = 30;
     int max_threads = 7;
+    int HPWL_est = 1e8;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "Iteration " << i << std::endl;
@@ -116,47 +116,15 @@ int main(int, char* argv[])
             }
         }
         
-        std::cout << "Matching Complete." << std::endl;
+        // std::cout << "Matching Complete." << std::endl;
         for (auto &indepSet : indepSets)
         {
             update_instance(indepSet);
         }
-        std::cout << "instance updates complete." << std::endl;
-        update_net();
-        std::cout << "net updates complete." << std::endl;
-        // check the instance position
-        // for (auto instancepair : InstArray)
-        // {
-        //     auto instance=instancepair.second;
-        //     int x = std::get<0>(instance->Location);
-        //     int y = std::get<1>(instance->Location);
-        //     int index = xy_2_index(x, y);
-        //     int z= std::get<2>(instance->Location);
-        //     if (instance->Lib >= 9 && instance->Lib <= 15)
-        //     {
-        //         STile* tile_ptr = TileArray[index];
-        //         bool found = false;
-        //         // std::cout << "instance id: " << instance->id << " / ";
-        //         for (auto instID : tile_ptr->instanceMap["LUT"][z].current_InstIDs)
-        //         {
-        //             // std::cout << instID << " ";
-        //             if (instID == instance->id)
-        //             {
-        //                 found = true;
-        //                 break;
-        //             }
-        //         }
-        //         // std::cout << std::endl;
-        //         if (!found)
-        //         {std::cout << "not";
-        //         std::cout << "found";
-        //         }
-        //         assert(found);
-        //         // success
-        //     }
-        // } 
+        int HPWL = update_net();
+        if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 4)) break;
+        else HPWL_est = HPWL;
     }
-
     std::cout << "Successfully realized matching." << std::endl;
 
     file_output(outputFileName);
