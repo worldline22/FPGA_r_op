@@ -12,6 +12,8 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <future>
+
 int main(int, char* argv[])
 {
     std::string nodeFileName = argv[1];
@@ -49,7 +51,6 @@ int main(int, char* argv[])
     }
 
     int num_iter = 10;
-    int max_threads = 8;
 
     for (int i = 0; i < num_iter; ++i)
     {
@@ -75,10 +76,11 @@ int main(int, char* argv[])
         
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
 
-        std::vector<std::thread> threads;
-        std::mutex mtx;
-        std::condition_variable cv;
-        int active_threads = 0;
+        // int max_threads = 7;
+        // std::vector<std::thread> threads;
+        // std::mutex mtx;
+        // std::condition_variable cv;
+        // int active_threads = 0;
 
         // for (auto &indepSet : indepSets)
         // {   
@@ -104,33 +106,34 @@ int main(int, char* argv[])
         //     });
         // }
 
-        for (auto &indepSet : indepSets)
-        {   
-            {
-                // Wait until the number of active threads is below the maximum limit
-                std::unique_lock<std::mutex> lock(mtx);
-                cv.wait(lock, [&]() { return active_threads < max_threads; });
+        // // Wait for all threads to complete
+        // for (auto &thread : threads)
+        // {
+        //     if (thread.joinable()) {
+        //         thread.join();
+        //     }
+        // }
 
-                ++active_threads;
-            }
+        const size_t max_threads = 4;
+        std::vector<std::future<void>> futures;
+        int indepSetIndex = 0;
 
-            threads.emplace_back([&solver, &mem, &indepSet, &mtx, &cv, &active_threads]() {
-                ISMMemory thread_mem;
-                solver.realizeMatching(thread_mem, indepSet);
-
-                {
-                    std::lock_guard<std::mutex> guard(mtx);
-                    --active_threads;
+        for (auto &indepSet : indepSets) {
+            indepSetIndex++;
+            std::cout << "Independent set " << indepSetIndex << std::endl;
+            if (futures.size() < max_threads) {
+                futures.emplace_back(std::async(std::launch::async, [solver, indepSet]() mutable {
+                    ISMMemory thread_mem;
+                    solver.realizeMatching(thread_mem, indepSet);
+                }));
+            } else {
+                for (auto it = futures.begin(); it != futures.end(); ) {
+                    if (it->wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+                        it = futures.erase(it); // 移除已完成的任务
+                    } else {
+                        ++it;
+                    }
                 }
-                cv.notify_one();
-            });
-        }
-
-        // Wait for all threads to complete
-        for (auto &thread : threads)
-        {
-            if (thread.joinable()) {
-                thread.join();
             }
         }
         
