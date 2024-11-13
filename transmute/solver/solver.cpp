@@ -1043,7 +1043,11 @@ void update_tile_I(std::set<int> changed_tiles)
         }
         for (int i = 4; i < 8; ++i)
         {
-            for (int instID : tile->instanceMap["LUT"][i].current_InstIDs) {
+            auto map = tile->instanceMap;
+            auto vector = map["LUT"];
+            auto slot = vector[i];
+            auto list = slot.current_InstIDs;
+            for (int instID : list) {
                 if (instID == -1)
                 {
                     auto it = std::find(tile->instanceMap["LUT"][i].current_InstIDs.begin(), tile->instanceMap["LUT"][i].current_InstIDs.end(), -1);
@@ -1103,7 +1107,11 @@ void update_tile_I(std::set<int> changed_tiles)
         }
         for (int i = 0; i < 8; ++i)
         {
-            for (int instID : tile->instanceMap["SEQ"][i].current_InstIDs) {
+            auto map = tile->instanceMap;
+            auto vector = map["SEQ"];
+            auto slot = vector[i];
+            auto list = slot.current_InstIDs;
+            for (int instID : list) {
                 if (instID == -1)
                 {
                     auto it = std::find(tile->instanceMap["SEQ"][i].current_InstIDs.begin(), tile->instanceMap["SEQ"][i].current_InstIDs.end(), -1);
@@ -1163,7 +1171,11 @@ void update_tile_I(std::set<int> changed_tiles)
         }
         for (int i = 8; i < 16; ++i)
         {
-            for (int instID : tile->instanceMap["SEQ"][i].current_InstIDs) {
+            auto map = tile->instanceMap;
+            auto vector = map["SEQ"];
+            auto slot = vector[i];
+            auto list = slot.current_InstIDs;
+            for (int instID : list) {
                 if (instID == -1)
                 {
                     auto it = std::find(tile->instanceMap["SEQ"][i].current_InstIDs.begin(), tile->instanceMap["SEQ"][i].current_InstIDs.end(), -1);
