@@ -169,9 +169,9 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
         STile* tile = TileArray[index_tile];
         if (tile->type != 1) continue;
         if (isLUT(Lib)){
-            std::cout<<"Start buildLUTIndepSetPerTile"<<std::endl;
+            // std::cout<<"Start buildLUTIndepSetPerTile"<<std::endl;
             buildLUTIndepSetPerTile(indepSet, tile, Spacechoose, index_tile, SetNum);
-            std::cout<<"Finish buildLUTIndepSetPerTile"<<std::endl;
+            // std::cout<<"Finish buildLUTIndepSetPerTile"<<std::endl;
         }
         else if (Lib == 19){
             bool hasSEQinTile = false;

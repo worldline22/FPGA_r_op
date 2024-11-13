@@ -864,7 +864,7 @@ int update_net()
     return totalHPWL;
 }
 
-std::set<int> update_instance_I(IndepSet &ids)
+std::set<int> update_instance_I(IndepSet &ids, int type)
 {
 
     int size = ids.inst.size();
@@ -890,7 +890,7 @@ std::set<int> update_instance_I(IndepSet &ids)
         STile& tile_from = tmpTile[i];
         int detail_from = siteID_from % 16;
         int inst_from = -1;
-        if (ids.type == 1) // LUT
+        if (type == 1) // LUT
         {
             int z = detail_from / 2;
             int zz = detail_from % 2;
@@ -907,7 +907,7 @@ std::set<int> update_instance_I(IndepSet &ids)
                 else inst_from = *(from_inst.begin());
             }
         }
-        else if (ids.type == 2)
+        else if (type == 2)
         {
             inst_from = *(tile_from.instanceMap["SEQ"][detail_from].current_InstIDs.begin());
         }
@@ -918,9 +918,9 @@ std::set<int> update_instance_I(IndepSet &ids)
         int detail_to = siteID_from % 16;
 
         // 无论当前位置有没有instance，都先塞过去
-        if (ids.type == 1)
+        if (type == 1)
         {
-            if (inst_from != 1)
+            if (inst_from != -1)
             {
                 InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to / 2);
                 InstArray[inst_from]->numMov++;
@@ -943,9 +943,9 @@ std::set<int> update_instance_I(IndepSet &ids)
                 else *(to_list.begin()) = inst_from;
             }
         }
-        else if (ids.type == 2)
+        else if (type == 2)
         {
-            if (inst_from != 1)
+            if (inst_from != -1)
             {
                 InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to);
                 InstArray[inst_from]->numMov++;

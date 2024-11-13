@@ -209,7 +209,7 @@ int main(int, char* argv[])
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
-            auto changed = update_instance_I(indepSet);
+            auto changed = update_instance_I(indepSet, 1);
             changed_tiles.insert(changed.begin(), changed.end());
         }
         update_tile_I(changed_tiles);
