@@ -95,6 +95,7 @@ void init_tiles()
                 tile->instanceMap.insert(std::make_pair(slotType, tmpSlotArr));
             }
             // std::cout << std::endl;
+            tile->netsConnected.clear();
             tile->netsConnected_bank0.clear();
             tile->pin_in_nets_bank0.clear();
             tile->netsConnected_bank1.clear();
@@ -260,6 +261,7 @@ void copy_instances()
                     auto tile_ptr = TileArray[tileindex];
                     if (!instance->bank)
                     {
+                        tile_ptr->netsConnected.insert(pin->netID);
                         int sizen = tile_ptr->netsConnected_bank0.size();
                         for (findindex = 0; findindex < sizen; ++findindex)
                             if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
@@ -295,6 +297,7 @@ void copy_instances()
                     }
                     else
                     {
+                        tile_ptr->netsConnected.insert(pin->netID);
                         int sizen = tile_ptr->netsConnected_bank1.size();
                         for (findindex = 0; findindex < sizen; ++findindex)
                             if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
@@ -373,6 +376,7 @@ void copy_instances()
                     auto tile_ptr = TileArray[tileindex];
                     if (!instance->bank)
                     {
+                        tile_ptr->netsConnected.insert(pin->netID);
                         int sizen = tile_ptr->netsConnected_bank0.size();
                         for (findindex = 0; findindex < sizen; ++findindex)
                             if (tile_ptr->netsConnected_bank0[findindex] == pin->netID) break;
@@ -408,6 +412,7 @@ void copy_instances()
                     }
                     else
                     {
+                        tile_ptr->netsConnected.insert(pin->netID);
                         int sizen = tile_ptr->netsConnected_bank1.size();
                         for (findindex = 0; findindex < sizen; ++findindex)
                             if (tile_ptr->netsConnected_bank1[findindex] == pin->netID) break;
@@ -523,7 +528,7 @@ void connection_setup()
         int size = pinIDs.size();
             // std::cout << netP.first << " " << size << std::endl;
             // std::cout << netP.first << " " << netP.second->BBox_L << " " << netP.second->BBox_R << " " << netP.second->BBox_D << " " << netP.second->BBox_U << std::endl;
-        if (size > 16) // parameter: to many pins, not consider
+        if (size > 15) // parameter: to many pins, not consider
         {
             continue;
         }

@@ -1,6 +1,6 @@
 SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp
 SRC = $(addprefix checker_legacy/, $(SRC_FILES))
-SRC += solver/solverObject.cpp solver/solver.cpp
+SRC += solver/solverObject.cpp solver/solver.cpp solver/solverI.cpp
 SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
 
@@ -17,7 +17,7 @@ clean:
 	rm -f build.exe $(OBJ)
 
 run:
-	./build ../benchmark/case_9.nodes ../benchmark/case_9.nets ../benchmark/case_9.timing ../../public/Test/MRes/case_9.nodes.out
+	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out
 
 runall:
 	./build ../benchmark/case_1.nodes ../benchmark/case_1.nets ../benchmark/case_1.timing ../../public/Test/MRes/case_1.nodes.out

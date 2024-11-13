@@ -37,6 +37,7 @@ struct STile
     std::vector<int> type_add;
     std::map<std::string, std::vector<SSlot>> instanceMap;
     // tile type 和 lib type 都改成数组，instanceMap的索引保留string
+    std::set<int> netsConnected;
     std::vector<int> netsConnected_bank0;
     std::vector<std::vector<int>> pin_in_nets_bank0;
     std::vector<int> netsConnected_bank1;
