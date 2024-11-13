@@ -91,6 +91,7 @@ void init_tiles()
                 {
                     tmpSlotArr[i].baseline_InstIDs = slotArr[i]->getBaselineInstances();
                     tmpSlotArr[i].current_InstIDs = slotArr[i]->getBaselineInstances();
+                    if (tmpSlotArr[i].current_InstIDs.size() == 0) tmpSlotArr[i].current_InstIDs.clear();
                 }
                 tile->instanceMap.insert(std::make_pair(slotType, tmpSlotArr));
             }

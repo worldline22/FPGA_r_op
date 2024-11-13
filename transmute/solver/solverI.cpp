@@ -98,6 +98,9 @@ std::vector<size_t> ISMSolver_matching_I::realizeMatching_Instance(ISMMemory &me
 
 void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority){
     dep_inst.resize(45000 * 16, false);
+    for (int i = 0; i < 45000 * 16; i++){
+        dep_inst[i] = false;
+    }
     // 编码方式SEQ：（y * 150 + x）* 16 + z，z from 0 to 15
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
     if (isLUT(Lib)){

@@ -147,7 +147,7 @@ int main(int, char* argv[])
     {
         inst.second->numMov = 0;
     }
-    num_iter = 1;
+    num_iter = 5;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "IterationI " << i << std::endl;
