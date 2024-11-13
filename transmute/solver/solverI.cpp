@@ -234,6 +234,7 @@ void ISMSolver_matching_I::addSEQToIndepSet(IndepSet &indepSet, const int index,
     int x = index_2_x_inst(index);
     int y = index_2_y_inst(index);
     int z = index % 16;
+    if (dep_inst[index]) return;
     indepSet.inst.push_back(index);
     // LUT和SEQ的编码方式不同，因此要分开讨论
     if (z >= 8){    //所有都必须得是true
@@ -477,7 +478,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         }
     }
     else if (Lib == 19){
-        if (old_instIDs.size()) return 0;
+        if (!old_instIDs.size()) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
 
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
@@ -502,12 +503,16 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
                 }
             }
         }
-
+        bool crit = false;
+        if (net->outpins.size() + 1 == 2){
+            if (net->inpin->timingCritical) crit = true;
+        }
         int tmp = std::max(net->BBox_L - x, x - net->BBox_R);
         tmp = std::max(0, tmp);
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += tmp + tmp1;
     }
     for (int i = 0; i < old_inst->outpins.size(); i++){
         if (old_inst->outpins[i]->netID == -1){
@@ -521,11 +526,16 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
                 }
             }
         }
+        bool crit = false;
+        if (net->outpins.size() + 1 == 2){
+            if (net->inpin->timingCritical) crit = true;
+        }
         int tmp = std::max(net->BBox_L - x, x - net->BBox_R);
         tmp = std::max(0, tmp);
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += tmp + tmp1;
     }
     return totalHPWL;
 }
@@ -579,12 +589,16 @@ SInstance* ISMSolver_matching_I::fromListToInst(std::list<int> &instIDs, int ind
 
 
 // ControlSet的条件判断
-bool ISMSolver_matching_I::isControlSetCondition(SInstance *&old_inst, STile *&new_tile, bool new_bank){
+bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new_tile, bool new_bank){
     std::set<int> old_inst_ce;
     std::set<int> old_inst_ck;
     std::set<int> old_inst_rs;
-
     for (int i = 0; i < old_inst->inpins.size(); i++){
+        if (old_inst->inpins[i]->netID == -1){
+            continue;
+        }
+        if (old_inst->inpins[i]->netID == 5760 || old_inst->inpins[i]->netID == 5761)
+            std::cout << "debug";
         SNet *net = NetArray[old_inst->inpins[i]->netID];
         if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CE){
             old_inst_ce.insert(net->id);
@@ -598,6 +612,9 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *&old_inst, STile *&n
     }
 
     for (int i = 0; i < old_inst->outpins.size(); i++){
+        if (old_inst->outpins[i]->netID == -1){
+            continue;
+        }
         SNet *net = NetArray[old_inst->outpins[i]->netID];
         if(old_inst->outpins[i]->prop == PinProp::PIN_PROP_CE){
             old_inst_ce.insert(net->id);

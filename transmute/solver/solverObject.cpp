@@ -561,6 +561,7 @@ void file_output(std::string filename)
     std::ofstream out(filename);
     for (auto instP : InstArray)
     {
+        if (instP.first == -1) continue;
         int x = std::get<0>(instP.second->Location);
         int y = std::get<1>(instP.second->Location);
         int z = std::get<2>(instP.second->Location);

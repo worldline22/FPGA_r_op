@@ -43,5 +43,5 @@ public:
     SInstance* fromListToInst(std::list<int> &instIDs, int index);
 
     // ControlSet的判断
-    bool isControlSetCondition(SInstance* &old_inst, STile* &new_tile, bool new_bank);
+    bool isControlSetCondition(SInstance* old_inst, STile* new_tile, bool new_bank);
 };
