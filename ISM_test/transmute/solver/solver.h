@@ -53,9 +53,9 @@ public:
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority);
     void buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose);
     void addLUTToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
-    void addSEQToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib);
+    void addSEQToIndepSet(IndepSet &indepSet, const int index, int maxSpace, const int Lib);
     void buildLUTIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
-    void buildSEQIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum);
+    void buildSEQIndepSetPerTile(IndepSet &indepSet, STile* &tile, int Spacechoose, const int tile_id, int &SetNum, int maxSpace, int &SpaceNum);
 
     // 用于计算权重矩阵
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib);

@@ -77,43 +77,50 @@ int main(int, char* argv[])
             it += bkt.size();
         }
         std::cout<<"Start to construct IndepSet"<<std::endl;
-        solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+        solver.buildIndependentIndepSets(indepSets, 10, 50, 19, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
+        int num = 0;
         for (int i = 0; i < indepSets.size(); ++i)
         {
-            if (indepSets[i].inst.size() < 2) continue;
+            // if (indepSets[i].inst.size() < 2) continue;
             std::cout << "Independent set " << i << " has " << indepSets[i].inst.size() << " instances." << std::endl;
+            num += indepSets[i].inst.size();
+        }
+        std::cout << "Total " << num << " instances." << std::endl;
+        for (auto &inst : indepSets[indepSets.size()-2].inst)
+        {
+            std::cout << "The Instance id is " << inst << "The (x,y,z) is " << "("  << (inst/16)%150 << "," << inst/2400 <<","<<inst%16<< ")" << std::endl;
         }
         // std::vector<std::thread> threads;
-        std::mutex mtx;
-        std::condition_variable cv;
-        int active_threads = 0;
-        for (auto &indepSet : indepSets)
-        {
-            // {
-            //     std::unique_lock<std::mutex> lock(mtx);
-            //     cv.wait(lock, [&]() { return active_threads < max_threads; });
-            //     ++active_threads;
-            // }
+        // std::mutex mtx;
+        // std::condition_variable cv;
+        // int active_threads = 0;
+        // for (auto &indepSet : indepSets)
+        // {
+        //     // {
+        //     //     std::unique_lock<std::mutex> lock(mtx);
+        //     //     cv.wait(lock, [&]() { return active_threads < max_threads; });
+        //     //     ++active_threads;
+        //     // }
 
-            // threads.emplace_back(
-            //     [&solver, &indepSet, &mtx, &cv, &active_threads]()
-            // {
-            //     ISMMemory mem;
-            //     indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-            //     {
-            //         std::lock_guard<std::mutex> guard(mtx);
-            //         --active_threads;
-            //     }
-            //     cv.notify_one();
-            // }
-            // );
+        //     // threads.emplace_back(
+        //     //     [&solver, &indepSet, &mtx, &cv, &active_threads]()
+        //     // {
+        //     //     ISMMemory mem;
+        //     //     indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+        //     //     {
+        //     //         std::lock_guard<std::mutex> guard(mtx);
+        //     //         --active_threads;
+        //     //     }
+        //     //     cv.notify_one();
+        //     // }
+        //     // );
 
 
-            // the fuction to be executed in non-parellel way :
-            ISMMemory mem;
-            indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-        }
+        //     // the fuction to be executed in non-parellel way :
+        //     ISMMemory mem;
+        //     indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 19);
+        // }
 
         
 
@@ -123,4 +130,19 @@ int main(int, char* argv[])
         //         thread.join();
         //     }
         // }
- 
+        
+        // std::cout << "Matching Complete." << std::endl;
+        // for (auto &indepSet : indepSets)
+        // {
+        //     update_instance(indepSet);
+        // }
+        // int HPWL = update_net();
+        // if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 4)) break;
+        // else HPWL_est = HPWL;
+    }
+    std::cout << "Successfully realized matching." << std::endl;
+
+    file_output(outputFileName);
+
+    return 0;
+}

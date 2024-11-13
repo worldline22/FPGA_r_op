@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <iostream>
 #include <limits>
 #include <numeric>
 #include <sstream>
@@ -121,10 +122,12 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
             int inst_y = std::get<1>(InstArray[instId]->Location);
             int inst_z = std::get<2>(InstArray[instId]->Location);
             int index = ((inst_y * 150 + inst_x) * 8 * 2) + (inst_z * 2);
-            if(!dep_inst[index]&&!dep_inst[index+1]&&!InstArray[instId]->fixed){
+            if(!dep_inst[index]&&!dep_inst[index+1]&&!InstArray[instId]->fixed&&isLUT(InstArray[instId]->Lib)){
                 IndepSet indepSet;
                 int Spacechoose = 2;
-                buildIndepSet(indepSet, instId, maxR, maxIndepSetSize, Lib, Spacechoose);
+                std::cout<<"Start find a new indepSet"<<std::endl;
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose);
+                std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
             }
         }
@@ -135,10 +138,10 @@ void ISMSolver_matching::buildIndependentIndepSets(std::vector<IndepSet> &set, c
             int inst_y = std::get<1>(InstArray[instId]->Location);
             int inst_z = std::get<2>(InstArray[instId]->Location);
             int index = (inst_y * 150 + inst_x) * 16 + inst_z;
-            if(!dep_inst[index]&&!InstArray[instId]->fixed){
+            if(!dep_inst[index]&&!InstArray[instId]->fixed&&InstArray[instId]->Lib == 19){
                 IndepSet indepSet;
-                int Spacechoose = 0;
-                buildIndepSet(indepSet, instId, maxR, maxIndepSetSize, Lib, Spacechoose);
+                int Spacechoose = 2;
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose);
                 set.push_back(indepSet);
             }
         }
@@ -168,20 +171,40 @@ void ISMSolver_matching::buildIndepSet(IndepSet &indepSet, const int seed, const
             seq.push_back(std::make_pair(initX + x, initY + y));
         }
     }
+    // std::cout<<"Start addInstToIndepSet"<<std::endl;
     int SetNum = 1;
+    int seq_space_num = 0;
+    int MaxSpaceNum = 5;
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
         int index_tile = xy_2_index(x, y);
-        if (index_tile < 0 || index_tile >= TileArray.size()){
+        if (index_tile < 0 || index_tile >= TileArray.size() || x < 0 || x >= 150 || y < 0 || y >= 300){
             continue;
         }
         STile* tile = TileArray[index_tile];
+        if (tile->type != 1) continue;
         if (isLUT(Lib)){
-            buildLUTIndepSetPerTile(indepSet, tile, Spacechoose, xy_2_index(x, y), SetNum);
+            std::cout<<"Start buildLUTIndepSetPerTile"<<std::endl;
+            buildLUTIndepSetPerTile(indepSet, tile, Spacechoose, index_tile, SetNum);
+            std::cout<<"Finish buildLUTIndepSetPerTile"<<std::endl;
         }
         else if (Lib == 19){
-            buildSEQIndepSetPerTile(indepSet, tile, Spacechoose, xy_2_index(x, y), SetNum);
+            bool hasSEQinTile = false;
+            if(tile->instanceMap["SEQ"].empty()){
+                hasSEQinTile = false;
+            }
+            else{
+                for (int i = 0; i < 16; i++){
+                    if (!tile->instanceMap["SEQ"][i].current_InstIDs.empty()){
+                        hasSEQinTile = true;
+                        break;
+                    }
+                }
+            }
+            if(hasSEQinTile){
+                buildSEQIndepSetPerTile(indepSet, tile, Spacechoose, index_tile, SetNum, MaxSpaceNum, seq_space_num);
+            }
         }
         // 为了方便起见，没有严格在内部定义说到50就不行了
         if (SetNum >= maxIndepSetSize){
@@ -219,15 +242,21 @@ void ISMSolver_matching::addLUTToIndepSet(IndepSet &indepSet, const int index, b
     return;
 }
 
-void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, bool isSpace, const int Lib){
+void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, int maxSpace, const int Lib){
     int x = index_2_x_inst(index);
     int y = index_2_y_inst(index);
-    int z = index_2_z_inst(index);
+    int z = index % 16;
     indepSet.inst.push_back(index);
     // LUT和SEQ的编码方式不同，因此要分开讨论
-    dep_inst[xy_2_index(x, y) * 16 + z] = true;
-    if(isSpace){
-        return;
+    if (z >= 8){    //所有都必须得是true
+        for (int i = 8; i < 16; i++){
+            dep_inst[xy_2_index(x, y) * 16 + i] = true;
+        }
+    }
+    else {
+        for (int i = 0; i < 8; i++){
+            dep_inst[xy_2_index(x, y) * 16 + i] = true;
+        }
     }
     STile* tile = TileArray[xy_2_index(x, y)];
     std::list<int> instIDs = findSlotInstIds(index, Lib);
@@ -237,10 +266,12 @@ void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, b
     }
     for (auto &instId : Inst->conn){
         SInstance* inst = InstArray[instId];
-        int x_conn = std::get<0>(inst->Location);
-        int y_conn = std::get<1>(inst->Location);
-        int z_conn = std::get<2>(inst->Location);
-        dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn] = true;
+        if (inst->Lib == 19){
+            int x_conn = std::get<0>(inst->Location);
+            int y_conn = std::get<1>(inst->Location);
+            int z_conn = std::get<2>(inst->Location);
+            dep_inst[xy_2_index(x_conn, y_conn) * 16 + z_conn] = true;
+        }
     }
     return;
 }
@@ -248,10 +279,21 @@ void ISMSolver_matching::addSEQToIndepSet(IndepSet &indepSet, const int index, b
 void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&tile, int Spacechoose, const int tile_id, int &SetNum){
     bool SpaceChooseEnough = false;
     int SpaceCount = 0;
+    if(tile->instanceMap["LUT"].empty()){
+        return;
+    }
     for (int i = 0; i < 8; i++){
         for (int j = 0; j < 2; j++){
             if (!dep_inst[tile_id * 16 + i * 2 + j]){
+                // std::cout<<"0"<<std::endl;
+                if(tile->instanceMap["LUT"].empty()){
+                    std::cout<<"error1"<<std::endl;
+                }
+                if(tile->instanceMap["LUT"].size() < 8){
+                    std::cout<<"error2"<<std::endl;
+                }
                 if(tile->instanceMap["LUT"][i].current_InstIDs.size() == 0){
+                    // std::cout<<"1"<<std::endl;
                     if(!SpaceChooseEnough){
                         SpaceCount++;
                         if (SpaceCount == Spacechoose){
@@ -262,6 +304,7 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
                     }
                 }
                 else if (tile->instanceMap["LUT"][i].current_InstIDs.size() == 1){  //如果只有一个LUT默认放在偶数的位置上
+                    // std::cout<<"2"<<std::endl;
                     if (j == 1){
                         if(!SpaceChooseEnough){
                             SpaceCount++;
@@ -281,6 +324,7 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
                     }
                 }
                 else {
+                    // std::cout<<"3"<<std::endl;
                     SInstance* inst = fromListToInst(tile->instanceMap["LUT"][i].current_InstIDs, tile_id * 16 + i * 2 + j);
                     if (!inst->fixed){
                         addLUTToIndepSet(indepSet, tile_id * 16 + i * 2 + j, false, inst->Lib);
@@ -293,10 +337,12 @@ void ISMSolver_matching::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&til
     return;
 }
 
-void ISMSolver_matching::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&tile, int Spacechoose, const int tile_id, int &SetNum){
+void ISMSolver_matching::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&tile, int Spacechoose, const int tile_id, int &SetNum, int maxSpace, int &SpaceNum){
     int min_index = -1;
     int min_value = 10000000;
-
+    if(tile->instanceMap["SEQ"].empty()){
+        return;
+    }
     for (int i = 0; i < 8; i++){
         if (!dep_inst[tile_id * 16 + i]){
             if (min_value > tile->seq_choose_num_bank0[i]){
@@ -306,10 +352,31 @@ void ISMSolver_matching::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&til
         }
     }
     if (min_index != -1){
-        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
+        // bool all_dep = true;
+        // for (int i = 0; i < 8;i++){
+        //     if (!dep_inst[tile_id * 16 + i]){
+        //         all_dep = false;
+        //         break;
+        //     }
+        // }
+        // if(!all_dep){
+        SInstance* inst = fromListToInst(tile->instanceMap["SEQ"][min_index].current_InstIDs, tile_id * 16 + min_index);
+        if (inst!=nullptr){
+            if (!inst->fixed){
+                addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
+            }
+            for (int i = 0; i < 8; i++){
+                dep_inst[tile_id * 16 + i] = true;
+            }
+        }
+    }
+    else if (maxSpace > SpaceNum){
+        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
         tile->seq_choose_num_bank0[min_index]++;
         SetNum++;
+        SpaceNum++;
     }
+        // }
     
     min_index = -1;
     min_value = 10000000;
@@ -322,9 +389,29 @@ void ISMSolver_matching::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&til
         }
     }
     if (min_index != -1){
-        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
-        tile->seq_choose_num_bank1[min_index - 8]++;
-        SetNum++;
+        // bool all_dep = true;
+        // for (int i = 8; i < 16;i++){
+        //     if (!dep_inst[tile_id * 16 + i]){
+        //         all_dep = false;
+        //         break;
+        //     }
+        // }
+        // if(!all_dep){
+        // }
+        SInstance* inst = fromListToInst(tile->instanceMap["SEQ"][min_index - 8].current_InstIDs, tile_id * 16 + min_index);
+        if (inst!=nullptr){
+            if (!inst->fixed){
+                addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
+                tile->seq_choose_num_bank1[min_index - 8]++;
+                SetNum++;
+            }
+        }
+        else if (maxSpace > SpaceNum){
+            addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
+            tile->seq_choose_num_bank1[min_index - 8]++;
+            SetNum++;
+            SpaceNum++;
+        }
     }
     return;
 }
@@ -455,7 +542,13 @@ bool ISMSolver_matching::isLUT(int Lib){
 std::list<int> ISMSolver_matching::findSlotInstIds(int index, const int Lib){
     int x = index_2_x_inst(index);
     int y = index_2_y_inst(index);
-    int z = index_2_z_inst(index);
+    int z = 0;
+    if(isLUT(Lib)){
+        z = index_2_z_inst(index);
+    }
+    else {
+        z = index % 16;
+    }
     int tile_index = xy_2_index(x, y);
     return isLUT(Lib) ? TileArray[tile_index]->instanceMap["LUT"][z].current_InstIDs : TileArray[tile_index]->instanceMap["SEQ"][z].current_InstIDs;
 }
@@ -465,7 +558,9 @@ SInstance* ISMSolver_matching::fromListToInst(std::list<int> &instIDs, int index
     if (instIDs.size() == 0){
         return nullptr;
     }
-    return index % 2 == 0 ? InstArray[*instIDs.begin()] : InstArray[*instIDs.rbegin()];
+    SInstance* inst;
+    inst = (index % 2 == 0) ? InstArray[*instIDs.begin()] : InstArray[*instIDs.rbegin()];
+    return inst;
 }
 
 
