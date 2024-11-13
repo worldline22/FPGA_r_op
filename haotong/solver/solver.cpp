@@ -277,11 +277,23 @@ bool ISMSolver_matching::inBox(const int x, const int y, const int BBox_R, const
 
 int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank){
     int totalHPWL = 0;
+    int old_clockregion = ClockRegion_Info.getCRID(tile->X, tile->Y);
+    int new_clockregion = ClockRegion_Info.getCRID(newLoc.first, newLoc.second);
     int x = newLoc.first;
     int y = newLoc.second;
     if (bank == false){
         for (int i = 0 ; i < (int)tile->netsConnected_bank0.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank0[i]];
+            if(net->clock && ClockRegion_Info.clockNets[new_clockregion].find(net->id) != ClockRegion_Info.clockNets[new_clockregion].end())
+            {
+                if(old_clockregion != new_clockregion)
+                {
+                    if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28)
+                    {
+                        return std::numeric_limits<int>::max();
+                    }
+                }
+            }
             // if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
             //     continue;
             // }
@@ -357,6 +369,16 @@ int ISMSolver_matching::tileHPWLdifference(STile* &tile, const std::pair<int, in
     else{
         for (int i = 0 ; i < (int)tile->netsConnected_bank1.size(); i++){
             SNet *net = NetArray[tile->netsConnected_bank1[i]];
+            if(net->clock && ClockRegion_Info.clockNets[new_clockregion].find(net->id) != ClockRegion_Info.clockNets[new_clockregion].end())
+            {
+                if(old_clockregion != new_clockregion)
+                {
+                    if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28)
+                    {
+                        return std::numeric_limits<int>::max();
+                    }
+                }
+            }
             // if (inBox(x, y, net->BBox_R, net->BBox_L, net->BBox_U, net->BBox_D)){
             //     continue;
             // }
@@ -779,8 +801,9 @@ void update_instance(IndepSet &ids)
     // update the CR
 }
 
-void update_net()
+int update_net()
 {
+    int totalHPWL = 0;
     for (auto netpair : NetArray)
     {
         auto netp = netpair.second;
@@ -796,6 +819,13 @@ void update_net()
             netp->BBox_R = std::max(netp->BBox_R, x);
             netp->BBox_U = std::max(netp->BBox_U, y);
             netp->BBox_D = std::min(netp->BBox_D, y);
+            if (pinp->prop == PinProp::PIN_PROP_CLOCK && netp->clock)
+            {
+                int x = std::get<0>(InstArray[pinp->instanceOwner->id]->Location);
+                int y = std::get<1>(InstArray[pinp->instanceOwner->id]->Location);
+                int CRID = ClockRegion_Info.getCRID(x, y);
+                ClockRegion_Info.clockNets[CRID].insert(netp->id);
+            }
         for (auto pinp : netp->outpins)
         {
             auto inst = pinp->instanceOwner;
@@ -805,6 +835,15 @@ void update_net()
             netp->BBox_R = std::max(netp->BBox_R, x);
             netp->BBox_U = std::max(netp->BBox_U, y);
             netp->BBox_D = std::min(netp->BBox_D, y);
+            if (pinp->prop == PinProp::PIN_PROP_CLOCK && netp->clock)
+            {
+                int x = std::get<0>(InstArray[pinp->instanceOwner->id]->Location);
+                int y = std::get<1>(InstArray[pinp->instanceOwner->id]->Location);
+                int CRID = ClockRegion_Info.getCRID(x, y);
+                ClockRegion_Info.clockNets[CRID].insert(netp->id);
+            }
         }
+        totalHPWL += (netp->BBox_R - netp->BBox_L) + (netp->BBox_U - netp->BBox_D);
     }
+    return totalHPWL;
 }
