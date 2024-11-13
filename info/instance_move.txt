@@ -1,0 +1,5495 @@
+instance 411:
+from: 60 121 4
+to: 61 121 4
+instance 400:
+from: 60 121 5
+to: 60 121 5
+instance 187:
+from: 60 121 7
+to: 59 122 7
+instance 359:
+from: 61 121 0
+to: 63 121 0
+instance 357:
+from: 61 121 1
+to: 63 121 1
+instance 355:
+from: 61 121 2
+to: 61 121 2
+instance 363:
+from: 61 121 3
+to: 61 121 3
+instance 1367:
+from: 60 122 0
+to: 60 122 0
+instance 396:
+from: 60 122 2
+to: 60 122 2
+instance 399:
+from: 59 121 4
+to: 61 121 4
+instance 634:
+from: 59 121 6
+to: 58 121 6
+instance 597:
+from: 59 121 7
+to: 59 122 7
+instance 2418:
+from: 59 122 1
+to: 60 123 1
+instance 635:
+from: 59 122 6
+to: 59 122 6
+instance 415:
+from: 61 120 4
+to: 61 120 4
+instance 407:
+from: 61 120 5
+to: 61 121 5
+instance 397:
+from: 61 120 6
+to: 61 120 6
+instance 404:
+from: 61 120 7
+to: 61 121 7
+instance 383:
+from: 63 121 0
+to: 63 121 0
+instance 366:
+from: 63 121 1
+to: 63 121 1
+instance 365:
+from: 63 121 2
+to: 63 121 2
+instance 2517:
+from: 63 121 3
+to: 59 122 3
+instance 2878:
+from: 77 124 4
+to: 77 124 4
+instance 191:
+from: 77 124 7
+to: 75 124 7
+instance 684:
+from: 79 124 0
+to: 79 124 0
+instance 685:
+from: 79 124 1
+to: 79 124 1
+instance 1870:
+from: 79 124 2
+to: 79 124 2
+instance 1869:
+from: 79 124 3
+to: 79 124 3
+instance 1252:
+from: 79 124 4
+to: 79 125 4
+instance 679:
+from: 76 125 4
+to: 76 122 4
+instance 676:
+from: 76 125 5
+to: 76 124 5
+instance 678:
+from: 76 125 6
+to: 76 125 6
+instance 690:
+from: 76 125 7
+to: 77 125 7
+instance 749:
+from: 75 125 4
+to: 75 125 4
+instance 193:
+from: 48 119 4
+to: 48 121 4
+instance 1529:
+from: 48 119 5
+to: 45 119 5
+instance 1527:
+from: 48 119 6
+to: 45 119 6
+instance 1522:
+from: 48 119 7
+to: 48 119 7
+instance 3169:
+from: 47 119 4
+to: 47 119 4
+instance 1531:
+from: 47 119 5
+to: 47 119 5
+instance 1530:
+from: 47 119 6
+to: 47 119 6
+instance 1533:
+from: 47 119 7
+to: 47 119 7
+instance 2254:
+from: 50 119 0
+to: 50 119 0
+instance 2266:
+from: 50 119 1
+to: 50 119 1
+instance 2251:
+from: 50 119 2
+to: 50 119 2
+instance 1524:
+from: 48 121 4
+to: 47 121 4
+instance 1523:
+from: 48 121 5
+to: 47 120 5
+instance 661:
+from: 48 121 6
+to: 48 121 6
+instance 2255:
+from: 50 120 4
+to: 50 120 4
+instance 2258:
+from: 50 120 5
+to: 50 120 5
+instance 2257:
+from: 50 120 6
+to: 50 120 6
+instance 2240:
+from: 48 122 0
+to: 48 122 0
+instance 1532:
+from: 48 122 2
+to: 48 122 2
+instance 1528:
+from: 48 122 3
+to: 48 121 3
+instance 1491:
+from: 45 119 4
+to: 45 119 4
+instance 1493:
+from: 45 119 5
+to: 45 119 5
+instance 891:
+from: 44 123 0
+to: 44 123 0
+instance 875:
+from: 44 123 1
+to: 44 123 1
+instance 878:
+from: 44 123 2
+to: 44 123 2
+instance 194:
+from: 44 123 4
+to: 44 126 4
+instance 3172:
+from: 44 123 5
+to: 44 123 5
+instance 2273:
+from: 45 123 2
+to: 47 123 2
+instance 1477:
+from: 44 125 0
+to: 44 125 0
+instance 1476:
+from: 44 125 1
+to: 44 125 1
+instance 1479:
+from: 44 125 2
+to: 44 125 2
+instance 1480:
+from: 44 125 3
+to: 44 125 3
+instance 876:
+from: 43 124 0
+to: 44 124 0
+instance 1534:
+from: 43 124 1
+to: 42 123 1
+instance 1487:
+from: 44 121 0
+to: 44 121 0
+instance 1490:
+from: 44 121 3
+to: 44 121 3
+instance 1738:
+from: 45 125 0
+to: 45 125 0
+instance 488:
+from: 45 125 2
+to: 45 124 2
+instance 1504:
+from: 45 125 4
+to: 44 125 4
+instance 1511:
+from: 45 125 5
+to: 45 125 5
+instance 1510:
+from: 45 125 6
+to: 44 125 6
+instance 1513:
+from: 45 125 7
+to: 45 125 7
+instance 1478:
+from: 44 126 4
+to: 44 126 4
+instance 1481:
+from: 44 126 5
+to: 44 126 5
+instance 195:
+from: 58 138 2
+to: 58 140 2
+instance 2513:
+from: 58 138 3
+to: 58 139 3
+instance 983:
+from: 58 140 2
+to: 58 141 2
+instance 1634:
+from: 58 140 4
+to: 58 140 4
+instance 1683:
+from: 58 140 5
+to: 58 141 5
+instance 1705:
+from: 58 140 6
+to: 58 140 6
+instance 2430:
+from: 56 138 0
+to: 56 138 0
+instance 2444:
+from: 56 138 2
+to: 56 138 2
+instance 2439:
+from: 56 138 4
+to: 56 138 4
+instance 2440:
+from: 56 138 6
+to: 56 138 6
+instance 1829:
+from: 58 136 5
+to: 58 136 5
+instance 1826:
+from: 58 136 6
+to: 58 136 6
+instance 2480:
+from: 61 138 0
+to: 61 138 0
+instance 2479:
+from: 61 138 1
+to: 61 138 1
+instance 2477:
+from: 61 138 2
+to: 61 138 2
+instance 2488:
+from: 61 138 4
+to: 61 138 4
+instance 907:
+from: 60 139 2
+to: 61 138 2
+instance 2478:
+from: 60 139 4
+to: 60 139 4
+instance 2486:
+from: 60 139 5
+to: 60 139 5
+instance 2482:
+from: 60 139 6
+to: 60 139 6
+instance 726:
+from: 72 158 1
+to: 74 158 1
+instance 192:
+from: 72 158 2
+to: 74 155 2
+instance 199:
+from: 79 151 4
+to: 79 151 4
+instance 2123:
+from: 79 151 5
+to: 79 151 5
+instance 1412:
+from: 77 151 4
+to: 77 151 4
+instance 1410:
+from: 77 151 5
+to: 77 151 5
+instance 1310:
+from: 79 149 4
+to: 79 150 4
+instance 1407:
+from: 79 149 5
+to: 79 149 5
+instance 1959:
+from: 77 152 5
+to: 77 152 5
+instance 1413:
+from: 79 148 4
+to: 79 148 4
+instance 1409:
+from: 79 148 5
+to: 79 148 5
+instance 477:
+from: 79 148 6
+to: 79 148 6
+instance 2149:
+from: 79 142 1
+to: 79 142 1
+instance 200:
+from: 79 142 2
+to: 76 142 2
+instance 1444:
+from: 79 143 4
+to: 79 143 4
+instance 1438:
+from: 79 143 5
+to: 79 143 5
+instance 1443:
+from: 79 143 6
+to: 79 143 6
+instance 1411:
+from: 79 143 7
+to: 79 143 7
+instance 2151:
+from: 79 141 6
+to: 79 141 6
+instance 217:
+from: 79 144 0
+to: 79 144 0
+instance 2154:
+from: 79 144 1
+to: 79 143 1
+instance 228:
+from: 79 144 2
+to: 79 144 2
+instance 3059:
+from: 77 142 0
+to: 77 142 0
+instance 3050:
+from: 77 142 2
+to: 77 142 2
+instance 3058:
+from: 77 142 4
+to: 77 142 4
+instance 2155:
+from: 79 139 4
+to: 79 140 4
+instance 1386:
+from: 72 131 0
+to: 72 131 0
+instance 1419:
+from: 72 131 1
+to: 72 131 1
+instance 1415:
+from: 72 131 3
+to: 72 131 3
+instance 3157:
+from: 72 131 4
+to: 72 131 4
+instance 2196:
+from: 72 131 5
+to: 71 131 5
+instance 213:
+from: 72 131 6
+to: 72 131 6
+instance 1468:
+from: 71 131 0
+to: 71 131 0
+instance 1471:
+from: 71 131 1
+to: 71 130 1
+instance 1470:
+from: 71 131 2
+to: 71 130 2
+instance 1454:
+from: 71 131 3
+to: 71 131 3
+instance 1452:
+from: 71 131 7
+to: 71 131 7
+instance 215:
+from: 72 130 4
+to: 74 132 4
+instance 2983:
+from: 72 130 5
+to: 72 130 5
+instance 1944:
+from: 72 130 7
+to: 72 130 7
+instance 1334:
+from: 74 131 0
+to: 74 131 0
+instance 1448:
+from: 71 130 0
+to: 71 130 0
+instance 811:
+from: 71 130 1
+to: 71 130 1
+instance 1453:
+from: 71 130 2
+to: 71 130 2
+instance 1451:
+from: 71 130 3
+to: 71 130 3
+instance 1464:
+from: 72 129 4
+to: 72 129 4
+instance 1465:
+from: 72 129 5
+to: 72 129 5
+instance 1467:
+from: 72 129 6
+to: 72 129 6
+instance 1469:
+from: 72 129 7
+to: 72 129 7
+instance 1940:
+from: 75 131 0
+to: 75 131 0
+instance 2225:
+from: 74 132 0
+to: 74 132 0
+instance 2221:
+from: 74 132 1
+to: 74 132 1
+instance 2223:
+from: 74 132 2
+to: 74 132 2
+instance 1450:
+from: 72 134 7
+to: 72 133 7
+instance 218:
+from: 79 146 4
+to: 77 146 4
+instance 2157:
+from: 79 146 6
+to: 79 148 6
+instance 1388:
+from: 77 146 5
+to: 77 145 5
+instance 224:
+from: 77 147 0
+to: 77 147 0
+instance 2132:
+from: 77 147 1
+to: 77 147 1
+instance 3026:
+from: 77 147 4
+to: 77 147 4
+instance 3033:
+from: 76 147 0
+to: 76 147 0
+instance 3125:
+from: 76 147 4
+to: 76 146 4
+instance 3122:
+from: 76 147 5
+to: 76 147 5
+instance 2175:
+from: 76 147 6
+to: 76 147 6
+instance 235:
+from: 79 132 4
+to: 79 129 4
+instance 3098:
+from: 79 132 5
+to: 79 132 5
+instance 3075:
+from: 79 133 0
+to: 79 133 0
+instance 705:
+from: 77 132 1
+to: 77 132 1
+instance 2122:
+from: 77 132 2
+to: 76 132 2
+instance 3106:
+from: 77 132 6
+to: 77 132 6
+instance 1247:
+from: 77 131 0
+to: 80 131 0
+instance 691:
+from: 77 131 2
+to: 77 132 2
+instance 687:
+from: 79 129 4
+to: 79 133 4
+instance 682:
+from: 79 129 6
+to: 79 129 6
+instance 240:
+from: 68 117 0
+to: 67 118 0
+instance 1971:
+from: 68 117 1
+to: 68 116 1
+instance 236:
+from: 68 117 3
+to: 68 117 3
+instance 1364:
+from: 68 117 4
+to: 68 117 4
+instance 798:
+from: 68 117 6
+to: 68 117 6
+instance 1355:
+from: 69 117 0
+to: 68 117 0
+instance 320:
+from: 67 117 0
+to: 67 116 0
+instance 324:
+from: 67 117 1
+to: 67 117 1
+instance 300:
+from: 67 117 4
+to: 67 117 4
+instance 1967:
+from: 68 116 5
+to: 68 116 5
+instance 764:
+from: 69 118 4
+to: 66 117 4
+instance 772:
+from: 69 118 5
+to: 69 118 5
+instance 1366:
+from: 68 119 0
+to: 68 119 0
+instance 276:
+from: 68 119 4
+to: 68 119 4
+instance 272:
+from: 68 119 5
+to: 67 118 5
+instance 273:
+from: 68 119 6
+to: 68 119 6
+instance 280:
+from: 68 119 7
+to: 69 116 7
+instance 331:
+from: 67 118 0
+to: 67 117 0
+instance 346:
+from: 67 118 1
+to: 67 116 1
+instance 297:
+from: 67 118 2
+to: 68 119 2
+instance 1976:
+from: 67 118 3
+to: 67 118 3
+instance 1316:
+from: 66 117 0
+to: 66 117 0
+instance 1368:
+from: 66 117 1
+to: 66 117 1
+instance 1972:
+from: 69 116 0
+to: 69 116 0
+instance 245:
+from: 66 123 5
+to: 69 123 5
+instance 247:
+from: 66 123 6
+to: 66 124 6
+instance 242:
+from: 66 123 7
+to: 67 125 7
+instance 2957:
+from: 66 124 0
+to: 66 124 0
+instance 2933:
+from: 66 124 1
+to: 66 124 1
+instance 2925:
+from: 66 124 2
+to: 66 124 2
+instance 266:
+from: 66 124 4
+to: 67 125 4
+instance 267:
+from: 66 124 5
+to: 68 123 5
+instance 2937:
+from: 66 124 6
+to: 67 124 6
+instance 271:
+from: 66 124 7
+to: 66 125 7
+instance 2955:
+from: 66 122 4
+to: 66 122 4
+instance 248:
+from: 67 124 4
+to: 67 125 4
+instance 249:
+from: 67 124 6
+to: 68 123 6
+instance 256:
+from: 67 124 7
+to: 69 123 7
+instance 360:
+from: 66 121 6
+to: 66 121 6
+instance 1360:
+from: 67 122 0
+to: 67 122 0
+instance 2964:
+from: 67 122 1
+to: 67 122 1
+instance 785:
+from: 69 123 5
+to: 67 124 5
+instance 264:
+from: 68 124 0
+to: 67 122 0
+instance 2922:
+from: 68 124 1
+to: 68 124 1
+instance 288:
+from: 68 124 2
+to: 68 124 2
+instance 255:
+from: 67 125 2
+to: 69 123 2
+instance 252:
+from: 67 125 3
+to: 68 124 3
+instance 2921:
+from: 66 126 0
+to: 66 126 0
+instance 2918:
+from: 66 126 1
+to: 66 126 1
+instance 2916:
+from: 66 126 2
+to: 66 126 2
+instance 2944:
+from: 66 126 4
+to: 66 126 4
+instance 2912:
+from: 66 126 5
+to: 66 126 5
+instance 2908:
+from: 66 126 6
+to: 66 126 6
+instance 2006:
+from: 72 118 1
+to: 72 117 1
+instance 2000:
+from: 72 118 2
+to: 72 118 2
+instance 770:
+from: 72 118 3
+to: 72 117 3
+instance 1994:
+from: 72 118 7
+to: 72 118 7
+instance 763:
+from: 72 119 1
+to: 72 119 1
+instance 1993:
+from: 74 118 4
+to: 74 119 4
+instance 2904:
+from: 72 116 4
+to: 74 117 4
+instance 2958:
+from: 72 121 2
+to: 72 121 2
+instance 1988:
+from: 74 120 1
+to: 74 119 1
+instance 1985:
+from: 74 120 2
+to: 74 120 2
+instance 1984:
+from: 74 120 5
+to: 74 120 5
+instance 1983:
+from: 74 120 7
+to: 74 120 7
+instance 290:
+from: 71 124 0
+to: 71 124 0
+instance 2947:
+from: 69 124 0
+to: 69 124 0
+instance 2945:
+from: 69 124 5
+to: 69 124 5
+instance 2928:
+from: 72 123 4
+to: 72 123 4
+instance 255:
+from: 69 123 2
+to: 71 125 2
+instance 1455:
+from: 71 128 4
+to: 71 128 4
+instance 2962:
+from: 69 126 0
+to: 69 126 0
+instance 2939:
+from: 69 126 2
+to: 69 126 2
+instance 439:
+from: 66 114 0
+to: 66 113 0
+instance 451:
+from: 66 114 1
+to: 66 114 1
+instance 440:
+from: 66 114 2
+to: 66 113 2
+instance 410:
+from: 66 114 3
+to: 66 114 3
+instance 347:
+from: 66 114 4
+to: 66 114 4
+instance 344:
+from: 66 114 5
+to: 66 114 5
+instance 328:
+from: 66 114 6
+to: 66 114 6
+instance 312:
+from: 66 114 7
+to: 66 115 7
+instance 188:
+from: 68 114 4
+to: 68 114 4
+instance 1377:
+from: 68 114 5
+to: 67 115 5
+instance 311:
+from: 67 115 0
+to: 67 114 0
+instance 310:
+from: 67 115 1
+to: 66 114 1
+instance 319:
+from: 67 115 2
+to: 66 114 2
+instance 318:
+from: 67 115 3
+to: 67 115 3
+instance 402:
+from: 67 115 4
+to: 67 115 4
+instance 351:
+from: 66 116 0
+to: 66 116 0
+instance 381:
+from: 66 116 1
+to: 66 116 1
+instance 354:
+from: 66 116 3
+to: 66 116 3
+instance 313:
+from: 66 116 4
+to: 66 116 4
+instance 325:
+from: 66 116 5
+to: 66 116 5
+instance 314:
+from: 66 116 6
+to: 66 116 6
+instance 326:
+from: 66 116 7
+to: 66 116 7
+instance 470:
+from: 64 114 0
+to: 64 114 0
+instance 438:
+from: 64 114 1
+to: 64 114 1
+instance 441:
+from: 64 114 2
+to: 64 114 2
+instance 442:
+from: 64 114 3
+to: 64 114 3
+instance 444:
+from: 64 114 4
+to: 64 114 4
+instance 462:
+from: 64 114 5
+to: 64 114 5
+instance 443:
+from: 64 114 6
+to: 64 114 6
+instance 437:
+from: 64 114 7
+to: 64 114 7
+instance 329:
+from: 66 119 0
+to: 66 117 0
+instance 337:
+from: 66 119 1
+to: 66 118 1
+instance 339:
+from: 66 119 2
+to: 64 118 2
+instance 2952:
+from: 69 119 4
+to: 69 119 4
+instance 797:
+from: 68 120 3
+to: 68 120 3
+instance 2936:
+from: 64 121 4
+to: 64 121 4
+instance 2927:
+from: 64 121 5
+to: 64 121 5
+instance 371:
+from: 63 120 0
+to: 63 120 0
+instance 364:
+from: 63 120 1
+to: 63 120 1
+instance 352:
+from: 63 120 2
+to: 66 120 2
+instance 361:
+from: 63 120 3
+to: 63 120 3
+instance 368:
+from: 63 120 4
+to: 64 120 4
+instance 358:
+from: 63 120 5
+to: 63 120 5
+instance 367:
+from: 63 120 6
+to: 64 121 6
+instance 374:
+from: 63 120 7
+to: 64 120 7
+instance 356:
+from: 63 116 0
+to: 64 119 0
+instance 449:
+from: 64 116 4
+to: 63 114 4
+instance 461:
+from: 64 116 5
+to: 61 115 5
+instance 430:
+from: 64 116 7
+to: 64 116 7
+instance 431:
+from: 61 116 0
+to: 61 116 0
+instance 416:
+from: 61 116 1
+to: 61 116 1
+instance 413:
+from: 61 116 2
+to: 63 116 2
+instance 401:
+from: 61 116 3
+to: 61 117 3
+instance 409:
+from: 61 116 4
+to: 61 116 4
+instance 447:
+from: 64 115 0
+to: 64 115 0
+instance 460:
+from: 64 115 1
+to: 63 114 1
+instance 435:
+from: 64 115 2
+to: 61 115 2
+instance 398:
+from: 64 115 3
+to: 64 115 3
+instance 339:
+from: 64 118 2
+to: 64 119 2
+instance 408:
+from: 61 118 4
+to: 61 118 4
+instance 414:
+from: 61 118 5
+to: 63 118 5
+instance 423:
+from: 61 118 6
+to: 63 118 6
+instance 412:
+from: 61 118 7
+to: 61 118 7
+instance 2976:
+from: 58 112 0
+to: 59 113 0
+instance 2017:
+from: 58 112 1
+to: 58 112 1
+instance 2018:
+from: 58 112 4
+to: 60 112 4
+instance 2971:
+from: 58 112 5
+to: 58 113 5
+instance 392:
+from: 58 112 6
+to: 56 112 6
+instance 2043:
+from: 59 112 0
+to: 59 112 0
+instance 1373:
+from: 59 112 2
+to: 59 113 2
+instance 1374:
+from: 59 112 3
+to: 59 112 3
+instance 2035:
+from: 59 112 5
+to: 59 112 5
+instance 2044:
+from: 58 113 5
+to: 60 113 5
+instance 2036:
+from: 58 113 6
+to: 58 113 6
+instance 2028:
+from: 58 113 7
+to: 58 113 7
+instance 2033:
+from: 60 112 1
+to: 60 112 1
+instance 2973:
+from: 56 112 4
+to: 56 112 4
+instance 403:
+from: 59 114 0
+to: 59 114 0
+instance 2052:
+from: 59 114 1
+to: 59 114 1
+instance 436:
+from: 59 114 2
+to: 58 114 2
+instance 459:
+from: 59 114 3
+to: 59 114 3
+instance 1375:
+from: 56 111 2
+to: 56 113 2
+instance 3154:
+from: 71 135 4
+to: 71 135 4
+instance 475:
+from: 71 135 6
+to: 71 135 6
+instance 2161:
+from: 71 136 6
+to: 72 136 6
+instance 3040:
+from: 71 134 0
+to: 71 134 0
+instance 2233:
+from: 72 136 1
+to: 72 136 1
+instance 1326:
+from: 71 133 0
+to: 71 133 0
+instance 1381:
+from: 71 133 2
+to: 71 134 2
+instance 3042:
+from: 71 138 4
+to: 71 138 4
+instance 2097:
+from: 69 136 0
+to: 69 136 0
+instance 735:
+from: 69 136 3
+to: 71 133 3
+instance 2226:
+from: 69 136 4
+to: 69 136 4
+instance 2214:
+from: 69 136 5
+to: 69 136 5
+instance 3152:
+from: 68 135 5
+to: 68 135 5
+instance 478:
+from: 68 135 6
+to: 68 135 6
+instance 3038:
+from: 69 134 0
+to: 69 134 0
+instance 2856:
+from: 69 134 4
+to: 69 134 4
+instance 2121:
+from: 75 135 7
+to: 74 135 7
+instance 2269:
+from: 50 118 4
+to: 50 118 4
+instance 2262:
+from: 50 118 5
+to: 50 118 5
+instance 2261:
+from: 50 118 6
+to: 50 119 6
+instance 482:
+from: 50 118 7
+to: 50 120 7
+instance 2260:
+from: 52 119 4
+to: 52 119 4
+instance 2268:
+from: 52 119 5
+to: 52 119 5
+instance 2267:
+from: 52 119 6
+to: 52 119 6
+instance 889:
+from: 50 121 0
+to: 50 121 0
+instance 3187:
+from: 50 121 2
+to: 50 121 2
+instance 2253:
+from: 50 121 4
+to: 50 121 4
+instance 2252:
+from: 50 121 5
+to: 50 121 5
+instance 2256:
+from: 50 121 6
+to: 50 121 6
+instance 485:
+from: 47 124 1
+to: 47 124 1
+instance 2273:
+from: 47 123 2
+to: 47 125 2
+instance 2500:
+from: 47 126 4
+to: 47 126 4
+instance 488:
+from: 45 124 2
+to: 45 122 2
+instance 2503:
+from: 48 126 2
+to: 48 126 2
+instance 1510:
+from: 44 125 6
+to: 48 125 6
+instance 489:
+from: 44 138 0
+to: 44 138 0
+instance 1538:
+from: 44 138 2
+to: 44 137 2
+instance 1578:
+from: 45 138 4
+to: 45 138 4
+instance 1586:
+from: 45 138 5
+to: 45 138 5
+instance 1579:
+from: 45 138 6
+to: 45 138 6
+instance 1577:
+from: 45 138 7
+to: 45 138 7
+instance 3207:
+from: 43 138 1
+to: 45 137 1
+instance 3208:
+from: 43 138 4
+to: 45 137 4
+instance 896:
+from: 45 139 4
+to: 45 140 4
+instance 1592:
+from: 45 139 6
+to: 45 139 6
+instance 3206:
+from: 43 139 0
+to: 42 139 0
+instance 1597:
+from: 45 137 5
+to: 45 137 5
+instance 1591:
+from: 45 137 6
+to: 45 137 6
+instance 3295:
+from: 42 139 4
+to: 42 139 4
+instance 3305:
+from: 42 139 5
+to: 42 139 5
+instance 3291:
+from: 42 139 6
+to: 42 139 6
+instance 895:
+from: 42 139 7
+to: 42 139 7
+instance 497:
+from: 32 131 0
+to: 32 131 0
+instance 495:
+from: 32 131 1
+to: 32 131 1
+instance 491:
+from: 32 131 2
+to: 31 131 2
+instance 515:
+from: 32 131 4
+to: 32 133 4
+instance 507:
+from: 32 131 5
+to: 32 131 5
+instance 505:
+from: 32 131 6
+to: 32 131 6
+instance 494:
+from: 32 131 7
+to: 31 130 7
+instance 3215:
+from: 31 131 5
+to: 31 131 5
+instance 3218:
+from: 32 133 0
+to: 32 133 0
+instance 512:
+from: 31 130 0
+to: 31 130 0
+instance 510:
+from: 31 130 1
+to: 31 131 1
+instance 532:
+from: 29 141 0
+to: 29 142 0
+instance 528:
+from: 29 141 1
+to: 29 141 1
+instance 535:
+from: 29 141 2
+to: 32 141 2
+instance 531:
+from: 29 141 3
+to: 29 141 3
+instance 524:
+from: 29 141 4
+to: 29 141 4
+instance 533:
+from: 29 141 5
+to: 29 143 5
+instance 526:
+from: 29 141 6
+to: 32 141 6
+instance 525:
+from: 29 141 7
+to: 29 141 7
+instance 3282:
+from: 29 140 0
+to: 29 140 0
+instance 3286:
+from: 29 140 1
+to: 29 140 1
+instance 3284:
+from: 29 140 4
+to: 29 140 4
+instance 3288:
+from: 29 140 5
+to: 29 140 5
+instance 522:
+from: 32 141 4
+to: 32 141 4
+instance 523:
+from: 32 141 5
+to: 32 141 5
+instance 545:
+from: 32 141 6
+to: 32 141 6
+instance 540:
+from: 32 141 7
+to: 32 141 7
+instance 1730:
+from: 55 127 0
+to: 55 129 0
+instance 1732:
+from: 55 127 1
+to: 56 129 1
+instance 1082:
+from: 55 127 2
+to: 54 129 2
+instance 653:
+from: 55 127 3
+to: 56 128 3
+instance 558:
+from: 55 127 4
+to: 55 127 4
+instance 557:
+from: 55 127 6
+to: 54 127 6
+instance 560:
+from: 55 127 7
+to: 55 128 7
+instance 741:
+from: 56 127 6
+to: 56 127 6
+instance 1079:
+from: 55 128 0
+to: 56 127 0
+instance 1731:
+from: 54 127 1
+to: 58 127 1
+instance 2494:
+from: 54 127 2
+to: 56 129 2
+instance 2493:
+from: 54 127 3
+to: 54 127 3
+instance 2495:
+from: 54 127 4
+to: 55 126 4
+instance 2496:
+from: 54 127 5
+to: 56 126 5
+instance 2497:
+from: 54 127 6
+to: 55 127 6
+instance 2498:
+from: 54 127 7
+to: 55 128 7
+instance 1188:
+from: 56 128 2
+to: 56 128 2
+instance 2492:
+from: 55 125 0
+to: 58 127 0
+instance 1769:
+from: 56 126 1
+to: 56 126 1
+instance 1948:
+from: 58 127 1
+to: 58 127 1
+instance 2452:
+from: 55 130 4
+to: 55 128 4
+instance 1709:
+from: 55 130 6
+to: 55 129 6
+instance 1616:
+from: 52 154 0
+to: 51 152 0
+instance 915:
+from: 52 154 1
+to: 52 154 1
+instance 963:
+from: 52 154 2
+to: 52 153 2
+instance 1003:
+from: 51 153 7
+to: 51 153 7
+instance 898:
+from: 52 152 2
+to: 54 154 2
+instance 1672:
+from: 55 154 6
+to: 55 154 6
+instance 584:
+from: 55 154 7
+to: 55 154 7
+instance 2328:
+from: 50 153 5
+to: 51 152 5
+instance 1666:
+from: 54 153 6
+to: 54 155 6
+instance 1614:
+from: 54 153 7
+to: 51 156 7
+instance 1700:
+from: 67 152 0
+to: 66 150 0
+instance 1704:
+from: 64 152 3
+to: 64 152 3
+instance 2336:
+from: 55 145 0
+to: 55 145 0
+instance 2378:
+from: 55 145 6
+to: 55 147 6
+instance 1662:
+from: 54 145 6
+to: 52 145 6
+instance 982:
+from: 55 144 4
+to: 55 144 4
+instance 2403:
+from: 55 147 1
+to: 56 147 1
+instance 1706:
+from: 55 147 2
+to: 55 147 2
+instance 1605:
+from: 55 143 2
+to: 55 143 2
+instance 1688:
+from: 55 143 6
+to: 55 143 6
+instance 2287:
+from: 56 147 5
+to: 56 147 5
+instance 959:
+from: 56 147 6
+to: 56 147 6
+instance 2400:
+from: 55 148 4
+to: 55 148 4
+instance 2309:
+from: 55 148 5
+to: 55 148 5
+instance 2392:
+from: 55 148 6
+to: 55 148 6
+instance 945:
+from: 55 148 7
+to: 55 143 7
+instance 2325:
+from: 54 143 1
+to: 54 143 1
+instance 743:
+from: 54 143 2
+to: 55 144 2
+instance 615:
+from: 54 143 5
+to: 54 143 5
+instance 613:
+from: 54 143 6
+to: 54 143 6
+instance 573:
+from: 54 151 3
+to: 54 150 3
+instance 935:
+from: 56 151 2
+to: 55 150 2
+instance 1693:
+from: 56 151 3
+to: 56 150 3
+instance 2349:
+from: 55 152 5
+to: 55 152 5
+instance 1651:
+from: 56 152 1
+to: 56 152 1
+instance 984:
+from: 56 152 6
+to: 56 152 6
+instance 2322:
+from: 51 151 0
+to: 52 150 0
+instance 2363:
+from: 54 148 0
+to: 54 148 0
+instance 1641:
+from: 56 150 2
+to: 56 150 2
+instance 973:
+from: 56 150 5
+to: 56 150 5
+instance 587:
+from: 60 153 6
+to: 59 151 6
+instance 954:
+from: 61 153 2
+to: 60 153 2
+instance 1009:
+from: 59 152 2
+to: 60 150 2
+instance 2405:
+from: 60 151 0
+to: 60 151 0
+instance 1002:
+from: 60 151 5
+to: 59 151 5
+instance 946:
+from: 59 151 6
+to: 60 151 6
+instance 2368:
+from: 61 151 5
+to: 61 151 5
+instance 590:
+from: 58 147 6
+to: 58 147 6
+instance 2347:
+from: 59 147 0
+to: 59 147 0
+instance 2306:
+from: 60 147 1
+to: 60 146 1
+instance 1644:
+from: 60 147 2
+to: 60 147 2
+instance 1702:
+from: 59 146 0
+to: 59 146 0
+instance 1645:
+from: 59 146 1
+to: 59 146 1
+instance 1013:
+from: 59 146 7
+to: 58 144 7
+instance 1690:
+from: 60 148 5
+to: 60 148 5
+instance 1621:
+from: 56 148 2
+to: 56 148 2
+instance 2378:
+from: 55 147 6
+to: 61 147 6
+instance 903:
+from: 58 144 6
+to: 58 146 6
+instance 2390:
+from: 61 148 4
+to: 59 148 4
+instance 1679:
+from: 61 148 6
+to: 61 148 6
+instance 930:
+from: 51 158 2
+to: 52 156 2
+instance 591:
+from: 51 158 3
+to: 51 157 3
+instance 2361:
+from: 52 158 4
+to: 52 158 4
+instance 641:
+from: 63 135 3
+to: 60 135 3
+instance 644:
+from: 63 136 0
+to: 63 136 0
+instance 2490:
+from: 63 136 3
+to: 63 136 3
+instance 2209:
+from: 64 137 4
+to: 64 137 4
+instance 1820:
+from: 61 136 0
+to: 61 134 0
+instance 2463:
+from: 61 134 4
+to: 61 134 4
+instance 2870:
+from: 61 134 5
+to: 63 134 5
+instance 1156:
+from: 56 125 2
+to: 56 125 2
+instance 647:
+from: 56 125 6
+to: 56 129 6
+instance 2496:
+from: 56 126 5
+to: 55 123 5
+instance 2865:
+from: 58 125 1
+to: 58 124 1
+instance 1187:
+from: 59 125 4
+to: 59 125 4
+instance 1204:
+from: 59 125 5
+to: 59 125 5
+instance 1202:
+from: 59 125 6
+to: 59 125 6
+instance 2494:
+from: 56 129 2
+to: 56 125 2
+instance 669:
+from: 59 129 4
+to: 60 130 4
+instance 1221:
+from: 61 129 4
+to: 61 129 4
+instance 1224:
+from: 61 129 6
+to: 61 129 6
+instance 1191:
+from: 59 127 0
+to: 59 127 0
+instance 1212:
+from: 59 127 2
+to: 59 127 2
+instance 2518:
+from: 59 127 5
+to: 58 127 5
+instance 1195:
+from: 59 127 7
+to: 59 127 7
+instance 1196:
+from: 60 127 5
+to: 60 127 5
+instance 1222:
+from: 61 128 0
+to: 61 128 0
+instance 699:
+from: 76 133 0
+to: 77 133 0
+instance 700:
+from: 76 133 1
+to: 76 133 1
+instance 689:
+from: 76 133 2
+to: 79 133 2
+instance 709:
+from: 76 133 3
+to: 77 133 3
+instance 3020:
+from: 75 133 5
+to: 75 133 5
+instance 1383:
+from: 75 133 6
+to: 75 132 6
+instance 3077:
+from: 76 135 2
+to: 76 135 2
+instance 3086:
+from: 76 135 5
+to: 76 135 5
+instance 3084:
+from: 76 135 6
+to: 76 135 6
+instance 2229:
+from: 74 133 0
+to: 74 133 0
+instance 2217:
+from: 74 133 1
+to: 74 133 1
+instance 2219:
+from: 74 133 2
+to: 74 133 2
+instance 681:
+from: 76 130 0
+to: 76 130 0
+instance 693:
+from: 76 130 1
+to: 76 131 1
+instance 696:
+from: 76 130 2
+to: 76 130 2
+instance 206:
+from: 76 130 3
+to: 76 131 3
+instance 1249:
+from: 76 130 4
+to: 76 130 4
+instance 1919:
+from: 95 123 5
+to: 95 123 5
+instance 718:
+from: 95 123 6
+to: 94 124 6
+instance 2758:
+from: 97 123 2
+to: 97 123 2
+instance 1285:
+from: 95 125 6
+to: 95 125 6
+instance 2653:
+from: 94 122 5
+to: 94 122 5
+instance 2666:
+from: 95 126 1
+to: 95 124 1
+instance 2768:
+from: 95 120 4
+to: 95 120 4
+instance 1289:
+from: 95 120 7
+to: 92 123 7
+instance 721:
+from: 94 138 0
+to: 95 136 0
+instance 719:
+from: 94 138 1
+to: 94 139 1
+instance 2672:
+from: 94 138 3
+to: 95 140 3
+instance 720:
+from: 95 138 1
+to: 95 138 1
+instance 1898:
+from: 95 138 3
+to: 92 138 3
+instance 2654:
+from: 91 123 4
+to: 95 123 4
+instance 1840:
+from: 89 124 5
+to: 89 124 5
+instance 1922:
+from: 88 123 3
+to: 89 123 3
+instance 1239:
+from: 89 125 0
+to: 89 125 0
+instance 1237:
+from: 89 125 1
+to: 91 125 1
+instance 1238:
+from: 89 125 3
+to: 89 124 3
+instance 723:
+from: 110 128 5
+to: 110 130 5
+instance 2617:
+from: 108 128 0
+to: 108 128 0
+instance 2613:
+from: 108 128 1
+to: 108 128 1
+instance 2612:
+from: 108 128 2
+to: 108 129 2
+instance 2616:
+from: 108 128 3
+to: 108 128 3
+instance 2604:
+from: 108 129 0
+to: 108 129 0
+instance 2608:
+from: 108 129 1
+to: 107 128 1
+instance 2598:
+from: 108 129 2
+to: 108 129 2
+instance 2602:
+from: 108 129 3
+to: 108 128 3
+instance 2615:
+from: 107 128 0
+to: 107 128 0
+instance 2611:
+from: 107 128 1
+to: 107 128 1
+instance 2432:
+from: 60 134 4
+to: 59 134 4
+instance 732:
+from: 60 134 6
+to: 58 134 6
+instance 641:
+from: 60 135 3
+to: 60 132 3
+instance 1810:
+from: 59 134 3
+to: 59 134 3
+instance 2461:
+from: 60 133 0
+to: 60 133 0
+instance 1715:
+from: 60 136 0
+to: 59 136 0
+instance 1716:
+from: 60 136 1
+to: 59 135 1
+instance 1807:
+from: 59 135 6
+to: 60 135 6
+instance 1811:
+from: 59 135 7
+to: 58 133 7
+instance 738:
+from: 43 135 6
+to: 42 137 6
+instance 1748:
+from: 42 134 0
+to: 42 134 0
+instance 1750:
+from: 42 134 1
+to: 42 134 1
+instance 1749:
+from: 42 134 2
+to: 42 134 2
+instance 1751:
+from: 42 134 3
+to: 42 134 3
+instance 1744:
+from: 42 134 4
+to: 42 134 4
+instance 1733:
+from: 43 133 0
+to: 43 133 0
+instance 1752:
+from: 43 133 1
+to: 43 133 1
+instance 1740:
+from: 43 133 2
+to: 42 133 2
+instance 1734:
+from: 43 133 3
+to: 43 133 3
+instance 748:
+from: 74 123 2
+to: 75 124 2
+instance 2960:
+from: 74 123 5
+to: 74 123 5
+instance 2930:
+from: 74 123 6
+to: 74 123 6
+instance 3055:
+from: 75 136 0
+to: 75 136 0
+instance 3094:
+from: 77 136 4
+to: 77 136 4
+instance 3093:
+from: 77 136 5
+to: 77 136 5
+instance 3089:
+from: 77 136 6
+to: 77 136 6
+instance 3092:
+from: 76 137 0
+to: 76 137 0
+instance 3088:
+from: 76 137 1
+to: 76 137 1
+instance 3091:
+from: 76 137 2
+to: 77 137 2
+instance 823:
+from: 76 137 6
+to: 76 137 6
+instance 211:
+from: 75 138 2
+to: 74 138 2
+instance 3053:
+from: 75 138 4
+to: 75 139 4
+instance 1401:
+from: 75 138 7
+to: 76 138 7
+instance 1403:
+from: 77 137 4
+to: 77 137 4
+instance 1399:
+from: 77 137 5
+to: 77 137 5
+instance 1433:
+from: 77 137 7
+to: 77 136 7
+instance 2085:
+from: 74 138 6
+to: 75 138 6
+instance 2161:
+from: 72 136 6
+to: 72 136 6
+instance 853:
+from: 52 126 4
+to: 52 126 4
+instance 3177:
+from: 51 126 0
+to: 51 126 0
+instance 3178:
+from: 51 126 1
+to: 51 126 1
+instance 1735:
+from: 50 126 6
+to: 50 126 6
+instance 3173:
+from: 51 125 0
+to: 51 125 0
+instance 3174:
+from: 51 125 1
+to: 51 125 1
+instance 3175:
+from: 51 125 2
+to: 51 125 2
+instance 3176:
+from: 51 125 3
+to: 51 125 3
+instance 2495:
+from: 55 126 4
+to: 50 127 4
+instance 837:
+from: 51 128 6
+to: 51 128 6
+instance 860:
+from: 52 123 2
+to: 51 125 2
+instance 885:
+from: 44 120 0
+to: 44 121 0
+instance 887:
+from: 44 120 1
+to: 44 120 1
+instance 880:
+from: 44 120 6
+to: 44 121 6
+instance 1499:
+from: 45 120 0
+to: 45 119 0
+instance 3170:
+from: 45 120 1
+to: 45 120 1
+instance 1497:
+from: 45 120 2
+to: 45 120 2
+instance 1498:
+from: 45 120 3
+to: 45 120 3
+instance 1495:
+from: 45 120 4
+to: 45 120 4
+instance 1494:
+from: 45 120 5
+to: 45 120 5
+instance 1525:
+from: 45 120 6
+to: 44 119 6
+instance 1492:
+from: 45 120 7
+to: 45 119 7
+instance 1519:
+from: 43 121 4
+to: 42 121 4
+instance 1520:
+from: 43 121 5
+to: 43 121 5
+instance 1521:
+from: 43 121 6
+to: 43 122 6
+instance 1518:
+from: 43 121 7
+to: 42 120 7
+instance 1523:
+from: 47 120 5
+to: 44 120 5
+instance 901:
+from: 64 150 0
+to: 66 152 0
+instance 1610:
+from: 64 149 4
+to: 64 151 4
+instance 965:
+from: 63 148 2
+to: 63 148 2
+instance 1677:
+from: 63 148 5
+to: 64 148 5
+instance 1648:
+from: 63 148 6
+to: 64 147 6
+instance 1012:
+from: 63 148 7
+to: 63 148 7
+instance 909:
+from: 48 154 4
+to: 48 153 4
+instance 2288:
+from: 47 154 5
+to: 47 153 5
+instance 941:
+from: 48 153 4
+to: 48 152 4
+instance 919:
+from: 50 145 4
+to: 51 143 4
+instance 924:
+from: 50 145 7
+to: 50 146 7
+instance 1637:
+from: 50 146 2
+to: 50 146 2
+instance 2410:
+from: 50 146 5
+to: 50 146 5
+instance 2315:
+from: 50 146 7
+to: 50 145 7
+instance 1045:
+from: 50 143 4
+to: 50 143 4
+instance 1034:
+from: 50 143 6
+to: 50 143 6
+instance 1006:
+from: 52 146 2
+to: 51 147 2
+instance 976:
+from: 52 146 5
+to: 51 146 5
+instance 1021:
+from: 50 148 5
+to: 50 148 5
+instance 1004:
+from: 48 146 7
+to: 48 145 7
+instance 2413:
+from: 52 144 4
+to: 52 144 4
+instance 2281:
+from: 52 144 5
+to: 52 144 5
+instance 2352:
+from: 63 146 1
+to: 63 145 1
+instance 2326:
+from: 64 146 5
+to: 64 146 5
+instance 2359:
+from: 63 145 6
+to: 63 144 6
+instance 1648:
+from: 64 147 6
+to: 64 145 6
+instance 2340:
+from: 61 146 1
+to: 61 146 1
+instance 980:
+from: 64 144 2
+to: 64 143 2
+instance 972:
+from: 52 149 0
+to: 54 148 0
+instance 1020:
+from: 52 149 6
+to: 50 148 6
+instance 1670:
+from: 52 148 7
+to: 51 150 7
+instance 2339:
+from: 51 148 7
+to: 51 148 7
+instance 573:
+from: 54 150 3
+to: 54 150 3
+instance 1006:
+from: 51 147 2
+to: 50 150 2
+instance 963:
+from: 52 153 2
+to: 50 150 2
+instance 1027:
+from: 48 149 6
+to: 48 149 6
+instance 1061:
+from: 56 133 6
+to: 55 133 6
+instance 2427:
+from: 55 132 0
+to: 55 132 0
+instance 2451:
+from: 55 132 3
+to: 55 132 3
+instance 2435:
+from: 55 135 4
+to: 55 135 4
+instance 2438:
+from: 55 135 5
+to: 55 135 5
+instance 2446:
+from: 56 137 0
+to: 56 137 0
+instance 2448:
+from: 56 137 1
+to: 56 137 1
+instance 2431:
+from: 56 137 2
+to: 56 136 2
+instance 1109:
+from: 40 125 4
+to: 40 124 4
+instance 1111:
+from: 40 125 5
+to: 40 125 5
+instance 1115:
+from: 40 125 6
+to: 40 125 6
+instance 1508:
+from: 42 125 0
+to: 42 125 0
+instance 1509:
+from: 42 125 1
+to: 42 125 1
+instance 1512:
+from: 42 125 2
+to: 42 126 2
+instance 1113:
+from: 39 124 4
+to: 39 124 4
+instance 1766:
+from: 40 128 6
+to: 40 128 6
+instance 1505:
+from: 42 124 4
+to: 43 125 4
+instance 1506:
+from: 42 124 5
+to: 43 125 5
+instance 1095:
+from: 43 126 2
+to: 43 126 2
+instance 1535:
+from: 42 122 0
+to: 42 122 0
+instance 1512:
+from: 42 126 2
+to: 42 123 2
+instance 2798:
+from: 114 141 4
+to: 112 141 4
+instance 1245:
+from: 92 140 2
+to: 92 144 2
+instance 1898:
+from: 92 138 3
+to: 94 141 3
+instance 2672:
+from: 95 140 3
+to: 92 142 3
+instance 1868:
+from: 94 128 0
+to: 94 128 0
+instance 1255:
+from: 94 128 1
+to: 94 126 1
+instance 1257:
+from: 94 127 0
+to: 94 127 0
+instance 2562:
+from: 97 128 6
+to: 97 128 6
+instance 2716:
+from: 95 130 6
+to: 95 130 6
+instance 2774:
+from: 91 128 6
+to: 91 128 6
+instance 2706:
+from: 96 130 6
+to: 95 130 6
+instance 2722:
+from: 104 138 0
+to: 104 138 0
+instance 2674:
+from: 102 138 4
+to: 103 138 4
+instance 2609:
+from: 104 136 7
+to: 104 135 7
+instance 1264:
+from: 105 138 7
+to: 104 139 7
+instance 2757:
+from: 103 134 0
+to: 103 136 0
+instance 1259:
+from: 100 140 0
+to: 100 143 0
+instance 2744:
+from: 89 152 6
+to: 88 152 6
+instance 2749:
+from: 89 147 0
+to: 89 147 0
+instance 2787:
+from: 95 148 6
+to: 95 148 6
+instance 2792:
+from: 95 148 7
+to: 96 151 7
+instance 2676:
+from: 97 149 5
+to: 97 149 5
+instance 2791:
+from: 99 149 6
+to: 99 149 6
+instance 1262:
+from: 108 126 3
+to: 108 126 3
+instance 1279:
+from: 107 126 3
+to: 107 126 3
+instance 1269:
+from: 112 125 6
+to: 110 126 6
+instance 2696:
+from: 114 127 7
+to: 112 128 7
+instance 1906:
+from: 87 127 4
+to: 88 128 4
+instance 1274:
+from: 87 127 7
+to: 87 126 7
+instance 2656:
+from: 89 127 2
+to: 89 127 2
+instance 1913:
+from: 88 128 0
+to: 88 129 0
+instance 2761:
+from: 88 128 3
+to: 88 128 3
+instance 2684:
+from: 87 125 1
+to: 87 125 1
+instance 2816:
+from: 87 125 4
+to: 87 125 4
+instance 1287:
+from: 86 125 5
+to: 86 125 5
+instance 1912:
+from: 88 125 2
+to: 88 125 2
+instance 1275:
+from: 104 143 4
+to: 107 143 4
+instance 2736:
+from: 108 143 1
+to: 108 143 1
+instance 1280:
+from: 99 130 5
+to: 99 130 5
+instance 1302:
+from: 76 153 0
+to: 77 152 0
+instance 1396:
+from: 76 153 1
+to: 76 153 1
+instance 1955:
+from: 76 154 5
+to: 76 154 5
+instance 1408:
+from: 76 152 3
+to: 76 152 3
+instance 1406:
+from: 74 153 0
+to: 74 153 0
+instance 1402:
+from: 74 152 4
+to: 74 153 4
+instance 1398:
+from: 74 152 5
+to: 74 153 5
+instance 1400:
+from: 74 152 6
+to: 75 152 6
+instance 826:
+from: 76 150 2
+to: 76 150 2
+instance 1980:
+from: 64 122 1
+to: 64 122 1
+instance 1363:
+from: 64 122 2
+to: 64 123 2
+instance 2906:
+from: 63 123 2
+to: 63 123 2
+instance 2951:
+from: 64 125 0
+to: 64 125 0
+instance 2910:
+from: 64 125 2
+to: 64 125 2
+instance 2942:
+from: 63 125 5
+to: 63 125 5
+instance 2914:
+from: 63 125 6
+to: 64 126 6
+instance 404:
+from: 61 121 7
+to: 61 123 7
+instance 1431:
+from: 74 146 0
+to: 74 146 0
+instance 1425:
+from: 74 146 1
+to: 75 146 1
+instance 1421:
+from: 74 146 2
+to: 72 146 2
+instance 207:
+from: 75 146 4
+to: 75 146 4
+instance 1387:
+from: 75 146 6
+to: 75 145 6
+instance 212:
+from: 72 146 0
+to: 72 146 0
+instance 1432:
+from: 72 146 2
+to: 72 145 2
+instance 2080:
+from: 72 146 6
+to: 72 146 6
+instance 2993:
+from: 75 148 1
+to: 75 145 1
+instance 3045:
+from: 71 146 0
+to: 71 146 0
+instance 2076:
+from: 71 146 4
+to: 71 146 4
+instance 1423:
+from: 72 140 6
+to: 72 140 6
+instance 1416:
+from: 72 141 6
+to: 72 141 6
+instance 2163:
+from: 71 141 0
+to: 71 140 0
+instance 2143:
+from: 71 141 1
+to: 71 141 1
+instance 2139:
+from: 71 141 2
+to: 71 141 2
+instance 214:
+from: 72 138 0
+to: 72 138 0
+instance 2137:
+from: 72 138 1
+to: 72 138 1
+instance 1430:
+from: 72 143 4
+to: 72 143 4
+instance 1424:
+from: 72 143 5
+to: 72 143 5
+instance 1420:
+from: 72 143 7
+to: 72 143 7
+instance 226:
+from: 77 139 0
+to: 77 138 0
+instance 231:
+from: 77 139 1
+to: 76 138 1
+instance 220:
+from: 77 139 2
+to: 76 138 2
+instance 223:
+from: 77 139 3
+to: 77 138 3
+instance 1442:
+from: 77 139 6
+to: 77 139 6
+instance 1393:
+from: 77 140 5
+to: 77 139 5
+instance 824:
+from: 77 140 7
+to: 77 136 7
+instance 3091:
+from: 77 137 2
+to: 74 139 2
+instance 1459:
+from: 68 142 5
+to: 69 143 5
+instance 2140:
+from: 69 142 0
+to: 69 142 0
+instance 2138:
+from: 69 142 1
+to: 69 142 1
+instance 3148:
+from: 67 142 4
+to: 67 142 4
+instance 2144:
+from: 69 141 1
+to: 68 141 1
+instance 2135:
+from: 69 141 2
+to: 69 141 2
+instance 1484:
+from: 45 127 1
+to: 45 124 1
+instance 1483:
+from: 45 127 2
+to: 45 127 2
+instance 1485:
+from: 45 127 3
+to: 45 124 3
+instance 1473:
+from: 45 127 4
+to: 45 127 4
+instance 1474:
+from: 45 127 5
+to: 45 127 5
+instance 1475:
+from: 45 127 6
+to: 45 126 6
+instance 1482:
+from: 45 127 7
+to: 45 127 7
+instance 872:
+from: 44 128 0
+to: 44 128 0
+instance 1542:
+from: 37 140 0
+to: 37 140 0
+instance 1541:
+from: 37 140 1
+to: 36 139 1
+instance 3275:
+from: 37 141 5
+to: 37 143 5
+instance 1545:
+from: 36 140 0
+to: 36 140 0
+instance 1544:
+from: 36 140 1
+to: 36 140 1
+instance 1543:
+from: 36 140 2
+to: 36 140 2
+instance 1546:
+from: 36 140 3
+to: 36 139 3
+instance 893:
+from: 36 140 4
+to: 37 139 4
+instance 3296:
+from: 36 140 5
+to: 35 140 5
+instance 1539:
+from: 35 140 0
+to: 35 140 0
+instance 1557:
+from: 35 140 1
+to: 35 140 1
+instance 1556:
+from: 35 140 2
+to: 36 140 2
+instance 1558:
+from: 35 140 3
+to: 35 140 3
+instance 1553:
+from: 36 139 0
+to: 36 139 0
+instance 1552:
+from: 36 139 1
+to: 36 139 1
+instance 1554:
+from: 36 139 2
+to: 36 139 2
+instance 1551:
+from: 36 139 3
+to: 36 139 3
+instance 1565:
+from: 37 138 0
+to: 37 138 0
+instance 1566:
+from: 37 138 1
+to: 37 138 1
+instance 3306:
+from: 37 138 2
+to: 37 138 2
+instance 3257:
+from: 39 141 2
+to: 39 141 2
+instance 1563:
+from: 35 138 0
+to: 35 136 0
+instance 1564:
+from: 35 138 1
+to: 35 138 1
+instance 1559:
+from: 35 138 2
+to: 35 136 2
+instance 1562:
+from: 35 138 3
+to: 35 138 3
+instance 1603:
+from: 35 138 4
+to: 35 138 4
+instance 1555:
+from: 35 138 7
+to: 35 137 7
+instance 1561:
+from: 34 138 0
+to: 35 138 0
+instance 1560:
+from: 34 138 1
+to: 34 137 1
+instance 3298:
+from: 34 138 2
+to: 34 138 2
+instance 3292:
+from: 34 138 5
+to: 34 138 5
+instance 1548:
+from: 35 137 0
+to: 35 137 0
+instance 1550:
+from: 35 137 1
+to: 35 137 1
+instance 1549:
+from: 35 137 2
+to: 35 137 2
+instance 1547:
+from: 35 137 3
+to: 35 137 3
+instance 3308:
+from: 34 137 4
+to: 34 137 4
+instance 3310:
+from: 34 137 5
+to: 34 137 5
+instance 1570:
+from: 35 136 0
+to: 35 136 0
+instance 1568:
+from: 35 136 1
+to: 35 136 1
+instance 1569:
+from: 35 136 2
+to: 35 136 2
+instance 1567:
+from: 35 136 3
+to: 35 136 3
+instance 1540:
+from: 34 140 0
+to: 36 139 0
+instance 1572:
+from: 47 140 0
+to: 47 140 0
+instance 1576:
+from: 47 139 1
+to: 47 139 1
+instance 1575:
+from: 47 139 2
+to: 47 139 2
+instance 1600:
+from: 47 139 4
+to: 47 139 4
+instance 1584:
+from: 47 139 6
+to: 47 139 6
+instance 1574:
+from: 47 139 7
+to: 47 139 7
+instance 1596:
+from: 48 139 0
+to: 48 138 0
+instance 1581:
+from: 48 139 2
+to: 48 138 2
+instance 1590:
+from: 48 139 3
+to: 48 139 3
+instance 1583:
+from: 48 138 0
+to: 48 138 0
+instance 1582:
+from: 48 138 1
+to: 48 138 1
+instance 1580:
+from: 48 138 2
+to: 48 138 2
+instance 1668:
+from: 52 141 1
+to: 56 141 1
+instance 1633:
+from: 52 141 6
+to: 54 142 6
+instance 2868:
+from: 54 141 1
+to: 54 140 1
+instance 1044:
+from: 51 142 0
+to: 51 142 0
+instance 897:
+from: 54 140 0
+to: 54 140 0
+instance 1694:
+from: 55 157 1
+to: 54 157 1
+instance 2374:
+from: 55 157 4
+to: 55 155 4
+instance 2329:
+from: 54 156 1
+to: 54 156 1
+instance 2394:
+from: 54 156 5
+to: 54 156 5
+instance 577:
+from: 54 156 6
+to: 56 155 6
+instance 1708:
+from: 59 124 6
+to: 59 124 6
+instance 597:
+from: 59 122 7
+to: 58 123 7
+instance 1857:
+from: 87 121 0
+to: 87 121 0
+instance 2843:
+from: 87 123 5
+to: 87 123 5
+instance 1922:
+from: 89 123 3
+to: 87 120 3
+instance 2657:
+from: 88 124 6
+to: 88 124 6
+instance 1875:
+from: 82 122 0
+to: 82 122 0
+instance 1876:
+from: 82 122 1
+to: 82 122 1
+instance 1878:
+from: 82 122 6
+to: 82 122 6
+instance 1877:
+from: 82 122 7
+to: 82 122 7
+instance 713:
+from: 84 122 5
+to: 84 122 5
+instance 1892:
+from: 82 120 0
+to: 82 120 0
+instance 1895:
+from: 82 120 1
+to: 82 120 1
+instance 1883:
+from: 82 120 2
+to: 82 120 2
+instance 1865:
+from: 82 120 3
+to: 82 120 3
+instance 1234:
+from: 83 121 2
+to: 83 121 2
+instance 2711:
+from: 88 135 3
+to: 87 135 3
+instance 1910:
+from: 86 138 3
+to: 86 138 3
+instance 1905:
+from: 86 138 4
+to: 86 138 4
+instance 1902:
+from: 86 138 5
+to: 86 138 5
+instance 2026:
+from: 60 111 0
+to: 60 111 0
+instance 2029:
+from: 60 111 4
+to: 60 111 4
+instance 2038:
+from: 60 111 5
+to: 60 112 5
+instance 2042:
+from: 60 111 7
+to: 60 113 7
+instance 2040:
+from: 61 111 0
+to: 61 113 0
+instance 2041:
+from: 61 111 1
+to: 61 113 1
+instance 2037:
+from: 61 111 2
+to: 61 111 2
+instance 2039:
+from: 61 113 0
+to: 61 113 0
+instance 1373:
+from: 59 113 2
+to: 60 111 2
+instance 2102:
+from: 69 146 0
+to: 69 146 0
+instance 2106:
+from: 69 146 5
+to: 69 148 5
+instance 2150:
+from: 75 128 0
+to: 75 128 0
+instance 752:
+from: 76 128 4
+to: 76 128 4
+instance 751:
+from: 76 128 6
+to: 76 128 6
+instance 1932:
+from: 75 130 0
+to: 75 130 0
+instance 1314:
+from: 75 130 2
+to: 75 130 2
+instance 3158:
+from: 74 130 1
+to: 74 130 1
+instance 3155:
+from: 74 130 2
+to: 74 130 2
+instance 2239:
+from: 74 130 5
+to: 74 130 5
+instance 2242:
+from: 51 123 2
+to: 51 123 2
+instance 2244:
+from: 51 123 5
+to: 51 123 5
+instance 2241:
+from: 51 123 6
+to: 51 123 6
+instance 2496:
+from: 55 123 5
+to: 51 126 5
+instance 482:
+from: 50 120 7
+to: 51 119 7
+instance 2344:
+from: 60 149 6
+to: 60 149 6
+instance 1009:
+from: 60 150 2
+to: 60 148 2
+instance 954:
+from: 60 153 2
+to: 61 150 2
+instance 2415:
+from: 48 147 1
+to: 50 147 1
+instance 1024:
+from: 48 147 4
+to: 48 147 4
+instance 1019:
+from: 48 148 5
+to: 48 148 5
+instance 1026:
+from: 48 148 6
+to: 48 147 6
+instance 1017:
+from: 47 149 6
+to: 47 149 6
+instance 2670:
+from: 80 120 0
+to: 80 120 0
+instance 1887:
+from: 80 120 4
+to: 80 120 4
+instance 1886:
+from: 80 120 5
+to: 80 120 5
+instance 1885:
+from: 80 120 6
+to: 80 120 6
+instance 1884:
+from: 80 120 7
+to: 80 120 7
+instance 1888:
+from: 80 119 2
+to: 80 120 2
+instance 2678:
+from: 96 118 6
+to: 95 119 6
+instance 2767:
+from: 96 118 7
+to: 96 119 7
+instance 2680:
+from: 99 121 5
+to: 99 125 5
+instance 2839:
+from: 99 124 6
+to: 99 124 6
+instance 2707:
+from: 94 132 1
+to: 94 132 1
+instance 2713:
+from: 115 134 1
+to: 115 134 1
+instance 724:
+from: 115 132 4
+to: 115 132 4
+instance 2833:
+from: 115 132 6
+to: 115 132 6
+instance 2720:
+from: 114 131 6
+to: 114 131 6
+instance 2784:
+from: 102 151 0
+to: 102 150 0
+instance 2804:
+from: 87 148 1
+to: 87 148 1
+instance 2733:
+from: 86 148 6
+to: 86 148 6
+instance 2735:
+from: 111 141 5
+to: 111 140 5
+instance 2737:
+from: 110 140 6
+to: 110 140 6
+instance 2802:
+from: 111 139 0
+to: 111 138 0
+instance 2777:
+from: 92 120 2
+to: 92 120 2
+instance 3153:
+from: 69 132 0
+to: 69 132 0
+instance 3151:
+from: 69 132 1
+to: 69 132 1
+instance 3165:
+from: 67 132 4
+to: 67 132 4
+instance 3166:
+from: 67 132 5
+to: 67 132 5
+instance 1389:
+from: 68 134 6
+to: 68 134 6
+instance 3198:
+from: 55 122 0
+to: 55 122 0
+instance 3227:
+from: 39 150 2
+to: 39 150 2
+instance 3235:
+from: 42 147 4
+to: 42 147 4
+instance 3236:
+from: 42 147 5
+to: 42 149 5
+instance 3239:
+from: 42 147 6
+to: 42 148 6
+instance 3246:
+from: 42 146 5
+to: 42 146 5
+instance 3237:
+from: 42 149 5
+to: 42 149 5
+instance 3244:
+from: 40 147 0
+to: 40 147 0
+instance 3243:
+from: 40 147 2
+to: 40 147 2
+instance 3250:
+from: 34 142 5
+to: 32 142 5
+instance 3268:
+from: 34 141 5
+to: 34 141 5
+instance 3252:
+from: 32 143 0
+to: 32 143 0
+instance 3270:
+from: 31 143 0
+to: 31 143 0
+instance 3277:
+from: 40 143 0
+to: 39 143 0
+instance 3255:
+from: 40 143 3
+to: 40 143 3
+instance 3259:
+from: 40 144 1
+to: 40 144 1
+instance 3261:
+from: 39 143 0
+to: 39 143 0
+instance 3273:
+from: 39 143 2
+to: 39 143 2
+instance 3267:
+from: 39 144 3
+to: 39 144 3
+instance 3275:
+from: 37 143 5
+to: 42 142 5
+instance 3302:
+from: 31 138 0
+to: 31 138 0
+instance 2450:
+from: 55 138 0
+to: 55 136 0
+instance 2434:
+from: 55 138 1
+to: 55 138 1
+instance 2436:
+from: 55 138 2
+to: 55 136 2
+instance 2513:
+from: 58 139 3
+to: 56 138 3
+instance 1200:
+from: 63 127 4
+to: 63 127 4
+instance 1208:
+from: 63 128 0
+to: 63 128 0
+instance 1199:
+from: 63 128 2
+to: 63 128 2
+instance 1197:
+from: 63 128 4
+to: 63 128 4
+instance 1211:
+from: 63 128 5
+to: 63 128 5
+instance 1198:
+from: 63 128 6
+to: 63 128 6
+instance 208:
+from: 74 150 4
+to: 74 147 4
+instance 2131:
+from: 75 150 5
+to: 74 150 5
+instance 1402:
+from: 74 153 4
+to: 74 154 4
+instance 204:
+from: 72 149 4
+to: 72 149 4
+instance 563:
+from: 52 131 0
+to: 51 131 0
+instance 1739:
+from: 39 134 4
+to: 39 134 4
+instance 1742:
+from: 39 134 5
+to: 39 134 5
+instance 1741:
+from: 39 134 6
+to: 39 134 6
+instance 1743:
+from: 39 134 7
+to: 39 134 7
+instance 1855:
+from: 84 119 1
+to: 84 119 1
+instance 1856:
+from: 84 119 2
+to: 84 119 2
+instance 1841:
+from: 84 119 3
+to: 84 119 3
+instance 1848:
+from: 84 119 4
+to: 84 119 4
+instance 1849:
+from: 84 119 5
+to: 84 119 5
+instance 1844:
+from: 84 119 7
+to: 84 119 7
+instance 1852:
+from: 83 119 4
+to: 83 119 4
+instance 1853:
+from: 83 119 5
+to: 83 119 5
+instance 1846:
+from: 86 118 6
+to: 86 118 6
+instance 1847:
+from: 86 118 7
+to: 86 118 7
+instance 1922:
+from: 87 120 3
+to: 87 120 3
+instance 2156:
+from: 77 149 0
+to: 77 149 0
+instance 2147:
+from: 77 149 1
+to: 77 149 1
+instance 2133:
+from: 77 149 2
+to: 77 149 2
+instance 2134:
+from: 77 149 3
+to: 79 149 3
+instance 1310:
+from: 79 150 4
+to: 77 149 4
+instance 2688:
+from: 88 130 4
+to: 88 130 4
+instance 1906:
+from: 88 128 4
+to: 88 128 4
+instance 1281:
+from: 87 133 1
+to: 87 133 1
+instance 1914:
+from: 87 133 3
+to: 87 133 3
+instance 2128:
+from: 71 151 1
+to: 71 151 1
+instance 2129:
+from: 71 151 2
+to: 71 151 2
+instance 2127:
+from: 71 151 3
+to: 72 151 3
+instance 1436:
+from: 72 153 0
+to: 72 153 0
+instance 1434:
+from: 72 153 1
+to: 72 153 1
+instance 1426:
+from: 72 153 2
+to: 72 153 2
+instance 1762:
+from: 42 130 0
+to: 42 130 0
+instance 1767:
+from: 42 130 1
+to: 42 130 1
+instance 1765:
+from: 42 130 3
+to: 42 130 3
+instance 1760:
+from: 42 131 4
+to: 42 131 4
+instance 1761:
+from: 42 131 6
+to: 42 131 6
+instance 1759:
+from: 42 132 4
+to: 42 132 4
+instance 1758:
+from: 43 129 2
+to: 42 129 2
+instance 1740:
+from: 42 133 2
+to: 42 131 2
+instance 2836:
+from: 84 128 2
+to: 86 128 2
+instance 1891:
+from: 84 128 3
+to: 83 127 3
+instance 1001:
+from: 58 155 6
+to: 58 155 6
+instance 943:
+from: 64 142 1
+to: 64 141 1
+instance 944:
+from: 64 142 2
+to: 64 143 2
+instance 980:
+from: 64 143 2
+to: 66 144 2
+instance 953:
+from: 64 141 2
+to: 64 141 2
+instance 906:
+from: 64 141 3
+to: 64 140 3
+instance 1648:
+from: 64 145 6
+to: 67 143 6
+instance 554:
+from: 42 140 0
+to: 45 140 0
+instance 555:
+from: 42 140 1
+to: 42 137 1
+instance 896:
+from: 45 140 4
+to: 43 143 4
+instance 293:
+from: 68 125 6
+to: 68 125 6
+instance 291:
+from: 68 125 7
+to: 68 124 7
+instance 289:
+from: 68 126 2
+to: 68 125 2
+instance 242:
+from: 67 125 7
+to: 67 128 7
+instance 255:
+from: 71 125 2
+to: 67 127 2
+instance 1636:
+from: 58 143 6
+to: 59 141 6
+instance 983:
+from: 58 141 2
+to: 61 144 2
+instance 945:
+from: 55 143 7
+to: 56 145 7
+instance 743:
+from: 55 144 2
+to: 58 143 2
+instance 727:
+from: 79 156 5
+to: 77 155 5
+instance 1305:
+from: 79 156 7
+to: 79 156 7
+instance 1601:
+from: 48 137 0
+to: 48 137 0
+instance 1599:
+from: 48 137 1
+to: 48 137 1
+instance 3076:
+from: 79 137 6
+to: 79 136 6
+instance 2155:
+from: 79 140 4
+to: 79 138 4
+instance 223:
+from: 77 138 3
+to: 79 140 3
+instance 824:
+from: 77 136 7
+to: 80 137 7
+
+
+
+
+修正版本 v2
+instance 411:
+from: 60 121 4
+to: 61 121 2
+instance 187:
+from: 60 121 7
+to: 59 122 2
+instance 359:
+from: 61 121 0
+to: 63 121 2
+instance 357:
+from: 61 121 1
+to: 63 121 5
+instance 355:
+from: 61 121 2
+to: 61 121 1
+instance 1367:
+from: 60 122 0
+to: 60 122 2
+instance 396:
+from: 60 122 2
+to: 60 122 3
+instance 399:
+from: 59 121 4
+to: 61 121 4
+instance 634:
+from: 59 121 6
+to: 58 121 1
+instance 597:
+from: 59 121 7
+to: 59 122 6
+instance 2418:
+from: 59 122 1
+to: 60 123 1
+instance 635:
+from: 59 122 6
+to: 59 122 3
+instance 415:
+from: 61 120 4
+to: 61 120 7
+instance 407:
+from: 61 120 5
+to: 61 121 5
+instance 397:
+from: 61 120 6
+to: 61 120 4
+instance 404:
+from: 61 120 7
+to: 61 121 0
+instance 366:
+from: 63 121 1
+to: 63 121 4
+instance 365:
+from: 63 121 2
+to: 63 121 3
+instance 2517:
+from: 63 121 3
+to: 59 122 1
+instance 2878:
+from: 77 124 4
+to: 77 124 1
+instance 191:
+from: 77 124 7
+to: 75 124 0
+instance 684:
+from: 79 124 0
+to: 79 124 3
+instance 685:
+from: 79 124 1
+to: 79 124 6
+instance 1870:
+from: 79 124 2
+to: 79 124 4
+instance 1869:
+from: 79 124 3
+to: 79 124 5
+instance 1252:
+from: 79 124 4
+to: 79 125 1
+instance 679:
+from: 76 125 4
+to: 76 122 0
+instance 676:
+from: 76 125 5
+to: 76 124 1
+instance 690:
+from: 76 125 7
+to: 77 125 1
+instance 193:
+from: 48 119 4
+to: 48 121 4
+instance 1529:
+from: 48 119 5
+to: 45 119 5
+instance 1527:
+from: 48 119 6
+to: 45 119 1
+instance 1522:
+from: 48 119 7
+to: 48 119 0
+instance 3169:
+from: 47 119 4
+to: 47 119 7
+instance 1531:
+from: 47 119 5
+to: 47 119 1
+instance 1530:
+from: 47 119 6
+to: 47 119 0
+instance 1533:
+from: 47 119 7
+to: 47 119 4
+instance 2254:
+from: 50 119 0
+to: 50 119 2
+instance 2266:
+from: 50 119 1
+to: 50 119 3
+instance 2251:
+from: 50 119 2
+to: 50 119 4
+instance 1524:
+from: 48 121 4
+to: 47 121 0
+instance 1523:
+from: 48 121 5
+to: 47 120 1
+instance 661:
+from: 48 121 6
+to: 48 121 0
+instance 2255:
+from: 50 120 4
+to: 50 120 1
+instance 2258:
+from: 50 120 5
+to: 50 120 4
+instance 2257:
+from: 50 120 6
+to: 50 120 5
+instance 1532:
+from: 48 122 2
+to: 48 122 3
+instance 1528:
+from: 48 122 3
+to: 48 121 5
+instance 1493:
+from: 45 119 5
+to: 45 119 0
+instance 891:
+from: 44 123 0
+to: 44 123 5
+instance 875:
+from: 44 123 1
+to: 44 123 0
+instance 878:
+from: 44 123 2
+to: 44 123 7
+instance 194:
+from: 44 123 4
+to: 44 126 1
+instance 3172:
+from: 44 123 5
+to: 44 123 2
+instance 2273:
+from: 45 123 2
+to: 47 123 0
+instance 1477:
+from: 44 125 0
+to: 44 125 4
+instance 1476:
+from: 44 125 1
+to: 44 125 3
+instance 1479:
+from: 44 125 2
+to: 44 125 0
+instance 1480:
+from: 44 125 3
+to: 44 125 1
+instance 876:
+from: 43 124 0
+to: 44 124 1
+instance 1534:
+from: 43 124 1
+to: 42 123 1
+instance 1487:
+from: 44 121 0
+to: 44 121 5
+instance 1738:
+from: 45 125 0
+to: 45 125 2
+instance 488:
+from: 45 125 2
+to: 45 124 0
+instance 1504:
+from: 45 125 4
+to: 44 125 5
+instance 1511:
+from: 45 125 5
+to: 45 125 6
+instance 1510:
+from: 45 125 6
+to: 44 125 2
+instance 1513:
+from: 45 125 7
+to: 45 125 0
+instance 1478:
+from: 44 126 4
+to: 44 126 0
+instance 1481:
+from: 44 126 5
+to: 44 126 4
+instance 195:
+from: 58 138 2
+to: 58 140 5
+instance 2513:
+from: 58 138 3
+to: 58 139 1
+instance 983:
+from: 58 140 2
+to: 58 141 0
+instance 1634:
+from: 58 140 4
+to: 58 140 2
+instance 1683:
+from: 58 140 5
+to: 58 141 1
+instance 1705:
+from: 58 140 6
+to: 58 140 3
+instance 2430:
+from: 56 138 0
+to: 56 138 6
+instance 2440:
+from: 56 138 6
+to: 56 138 3
+instance 1829:
+from: 58 136 5
+to: 58 136 0
+instance 2480:
+from: 61 138 0
+to: 61 138 4
+instance 2477:
+from: 61 138 2
+to: 61 138 0
+instance 2488:
+from: 61 138 4
+to: 61 138 3
+instance 907:
+from: 60 139 2
+to: 61 138 2
+instance 2478:
+from: 60 139 4
+to: 60 139 5
+instance 2486:
+from: 60 139 5
+to: 60 139 4
+instance 2482:
+from: 60 139 6
+to: 60 139 2
+instance 726:
+from: 72 158 1
+to: 74 158 7
+instance 192:
+from: 72 158 2
+to: 74 155 0
+instance 1412:
+from: 77 151 4
+to: 77 151 1
+instance 1310:
+from: 79 149 4
+to: 79 150 0
+instance 1407:
+from: 79 149 5
+to: 79 149 1
+instance 1413:
+from: 79 148 4
+to: 79 148 6
+instance 1409:
+from: 79 148 5
+to: 79 148 0
+instance 477:
+from: 79 148 6
+to: 79 148 5
+instance 2149:
+from: 79 142 1
+to: 79 142 2
+instance 200:
+from: 79 142 2
+to: 76 142 2
+instance 1438:
+from: 79 143 5
+to: 79 143 1
+instance 1411:
+from: 79 143 7
+to: 79 143 5
+instance 217:
+from: 79 144 0
+to: 79 144 7
+instance 2154:
+from: 79 144 1
+to: 79 143 0
+instance 228:
+from: 79 144 2
+to: 79 144 0
+instance 3059:
+from: 77 142 0
+to: 77 142 3
+instance 2155:
+from: 79 139 4
+to: 79 140 1
+instance 1386:
+from: 72 131 0
+to: 72 131 6
+instance 1419:
+from: 72 131 1
+to: 72 131 2
+instance 1415:
+from: 72 131 3
+to: 72 131 0
+instance 3157:
+from: 72 131 4
+to: 72 131 7
+instance 2196:
+from: 72 131 5
+to: 71 131 1
+instance 213:
+from: 72 131 6
+to: 72 131 3
+instance 1468:
+from: 71 131 0
+to: 71 131 7
+instance 1471:
+from: 71 131 1
+to: 71 130 4
+instance 1470:
+from: 71 131 2
+to: 71 130 2
+instance 1454:
+from: 71 131 3
+to: 71 131 2
+instance 1452:
+from: 71 131 7
+to: 71 131 3
+instance 215:
+from: 72 130 4
+to: 74 132 0
+instance 1334:
+from: 74 131 0
+to: 74 131 5
+instance 1453:
+from: 71 130 2
+to: 71 130 5
+instance 1464:
+from: 72 129 4
+to: 72 129 5
+instance 1465:
+from: 72 129 5
+to: 72 129 1
+instance 1467:
+from: 72 129 6
+to: 72 129 7
+instance 1469:
+from: 72 129 7
+to: 72 129 4
+instance 1940:
+from: 75 131 0
+to: 75 131 2
+instance 2225:
+from: 74 132 0
+to: 74 132 1
+instance 2221:
+from: 74 132 1
+to: 74 132 4
+instance 2223:
+from: 74 132 2
+to: 74 132 3
+instance 1450:
+from: 72 134 7
+to: 72 133 0
+instance 218:
+from: 79 146 4
+to: 77 146 5
+instance 2157:
+from: 79 146 6
+to: 79 148 3
+instance 1388:
+from: 77 146 5
+to: 77 145 4
+instance 224:
+from: 77 147 0
+to: 77 147 3
+instance 2132:
+from: 77 147 1
+to: 77 147 7
+instance 3026:
+from: 77 147 4
+to: 77 147 1
+instance 3033:
+from: 76 147 0
+to: 76 147 5
+instance 3125:
+from: 76 147 4
+to: 76 146 1
+instance 3122:
+from: 76 147 5
+to: 76 147 3
+instance 235:
+from: 79 132 4
+to: 79 129 4
+instance 3098:
+from: 79 132 5
+to: 79 132 0
+instance 3075:
+from: 79 133 0
+to: 79 133 3
+instance 705:
+from: 77 132 1
+to: 77 132 7
+instance 2122:
+from: 77 132 2
+to: 76 132 6
+instance 1247:
+from: 77 131 0
+to: 80 131 0
+instance 691:
+from: 77 131 2
+to: 77 132 1
+instance 687:
+from: 79 129 4
+to: 79 133 0
+instance 240:
+from: 68 117 0
+to: 67 118 5
+instance 1971:
+from: 68 117 1
+to: 68 116 1
+instance 236:
+from: 68 117 3
+to: 68 117 1
+instance 1364:
+from: 68 117 4
+to: 68 117 0
+instance 1355:
+from: 69 117 0
+to: 68 117 7
+instance 320:
+from: 67 117 0
+to: 67 116 0
+instance 324:
+from: 67 117 1
+to: 67 117 7
+instance 300:
+from: 67 117 4
+to: 67 117 0
+instance 764:
+from: 69 118 4
+to: 66 117 5
+instance 772:
+from: 69 118 5
+to: 69 118 0
+instance 1366:
+from: 68 119 0
+to: 68 119 5
+instance 276:
+from: 68 119 4
+to: 68 119 2
+instance 272:
+from: 68 119 5
+to: 67 118 1
+instance 273:
+from: 68 119 6
+to: 68 119 3
+instance 280:
+from: 68 119 7
+to: 69 116 3
+instance 331:
+from: 67 118 0
+to: 67 117 6
+instance 346:
+from: 67 118 1
+to: 67 116 1
+instance 297:
+from: 67 118 2
+to: 68 119 7
+instance 1972:
+from: 69 116 0
+to: 69 116 5
+instance 245:
+from: 66 123 5
+to: 69 123 0
+instance 247:
+from: 66 123 6
+to: 66 124 5
+instance 242:
+from: 66 123 7
+to: 67 125 5
+instance 2957:
+from: 66 124 0
+to: 66 124 3
+instance 2933:
+from: 66 124 1
+to: 66 124 7
+instance 266:
+from: 66 124 4
+to: 67 125 4
+instance 267:
+from: 66 124 5
+to: 68 123 1
+instance 2937:
+from: 66 124 6
+to: 67 124 0
+instance 271:
+from: 66 124 7
+to: 66 125 0
+instance 2955:
+from: 66 122 4
+to: 66 122 0
+instance 248:
+from: 67 124 4
+to: 67 125 3
+instance 249:
+from: 67 124 6
+to: 68 123 0
+instance 256:
+from: 67 124 7
+to: 69 123 5
+instance 1360:
+from: 67 122 0
+to: 67 122 3
+instance 785:
+from: 69 123 5
+to: 67 124 6
+instance 264:
+from: 68 124 0
+to: 67 122 0
+instance 288:
+from: 68 124 2
+to: 68 124 0
+instance 255:
+from: 67 125 2
+to: 69 123 1
+instance 252:
+from: 67 125 3
+to: 68 124 2
+instance 2921:
+from: 66 126 0
+to: 66 126 2
+instance 2918:
+from: 66 126 1
+to: 66 126 3
+instance 2916:
+from: 66 126 2
+to: 66 126 1
+instance 2944:
+from: 66 126 4
+to: 66 126 0
+instance 2912:
+from: 66 126 5
+to: 66 126 4
+instance 2006:
+from: 72 118 1
+to: 72 117 1
+instance 2000:
+from: 72 118 2
+to: 72 118 7
+instance 770:
+from: 72 118 3
+to: 72 117 0
+instance 1994:
+from: 72 118 7
+to: 72 118 1
+instance 1993:
+from: 74 118 4
+to: 74 119 0
+instance 2904:
+from: 72 116 4
+to: 74 117 4
+instance 2958:
+from: 72 121 2
+to: 72 121 3
+instance 1988:
+from: 74 120 1
+to: 74 119 1
+instance 1985:
+from: 74 120 2
+to: 74 120 7
+instance 1984:
+from: 74 120 5
+to: 74 120 2
+instance 1983:
+from: 74 120 7
+to: 74 120 1
+instance 290:
+from: 71 124 0
+to: 71 124 2
+instance 2945:
+from: 69 124 5
+to: 69 124 3
+instance 2928:
+from: 72 123 4
+to: 72 123 1
+instance 1455:
+from: 71 128 4
+to: 71 128 0
+instance 2939:
+from: 69 126 2
+to: 69 126 3
+instance 439:
+from: 66 114 0
+to: 66 113 1
+instance 451:
+from: 66 114 1
+to: 66 114 4
+instance 440:
+from: 66 114 2
+to: 66 113 0
+instance 410:
+from: 66 114 3
+to: 66 114 5
+instance 347:
+from: 66 114 4
+to: 66 114 6
+instance 344:
+from: 66 114 5
+to: 66 114 1
+instance 328:
+from: 66 114 6
+to: 66 114 7
+instance 312:
+from: 66 114 7
+to: 66 115 0
+instance 1377:
+from: 68 114 5
+to: 67 115 3
+instance 311:
+from: 67 115 0
+to: 67 114 0
+instance 310:
+from: 67 115 1
+to: 66 114 3
+instance 319:
+from: 67 115 2
+to: 66 114 0
+instance 318:
+from: 67 115 3
+to: 67 115 2
+instance 351:
+from: 66 116 0
+to: 66 116 5
+instance 381:
+from: 66 116 1
+to: 66 116 6
+instance 313:
+from: 66 116 4
+to: 66 116 7
+instance 325:
+from: 66 116 5
+to: 66 116 1
+instance 314:
+from: 66 116 6
+to: 66 116 4
+instance 326:
+from: 66 116 7
+to: 66 116 0
+instance 470:
+from: 64 114 0
+to: 64 114 1
+instance 438:
+from: 64 114 1
+to: 64 114 4
+instance 441:
+from: 64 114 2
+to: 64 114 5
+instance 442:
+from: 64 114 3
+to: 64 114 0
+instance 444:
+from: 64 114 4
+to: 64 114 2
+instance 462:
+from: 64 114 5
+to: 64 114 7
+instance 437:
+from: 64 114 7
+to: 64 114 3
+instance 329:
+from: 66 119 0
+to: 66 117 6
+instance 337:
+from: 66 119 1
+to: 66 118 0
+instance 339:
+from: 66 119 2
+to: 64 118 0
+instance 371:
+from: 63 120 0
+to: 63 120 7
+instance 364:
+from: 63 120 1
+to: 63 120 0
+instance 352:
+from: 63 120 2
+to: 66 120 0
+instance 361:
+from: 63 120 3
+to: 63 120 5
+instance 368:
+from: 63 120 4
+to: 64 120 0
+instance 358:
+from: 63 120 5
+to: 63 120 1
+instance 367:
+from: 63 120 6
+to: 64 121 0
+instance 374:
+from: 63 120 7
+to: 64 120 1
+instance 356:
+from: 63 116 0
+to: 64 119 3
+instance 449:
+from: 64 116 4
+to: 63 114 1
+instance 461:
+from: 64 116 5
+to: 61 115 0
+instance 431:
+from: 61 116 0
+to: 61 116 6
+instance 416:
+from: 61 116 1
+to: 61 116 5
+instance 413:
+from: 61 116 2
+to: 63 116 2
+instance 401:
+from: 61 116 3
+to: 61 117 0
+instance 409:
+from: 61 116 4
+to: 61 116 0
+instance 447:
+from: 64 115 0
+to: 64 115 1
+instance 460:
+from: 64 115 1
+to: 63 114 0
+instance 435:
+from: 64 115 2
+to: 61 115 1
+instance 398:
+from: 64 115 3
+to: 64 115 4
+instance 408:
+from: 61 118 4
+to: 61 118 6
+instance 414:
+from: 61 118 5
+to: 63 118 0
+instance 423:
+from: 61 118 6
+to: 63 118 1
+instance 412:
+from: 61 118 7
+to: 61 118 4
+instance 2976:
+from: 58 112 0
+to: 59 113 1
+instance 2017:
+from: 58 112 1
+to: 58 112 3
+instance 2018:
+from: 58 112 4
+to: 60 112 3
+instance 2971:
+from: 58 112 5
+to: 58 113 5
+instance 392:
+from: 58 112 6
+to: 56 112 0
+instance 2043:
+from: 59 112 0
+to: 59 112 3
+instance 1373:
+from: 59 112 2
+to: 59 113 0
+instance 1374:
+from: 59 112 3
+to: 59 112 7
+instance 2044:
+from: 58 113 5
+to: 60 113 1
+instance 2033:
+from: 60 112 1
+to: 60 112 4
+instance 403:
+from: 59 114 0
+to: 59 114 5
+instance 436:
+from: 59 114 2
+to: 58 114 0
+instance 459:
+from: 59 114 3
+to: 59 114 4
+instance 1375:
+from: 56 111 2
+to: 56 113 7
+instance 475:
+from: 71 135 6
+to: 71 135 0
+instance 2161:
+from: 71 136 6
+to: 72 136 4
+instance 2233:
+from: 72 136 1
+to: 72 136 3
+instance 1326:
+from: 71 133 0
+to: 71 133 2
+instance 1381:
+from: 71 133 2
+to: 71 134 4
+instance 3042:
+from: 71 138 4
+to: 71 138 0
+instance 2097:
+from: 69 136 0
+to: 69 136 4
+instance 735:
+from: 69 136 3
+to: 71 133 6
+instance 2226:
+from: 69 136 4
+to: 69 136 0
+instance 2214:
+from: 69 136 5
+to: 69 136 3
+instance 3152:
+from: 68 135 5
+to: 68 135 6
+instance 478:
+from: 68 135 6
+to: 68 135 5
+instance 3038:
+from: 69 134 0
+to: 69 134 7
+instance 2856:
+from: 69 134 4
+to: 69 134 0
+instance 2121:
+from: 75 135 7
+to: 74 135 0
+instance 2269:
+from: 50 118 4
+to: 50 118 0
+instance 2261:
+from: 50 118 6
+to: 50 119 6
+instance 482:
+from: 50 118 7
+to: 50 120 3
+instance 889:
+from: 50 121 0
+to: 50 121 5
+instance 2252:
+from: 50 121 5
+to: 50 121 6
+instance 2256:
+from: 50 121 6
+to: 50 121 3
+instance 485:
+from: 47 124 1
+to: 47 124 4
+instance 2503:
+from: 48 126 2
+to: 48 126 3
+instance 489:
+from: 44 138 0
+to: 44 138 2
+instance 1538:
+from: 44 138 2
+to: 44 137 3
+instance 1578:
+from: 45 138 4
+to: 45 138 6
+instance 1586:
+from: 45 138 5
+to: 45 138 7
+instance 1579:
+from: 45 138 6
+to: 45 138 0
+instance 1577:
+from: 45 138 7
+to: 45 138 5
+instance 3207:
+from: 43 138 1
+to: 45 137 1
+instance 3208:
+from: 43 138 4
+to: 45 137 5
+instance 896:
+from: 45 139 4
+to: 45 140 1
+instance 1592:
+from: 45 139 6
+to: 45 139 0
+instance 3206:
+from: 43 139 0
+to: 42 139 7
+instance 1597:
+from: 45 137 5
+to: 45 137 0
+instance 3305:
+from: 42 139 5
+to: 42 139 0
+instance 3291:
+from: 42 139 6
+to: 42 139 5
+instance 895:
+from: 42 139 7
+to: 42 139 6
+instance 497:
+from: 32 131 0
+to: 32 131 5
+instance 495:
+from: 32 131 1
+to: 32 131 6
+instance 491:
+from: 32 131 2
+to: 31 131 3
+instance 515:
+from: 32 131 4
+to: 32 133 0
+instance 507:
+from: 32 131 5
+to: 32 131 7
+instance 505:
+from: 32 131 6
+to: 32 131 0
+instance 494:
+from: 32 131 7
+to: 31 130 4
+instance 3218:
+from: 32 133 0
+to: 32 133 1
+instance 512:
+from: 31 130 0
+to: 31 130 5
+instance 510:
+from: 31 130 1
+to: 31 131 2
+instance 532:
+from: 29 141 0
+to: 29 142 0
+instance 528:
+from: 29 141 1
+to: 29 141 6
+instance 535:
+from: 29 141 2
+to: 32 141 2
+instance 531:
+from: 29 141 3
+to: 29 141 7
+instance 533:
+from: 29 141 5
+to: 29 143 1
+instance 526:
+from: 29 141 6
+to: 32 141 7
+instance 525:
+from: 29 141 7
+to: 29 141 1
+instance 523:
+from: 32 141 5
+to: 32 141 6
+instance 545:
+from: 32 141 6
+to: 32 141 5
+instance 540:
+from: 32 141 7
+to: 32 141 3
+instance 1730:
+from: 55 127 0
+to: 55 129 0
+instance 1732:
+from: 55 127 1
+to: 56 129 0
+instance 1082:
+from: 55 127 2
+to: 54 129 3
+instance 653:
+from: 55 127 3
+to: 56 128 3
+instance 557:
+from: 55 127 6
+to: 54 127 5
+instance 560:
+from: 55 127 7
+to: 55 128 4
+instance 1079:
+from: 55 128 0
+to: 56 127 1
+instance 1731:
+from: 54 127 1
+to: 58 127 3
+instance 2494:
+from: 54 127 2
+to: 56 129 1
+instance 2493:
+from: 54 127 3
+to: 54 127 1
+instance 2495:
+from: 54 127 4
+to: 55 126 1
+instance 2496:
+from: 54 127 5
+to: 56 126 3
+instance 2497:
+from: 54 127 6
+to: 55 127 7
+instance 2498:
+from: 54 127 7
+to: 55 128 0
+instance 1188:
+from: 56 128 2
+to: 56 128 4
+instance 2492:
+from: 55 125 0
+to: 58 127 4
+instance 1769:
+from: 56 126 1
+to: 56 126 2
+instance 2452:
+from: 55 130 4
+to: 55 128 3
+instance 1709:
+from: 55 130 6
+to: 55 129 1
+instance 1616:
+from: 52 154 0
+to: 51 152 0
+instance 915:
+from: 52 154 1
+to: 52 154 2
+instance 963:
+from: 52 154 2
+to: 52 153 1
+instance 898:
+from: 52 152 2
+to: 54 154 3
+instance 1672:
+from: 55 154 6
+to: 55 154 0
+instance 584:
+from: 55 154 7
+to: 55 154 6
+instance 2328:
+from: 50 153 5
+to: 51 152 1
+instance 1666:
+from: 54 153 6
+to: 54 155 1
+instance 1614:
+from: 54 153 7
+to: 51 156 2
+instance 1700:
+from: 67 152 0
+to: 66 150 1
+instance 1704:
+from: 64 152 3
+to: 64 152 4
+instance 2336:
+from: 55 145 0
+to: 55 145 6
+instance 2378:
+from: 55 145 6
+to: 55 147 1
+instance 1662:
+from: 54 145 6
+to: 52 145 1
+instance 2403:
+from: 55 147 1
+to: 56 147 5
+instance 1706:
+from: 55 147 2
+to: 55 147 3
+instance 1605:
+from: 55 143 2
+to: 55 143 3
+instance 2287:
+from: 56 147 5
+to: 56 147 1
+instance 2400:
+from: 55 148 4
+to: 55 148 7
+instance 2392:
+from: 55 148 6
+to: 55 148 1
+instance 945:
+from: 55 148 7
+to: 55 143 2
+instance 2325:
+from: 54 143 1
+to: 54 143 3
+instance 743:
+from: 54 143 2
+to: 55 144 1
+instance 615:
+from: 54 143 5
+to: 54 143 7
+instance 573:
+from: 54 151 3
+to: 54 150 1
+instance 935:
+from: 56 151 2
+to: 55 150 2
+instance 1693:
+from: 56 151 3
+to: 56 150 6
+instance 1651:
+from: 56 152 1
+to: 56 152 3
+instance 984:
+from: 56 152 6
+to: 56 152 2
+instance 2322:
+from: 51 151 0
+to: 52 150 1
+instance 587:
+from: 60 153 6
+to: 59 151 6
+instance 954:
+from: 61 153 2
+to: 60 153 1
+instance 1009:
+from: 59 152 2
+to: 60 150 0
+instance 2405:
+from: 60 151 0
+to: 60 151 7
+instance 1002:
+from: 60 151 5
+to: 59 151 1
+instance 946:
+from: 59 151 6
+to: 60 151 0
+instance 2368:
+from: 61 151 5
+to: 61 151 2
+instance 2347:
+from: 59 147 0
+to: 59 147 3
+instance 2306:
+from: 60 147 1
+to: 60 146 3
+instance 1644:
+from: 60 147 2
+to: 60 147 3
+instance 1013:
+from: 59 146 7
+to: 58 144 6
+instance 1690:
+from: 60 148 5
+to: 60 148 2
+instance 1621:
+from: 56 148 2
+to: 56 148 3
+instance 903:
+from: 58 144 6
+to: 58 146 0
+instance 2390:
+from: 61 148 4
+to: 59 148 0
+instance 1679:
+from: 61 148 6
+to: 61 148 0
+instance 930:
+from: 51 158 2
+to: 52 156 7
+instance 591:
+from: 51 158 3
+to: 51 157 0
+instance 641:
+from: 63 135 3
+to: 60 135 1
+instance 2490:
+from: 63 136 3
+to: 63 136 4
+instance 2209:
+from: 64 137 4
+to: 64 137 1
+instance 1820:
+from: 61 136 0
+to: 61 134 4
+instance 2463:
+from: 61 134 4
+to: 61 134 1
+instance 2870:
+from: 61 134 5
+to: 63 134 0
+instance 1156:
+from: 56 125 2
+to: 56 125 6
+instance 647:
+from: 56 125 6
+to: 56 129 2
+instance 2865:
+from: 58 125 1
+to: 58 124 3
+instance 1187:
+from: 59 125 4
+to: 59 125 6
+instance 1202:
+from: 59 125 6
+to: 59 125 4
+instance 669:
+from: 59 129 4
+to: 60 130 0
+instance 1221:
+from: 61 129 4
+to: 61 129 6
+instance 1224:
+from: 61 129 6
+to: 61 129 1
+instance 1191:
+from: 59 127 0
+to: 59 127 5
+instance 2518:
+from: 59 127 5
+to: 58 127 7
+instance 1196:
+from: 60 127 5
+to: 60 127 0
+instance 699:
+from: 76 133 0
+to: 77 133 3
+instance 700:
+from: 76 133 1
+to: 76 133 4
+instance 689:
+from: 76 133 2
+to: 79 133 6
+instance 709:
+from: 76 133 3
+to: 77 133 2
+instance 3020:
+from: 75 133 5
+to: 75 133 6
+instance 1383:
+from: 75 133 6
+to: 75 132 0
+instance 3086:
+from: 76 135 5
+to: 76 135 7
+instance 3084:
+from: 76 135 6
+to: 76 135 3
+instance 2229:
+from: 74 133 0
+to: 74 133 3
+instance 2219:
+from: 74 133 2
+to: 74 133 4
+instance 693:
+from: 76 130 1
+to: 76 131 1
+instance 696:
+from: 76 130 2
+to: 76 130 4
+instance 206:
+from: 76 130 3
+to: 76 131 0
+instance 1249:
+from: 76 130 4
+to: 76 130 2
+instance 718:
+from: 95 123 6
+to: 94 124 0
+instance 2758:
+from: 97 123 2
+to: 97 123 3
+instance 1285:
+from: 95 125 6
+to: 95 125 1
+instance 2666:
+from: 95 126 1
+to: 95 124 0
+instance 2768:
+from: 95 120 4
+to: 95 120 7
+instance 1289:
+from: 95 120 7
+to: 92 123 1
+instance 721:
+from: 94 138 0
+to: 95 136 0
+instance 719:
+from: 94 138 1
+to: 94 139 1
+instance 2672:
+from: 94 138 3
+to: 95 140 0
+instance 720:
+from: 95 138 1
+to: 95 138 3
+instance 1898:
+from: 95 138 3
+to: 92 138 0
+instance 2654:
+from: 91 123 4
+to: 95 123 3
+instance 1840:
+from: 89 124 5
+to: 89 124 0
+instance 1922:
+from: 88 123 3
+to: 89 123 1
+instance 1239:
+from: 89 125 0
+to: 89 125 1
+instance 1237:
+from: 89 125 1
+to: 91 125 1
+instance 1238:
+from: 89 125 3
+to: 89 124 5
+instance 723:
+from: 110 128 5
+to: 110 130 1
+instance 2617:
+from: 108 128 0
+to: 108 128 2
+instance 2613:
+from: 108 128 1
+to: 108 128 4
+instance 2612:
+from: 108 128 2
+to: 108 129 4
+instance 2616:
+from: 108 128 3
+to: 108 128 5
+instance 2604:
+from: 108 129 0
+to: 108 129 1
+instance 2608:
+from: 108 129 1
+to: 107 128 0
+instance 2602:
+from: 108 129 3
+to: 108 128 0
+instance 2615:
+from: 107 128 0
+to: 107 128 1
+instance 2611:
+from: 107 128 1
+to: 107 128 3
+instance 2432:
+from: 60 134 4
+to: 59 134 3
+instance 732:
+from: 60 134 6
+to: 58 134 0
+instance 1810:
+from: 59 134 3
+to: 59 134 5
+instance 2461:
+from: 60 133 0
+to: 60 133 3
+instance 1715:
+from: 60 136 0
+to: 59 136 1
+instance 1716:
+from: 60 136 1
+to: 59 135 1
+instance 1807:
+from: 59 135 6
+to: 60 135 3
+instance 1811:
+from: 59 135 7
+to: 58 133 0
+instance 738:
+from: 43 135 6
+to: 42 137 0
+instance 1748:
+from: 42 134 0
+to: 42 134 4
+instance 1750:
+from: 42 134 1
+to: 42 134 0
+instance 1749:
+from: 42 134 2
+to: 42 134 3
+instance 1751:
+from: 42 134 3
+to: 42 134 1
+instance 1744:
+from: 42 134 4
+to: 42 134 2
+instance 1733:
+from: 43 133 0
+to: 43 133 2
+instance 1752:
+from: 43 133 1
+to: 43 133 7
+instance 1740:
+from: 43 133 2
+to: 42 133 1
+instance 1734:
+from: 43 133 3
+to: 43 133 0
+instance 748:
+from: 74 123 2
+to: 75 124 5
+instance 2930:
+from: 74 123 6
+to: 74 123 7
+instance 3094:
+from: 77 136 4
+to: 77 136 6
+instance 3089:
+from: 77 136 6
+to: 77 136 4
+instance 3092:
+from: 76 137 0
+to: 76 137 1
+instance 3088:
+from: 76 137 1
+to: 76 137 7
+instance 3091:
+from: 76 137 2
+to: 77 137 7
+instance 823:
+from: 76 137 6
+to: 76 137 2
+instance 211:
+from: 75 138 2
+to: 74 138 3
+instance 3053:
+from: 75 138 4
+to: 75 139 0
+instance 1401:
+from: 75 138 7
+to: 76 138 1
+instance 1433:
+from: 77 137 7
+to: 77 136 1
+instance 2085:
+from: 74 138 6
+to: 75 138 2
+instance 853:
+from: 52 126 4
+to: 52 126 3
+instance 3177:
+from: 51 126 0
+to: 51 126 1
+instance 3178:
+from: 51 126 1
+to: 51 126 5
+instance 3173:
+from: 51 125 0
+to: 51 125 7
+instance 3174:
+from: 51 125 1
+to: 51 125 0
+instance 3175:
+from: 51 125 2
+to: 51 125 1
+instance 860:
+from: 52 123 2
+to: 51 125 2
+instance 885:
+from: 44 120 0
+to: 44 121 7
+instance 887:
+from: 44 120 1
+to: 44 120 7
+instance 880:
+from: 44 120 6
+to: 44 121 6
+instance 1499:
+from: 45 120 0
+to: 45 119 2
+instance 3170:
+from: 45 120 1
+to: 45 120 2
+instance 1497:
+from: 45 120 2
+to: 45 120 5
+instance 1498:
+from: 45 120 3
+to: 45 120 6
+instance 1494:
+from: 45 120 5
+to: 45 120 7
+instance 1525:
+from: 45 120 6
+to: 44 119 1
+instance 1492:
+from: 45 120 7
+to: 45 119 3
+instance 1519:
+from: 43 121 4
+to: 42 121 0
+instance 1520:
+from: 43 121 5
+to: 43 121 7
+instance 1521:
+from: 43 121 6
+to: 43 122 3
+instance 1518:
+from: 43 121 7
+to: 42 120 1
+instance 901:
+from: 64 150 0
+to: 66 152 5
+instance 1610:
+from: 64 149 4
+to: 64 151 1
+instance 965:
+from: 63 148 2
+to: 63 148 5
+instance 1677:
+from: 63 148 5
+to: 64 148 1
+instance 1648:
+from: 63 148 6
+to: 64 147 3
+instance 909:
+from: 48 154 4
+to: 48 153 4
+instance 2288:
+from: 47 154 5
+to: 47 153 1
+instance 941:
+from: 48 153 4
+to: 48 152 5
+instance 919:
+from: 50 145 4
+to: 51 143 1
+instance 924:
+from: 50 145 7
+to: 50 146 3
+instance 2410:
+from: 50 146 5
+to: 50 146 7
+instance 2315:
+from: 50 146 7
+to: 50 145 0
+instance 1034:
+from: 50 143 6
+to: 50 143 1
+instance 1006:
+from: 52 146 2
+to: 51 147 0
+instance 976:
+from: 52 146 5
+to: 51 146 4
+instance 1004:
+from: 48 146 7
+to: 48 145 0
+instance 2413:
+from: 52 144 4
+to: 52 144 1
+instance 2281:
+from: 52 144 5
+to: 52 144 4
+instance 2352:
+from: 63 146 1
+to: 63 145 6
+instance 2326:
+from: 64 146 5
+to: 64 146 0
+instance 2359:
+from: 63 145 6
+to: 63 144 0
+instance 2340:
+from: 61 146 1
+to: 61 146 5
+instance 980:
+from: 64 144 2
+to: 64 143 1
+instance 972:
+from: 52 149 0
+to: 54 148 7
+instance 1020:
+from: 52 149 6
+to: 50 148 6
+instance 1670:
+from: 52 148 7
+to: 51 150 7
+instance 2339:
+from: 51 148 7
+to: 51 148 2
+instance 1027:
+from: 48 149 6
+to: 48 149 1
+instance 1061:
+from: 56 133 6
+to: 55 133 4
+instance 2427:
+from: 55 132 0
+to: 55 132 7
+instance 2435:
+from: 55 135 4
+to: 55 135 5
+instance 2438:
+from: 55 135 5
+to: 55 135 7
+instance 2446:
+from: 56 137 0
+to: 56 137 4
+instance 2431:
+from: 56 137 2
+to: 56 136 3
+instance 1109:
+from: 40 125 4
+to: 40 124 1
+instance 1508:
+from: 42 125 0
+to: 42 125 3
+instance 1512:
+from: 42 125 2
+to: 42 126 1
+instance 1505:
+from: 42 124 4
+to: 43 125 0
+instance 1506:
+from: 42 124 5
+to: 43 125 1
+instance 1095:
+from: 43 126 2
+to: 43 126 3
+instance 1535:
+from: 42 122 0
+to: 42 122 3
+instance 2798:
+from: 114 141 4
+to: 112 141 1
+instance 1245:
+from: 92 140 2
+to: 92 144 0
+instance 1868:
+from: 94 128 0
+to: 94 128 4
+instance 1255:
+from: 94 128 1
+to: 94 126 1
+instance 2562:
+from: 97 128 6
+to: 97 128 1
+instance 2716:
+from: 95 130 6
+to: 95 130 0
+instance 2706:
+from: 96 130 6
+to: 95 130 1
+instance 2722:
+from: 104 138 0
+to: 104 138 2
+instance 2674:
+from: 102 138 4
+to: 103 138 0
+instance 2609:
+from: 104 136 7
+to: 104 135 1
+instance 1264:
+from: 105 138 7
+to: 104 139 0
+instance 2757:
+from: 103 134 0
+to: 103 136 0
+instance 1259:
+from: 100 140 0
+to: 100 143 0
+instance 2744:
+from: 89 152 6
+to: 88 152 2
+instance 2792:
+from: 95 148 7
+to: 96 151 2
+instance 2791:
+from: 99 149 6
+to: 99 149 3
+instance 1262:
+from: 108 126 3
+to: 108 126 4
+instance 1279:
+from: 107 126 3
+to: 107 126 4
+instance 1269:
+from: 112 125 6
+to: 110 126 4
+instance 2696:
+from: 114 127 7
+to: 112 128 6
+instance 1906:
+from: 87 127 4
+to: 88 128 3
+instance 1274:
+from: 87 127 7
+to: 87 126 2
+instance 2656:
+from: 89 127 2
+to: 89 127 3
+instance 1913:
+from: 88 128 0
+to: 88 129 0
+instance 2761:
+from: 88 128 3
+to: 88 128 1
+instance 2684:
+from: 87 125 1
+to: 87 125 4
+instance 2816:
+from: 87 125 4
+to: 87 125 1
+instance 1275:
+from: 104 143 4
+to: 107 143 3
+instance 1280:
+from: 99 130 5
+to: 99 130 3
+instance 1302:
+from: 76 153 0
+to: 77 152 3
+instance 1396:
+from: 76 153 1
+to: 76 153 0
+instance 1406:
+from: 74 153 0
+to: 74 153 1
+instance 1402:
+from: 74 152 4
+to: 74 153 0
+instance 1398:
+from: 74 152 5
+to: 74 153 2
+instance 1400:
+from: 74 152 6
+to: 75 152 0
+instance 826:
+from: 76 150 2
+to: 76 150 4
+instance 1980:
+from: 64 122 1
+to: 64 122 7
+instance 1363:
+from: 64 122 2
+to: 64 123 3
+instance 2906:
+from: 63 123 2
+to: 63 123 3
+instance 2910:
+from: 64 125 2
+to: 64 125 3
+instance 2914:
+from: 63 125 6
+to: 64 126 1
+instance 1425:
+from: 74 146 1
+to: 75 146 0
+instance 1421:
+from: 74 146 2
+to: 72 146 6
+instance 207:
+from: 75 146 4
+to: 75 146 6
+instance 1387:
+from: 75 146 6
+to: 75 145 7
+instance 212:
+from: 72 146 0
+to: 72 146 2
+instance 1432:
+from: 72 146 2
+to: 72 145 3
+instance 2080:
+from: 72 146 6
+to: 72 146 0
+instance 2993:
+from: 75 148 1
+to: 75 145 3
+instance 3045:
+from: 71 146 0
+to: 71 146 7
+instance 2076:
+from: 71 146 4
+to: 71 146 3
+instance 2163:
+from: 71 141 0
+to: 71 140 1
+instance 2143:
+from: 71 141 1
+to: 71 141 4
+instance 2139:
+from: 71 141 2
+to: 71 141 1
+instance 214:
+from: 72 138 0
+to: 72 138 1
+instance 2137:
+from: 72 138 1
+to: 72 138 7
+instance 1424:
+from: 72 143 5
+to: 72 143 3
+instance 1420:
+from: 72 143 7
+to: 72 143 5
+instance 226:
+from: 77 139 0
+to: 77 138 1
+instance 231:
+from: 77 139 1
+to: 76 138 3
+instance 220:
+from: 77 139 2
+to: 76 138 2
+instance 223:
+from: 77 139 3
+to: 77 138 0
+instance 1393:
+from: 77 140 5
+to: 77 139 0
+instance 824:
+from: 77 140 7
+to: 77 136 2
+instance 1459:
+from: 68 142 5
+to: 69 143 5
+instance 2140:
+from: 69 142 0
+to: 69 142 4
+instance 3148:
+from: 67 142 4
+to: 67 142 7
+instance 2144:
+from: 69 141 1
+to: 68 141 0
+instance 2135:
+from: 69 141 2
+to: 69 141 3
+instance 1484:
+from: 45 127 1
+to: 45 124 4
+instance 1483:
+from: 45 127 2
+to: 45 127 7
+instance 1485:
+from: 45 127 3
+to: 45 124 5
+instance 1473:
+from: 45 127 4
+to: 45 127 2
+instance 1474:
+from: 45 127 5
+to: 45 127 1
+instance 1475:
+from: 45 127 6
+to: 45 126 3
+instance 1482:
+from: 45 127 7
+to: 45 127 5
+instance 1541:
+from: 37 140 1
+to: 36 139 0
+instance 3275:
+from: 37 141 5
+to: 37 143 1
+instance 1545:
+from: 36 140 0
+to: 36 140 3
+instance 1544:
+from: 36 140 1
+to: 36 140 6
+instance 1543:
+from: 36 140 2
+to: 36 140 0
+instance 1546:
+from: 36 140 3
+to: 36 139 4
+instance 893:
+from: 36 140 4
+to: 37 139 1
+instance 3296:
+from: 36 140 5
+to: 35 140 7
+instance 1539:
+from: 35 140 0
+to: 35 140 6
+instance 1557:
+from: 35 140 1
+to: 35 140 0
+instance 1556:
+from: 35 140 2
+to: 36 140 4
+instance 1558:
+from: 35 140 3
+to: 35 140 1
+instance 1553:
+from: 36 139 0
+to: 36 139 2
+instance 1552:
+from: 36 139 1
+to: 36 139 5
+instance 1554:
+from: 36 139 2
+to: 36 139 1
+instance 1565:
+from: 37 138 0
+to: 37 138 3
+instance 1566:
+from: 37 138 1
+to: 37 138 0
+instance 3306:
+from: 37 138 2
+to: 37 138 4
+instance 1563:
+from: 35 138 0
+to: 35 136 0
+instance 1564:
+from: 35 138 1
+to: 35 138 3
+instance 1559:
+from: 35 138 2
+to: 35 136 1
+instance 1562:
+from: 35 138 3
+to: 35 138 1
+instance 1603:
+from: 35 138 4
+to: 35 138 6
+instance 1555:
+from: 35 138 7
+to: 35 137 0
+instance 1561:
+from: 34 138 0
+to: 35 138 2
+instance 1560:
+from: 34 138 1
+to: 34 137 5
+instance 3298:
+from: 34 138 2
+to: 34 138 6
+instance 3292:
+from: 34 138 5
+to: 34 138 2
+instance 1548:
+from: 35 137 0
+to: 35 137 2
+instance 1550:
+from: 35 137 1
+to: 35 137 5
+instance 1549:
+from: 35 137 2
+to: 35 137 4
+instance 3310:
+from: 34 137 5
+to: 34 137 1
+instance 1570:
+from: 35 136 0
+to: 35 136 2
+instance 1568:
+from: 35 136 1
+to: 35 136 3
+instance 1569:
+from: 35 136 2
+to: 35 136 4
+instance 1567:
+from: 35 136 3
+to: 35 136 5
+instance 1540:
+from: 34 140 0
+to: 36 139 6
+instance 1572:
+from: 47 140 0
+to: 47 140 3
+instance 1576:
+from: 47 139 1
+to: 47 139 4
+instance 1575:
+from: 47 139 2
+to: 47 139 7
+instance 1600:
+from: 47 139 4
+to: 47 139 2
+instance 1584:
+from: 47 139 6
+to: 47 139 1
+instance 1574:
+from: 47 139 7
+to: 47 139 6
+instance 1596:
+from: 48 139 0
+to: 48 138 0
+instance 1581:
+from: 48 139 2
+to: 48 138 4
+instance 1590:
+from: 48 139 3
+to: 48 139 0
+instance 1583:
+from: 48 138 0
+to: 48 138 1
+instance 1582:
+from: 48 138 1
+to: 48 138 2
+instance 1580:
+from: 48 138 2
+to: 48 138 5
+instance 1668:
+from: 52 141 1
+to: 56 141 0
+instance 1633:
+from: 52 141 6
+to: 54 142 1
+instance 2868:
+from: 54 141 1
+to: 54 140 3
+instance 1044:
+from: 51 142 0
+to: 51 142 3
+instance 897:
+from: 54 140 0
+to: 54 140 4
+instance 1694:
+from: 55 157 1
+to: 54 157 1
+instance 2374:
+from: 55 157 4
+to: 55 155 7
+instance 2329:
+from: 54 156 1
+to: 54 156 5
+instance 2394:
+from: 54 156 5
+to: 54 156 1
+instance 577:
+from: 54 156 6
+to: 56 155 3
+instance 1857:
+from: 87 121 0
+to: 87 121 4
+instance 2657:
+from: 88 124 6
+to: 88 124 1
+instance 1875:
+from: 82 122 0
+to: 82 122 7
+instance 1876:
+from: 82 122 1
+to: 82 122 0
+instance 1878:
+from: 82 122 6
+to: 82 122 1
+instance 1877:
+from: 82 122 7
+to: 82 122 3
+instance 1892:
+from: 82 120 0
+to: 82 120 4
+instance 1895:
+from: 82 120 1
+to: 82 120 5
+instance 1234:
+from: 83 121 2
+to: 83 121 4
+instance 2711:
+from: 88 135 3
+to: 87 135 6
+instance 1905:
+from: 86 138 4
+to: 86 138 5
+instance 1902:
+from: 86 138 5
+to: 86 138 4
+instance 2026:
+from: 60 111 0
+to: 60 111 7
+instance 2029:
+from: 60 111 4
+to: 60 111 0
+instance 2038:
+from: 60 111 5
+to: 60 112 6
+instance 2042:
+from: 60 111 7
+to: 60 113 2
+instance 2040:
+from: 61 111 0
+to: 61 113 2
+instance 2041:
+from: 61 111 1
+to: 61 113 0
+instance 2039:
+from: 61 113 0
+to: 61 113 1
+instance 2102:
+from: 69 146 0
+to: 69 146 5
+instance 2106:
+from: 69 146 5
+to: 69 148 5
+instance 752:
+from: 76 128 4
+to: 76 128 1
+instance 1932:
+from: 75 130 0
+to: 75 130 3
+instance 1314:
+from: 75 130 2
+to: 75 130 0
+instance 2239:
+from: 74 130 5
+to: 74 130 7
+instance 2241:
+from: 51 123 6
+to: 51 123 3
+instance 2415:
+from: 48 147 1
+to: 50 147 2
+instance 1024:
+from: 48 147 4
+to: 48 147 3
+instance 1019:
+from: 48 148 5
+to: 48 148 6
+instance 1026:
+from: 48 148 6
+to: 48 147 1
+instance 2670:
+from: 80 120 0
+to: 80 120 5
+instance 1887:
+from: 80 120 4
+to: 80 120 2
+instance 1886:
+from: 80 120 5
+to: 80 120 7
+instance 1884:
+from: 80 120 7
+to: 80 120 0
+instance 1888:
+from: 80 119 2
+to: 80 120 4
+instance 2678:
+from: 96 118 6
+to: 95 119 3
+instance 2767:
+from: 96 118 7
+to: 96 119 1
+instance 2680:
+from: 99 121 5
+to: 99 125 4
+instance 2707:
+from: 94 132 1
+to: 94 132 7
+instance 2833:
+from: 115 132 6
+to: 115 132 1
+instance 2720:
+from: 114 131 6
+to: 114 131 0
+instance 2784:
+from: 102 151 0
+to: 102 150 1
+instance 2804:
+from: 87 148 1
+to: 87 148 3
+instance 2735:
+from: 111 141 5
+to: 111 140 2
+instance 2737:
+from: 110 140 6
+to: 110 140 0
+instance 2802:
+from: 111 139 0
+to: 111 138 0
+instance 2777:
+from: 92 120 2
+to: 92 120 4
+instance 3151:
+from: 69 132 1
+to: 69 132 4
+instance 3165:
+from: 67 132 4
+to: 67 132 3
+instance 3166:
+from: 67 132 5
+to: 67 132 7
+instance 3236:
+from: 42 147 5
+to: 42 149 3
+instance 3239:
+from: 42 147 6
+to: 42 148 0
+instance 3246:
+from: 42 146 5
+to: 42 146 0
+instance 3244:
+from: 40 147 0
+to: 40 147 2
+instance 3243:
+from: 40 147 2
+to: 40 147 7
+instance 3250:
+from: 34 142 5
+to: 32 142 0
+instance 3268:
+from: 34 141 5
+to: 34 141 1
+instance 3252:
+from: 32 143 0
+to: 32 143 6
+instance 3270:
+from: 31 143 0
+to: 31 143 3
+instance 3277:
+from: 40 143 0
+to: 39 143 2
+instance 3255:
+from: 40 143 3
+to: 40 143 5
+instance 3259:
+from: 40 144 1
+to: 40 144 2
+instance 3261:
+from: 39 143 0
+to: 39 143 4
+instance 3273:
+from: 39 143 2
+to: 39 143 5
+instance 3267:
+from: 39 144 3
+to: 39 144 5
+instance 3302:
+from: 31 138 0
+to: 31 138 3
+instance 2450:
+from: 55 138 0
+to: 55 136 0
+instance 2434:
+from: 55 138 1
+to: 55 138 2
+instance 2436:
+from: 55 138 2
+to: 55 136 1
+instance 1208:
+from: 63 128 0
+to: 63 128 4
+instance 1199:
+from: 63 128 2
+to: 63 128 6
+instance 1197:
+from: 63 128 4
+to: 63 128 7
+instance 1211:
+from: 63 128 5
+to: 63 128 2
+instance 1198:
+from: 63 128 6
+to: 63 128 0
+instance 208:
+from: 74 150 4
+to: 74 147 5
+instance 2131:
+from: 75 150 5
+to: 74 150 0
+instance 204:
+from: 72 149 4
+to: 72 149 0
+instance 563:
+from: 52 131 0
+to: 51 131 1
+instance 1739:
+from: 39 134 4
+to: 39 134 6
+instance 1741:
+from: 39 134 6
+to: 39 134 1
+instance 1855:
+from: 84 119 1
+to: 84 119 7
+instance 1856:
+from: 84 119 2
+to: 84 119 3
+instance 1841:
+from: 84 119 3
+to: 84 119 4
+instance 1848:
+from: 84 119 4
+to: 84 119 2
+instance 1844:
+from: 84 119 7
+to: 84 119 1
+instance 1852:
+from: 83 119 4
+to: 83 119 0
+instance 1853:
+from: 83 119 5
+to: 83 119 4
+instance 1846:
+from: 86 118 6
+to: 86 118 7
+instance 1847:
+from: 86 118 7
+to: 86 118 0
+instance 2156:
+from: 77 149 0
+to: 77 149 6
+instance 2147:
+from: 77 149 1
+to: 77 149 2
+instance 2133:
+from: 77 149 2
+to: 77 149 3
+instance 2134:
+from: 77 149 3
+to: 79 149 7
+instance 1281:
+from: 87 133 1
+to: 87 133 3
+instance 1914:
+from: 87 133 3
+to: 87 133 5
+instance 2128:
+from: 71 151 1
+to: 71 151 3
+instance 2129:
+from: 71 151 2
+to: 71 151 4
+instance 2127:
+from: 71 151 3
+to: 72 151 2
+instance 1436:
+from: 72 153 0
+to: 72 153 2
+instance 1426:
+from: 72 153 2
+to: 72 153 4
+instance 1762:
+from: 42 130 0
+to: 42 130 4
+instance 1767:
+from: 42 130 1
+to: 42 130 5
+instance 1760:
+from: 42 131 4
+to: 42 131 1
+instance 1761:
+from: 42 131 6
+to: 42 131 4
+instance 1758:
+from: 43 129 2
+to: 42 129 2
+instance 2836:
+from: 84 128 2
+to: 86 128 3
+instance 1891:
+from: 84 128 3
+to: 83 127 1
+instance 943:
+from: 64 142 1
+to: 64 141 3
+instance 944:
+from: 64 142 2
+to: 64 143 3
+instance 953:
+from: 64 141 2
+to: 64 141 5
+instance 906:
+from: 64 141 3
+to: 64 140 0
+instance 554:
+from: 42 140 0
+to: 45 140 5
+instance 555:
+from: 42 140 1
+to: 42 137 2
+instance 291:
+from: 68 125 7
+to: 68 124 7
+instance 289:
+from: 68 126 2
+to: 68 125 1
+instance 1636:
+from: 58 143 6
+to: 59 141 1
+instance 727:
+from: 79 156 5
+to: 77 155 7
+instance 1305:
+from: 79 156 7
+to: 79 156 0
+instance 1601:
+from: 48 137 0
+to: 48 137 5
+instance 1599:
+from: 48 137 1
+to: 48 137 4
+instance 3076:
+from: 79 137 6
+to: 79 136 0

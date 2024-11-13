@@ -1,4 +1,5 @@
-#include <solverI.h>
+#include "solverI.h"
+#include "solverObject.h"
 #include <cassert>
 
 std::vector<bool> dep_inst;
@@ -98,6 +99,9 @@ std::vector<size_t> ISMSolver_matching_I::realizeMatching_Instance(ISMMemory &me
 
 void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, const int Lib, std::vector<int> &priority){
     dep_inst.resize(45000 * 16, false);
+    for (int i = 0; i < 45000 * 16; i++){
+        dep_inst[i] = false;
+    }
     // 编码方式SEQ：（y * 150 + x）* 16 + z，z from 0 to 15
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
     if (isLUT(Lib)){
@@ -110,7 +114,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 IndepSet indepSet;
                 int Spacechoose = 2;
                 // std::cout<<"Start find a new indepSet"<<std::endl;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 5);
                 // std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
             }
@@ -125,7 +129,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             if(!dep_inst[index]&&!InstArray[instId]->fixed&&InstArray[instId]->Lib == 19){
                 IndepSet indepSet;
                 int Spacechoose = 2;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 5);
                 set.push_back(indepSet);
             }
         }
@@ -133,7 +137,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
     return;
 }
 
-void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose){
+void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose, int maxSpace){
     int initX = index_2_x_inst(seed);
     int initY = index_2_y_inst(seed);
     int initZ = index_2_z_inst(seed);
@@ -158,7 +162,7 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
     // std::cout<<"Start addInstToIndepSet"<<std::endl;
     int SetNum = 1;
     int seq_space_num = 0;
-    int MaxSpaceNum = 5;
+    int MaxSpaceNum = maxSpace;
     for (auto &point : seq){
         int x = point.first;
         int y = point.second;
@@ -169,9 +173,9 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
         STile* tile = TileArray[index_tile];
         if (tile->type != 1) continue;
         if (isLUT(Lib)){
-            std::cout<<"Start buildLUTIndepSetPerTile"<<std::endl;
+            // std::cout<<"Start buildLUTIndepSetPerTile"<<std::endl;
             buildLUTIndepSetPerTile(indepSet, tile, Spacechoose, index_tile, SetNum);
-            std::cout<<"Finish buildLUTIndepSetPerTile"<<std::endl;
+            // std::cout<<"Finish buildLUTIndepSetPerTile"<<std::endl;
         }
         else if (Lib == 19){
             bool hasSEQinTile = false;
@@ -266,7 +270,20 @@ void ISMSolver_matching_I::buildLUTIndepSetPerTile(IndepSet &indepSet, STile *&t
     if(tile->instanceMap["LUT"].empty()){
         return;
     }
-    for (int i = 0; i < 8; i++){
+    int beg = 0, end = 8;
+    if (tile->has_fixed_bank0){
+        beg = 4;
+        end = 8;
+    }
+    if (tile->has_fixed_bank1){
+        beg = 0;
+        end = 4;
+    }
+    if (tile->has_fixed_bank0 && tile->has_fixed_bank1){
+        beg = 4;
+        end = 4;
+    }
+    for (int i = beg; i < end; i++){
         for (int j = 0; j < 2; j++){
             if (!dep_inst[tile_id * 16 + i * 2 + j]){
                 // std::cout<<"0"<<std::endl;
@@ -348,17 +365,16 @@ void ISMSolver_matching_I::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&t
         if (inst!=nullptr){
             if (!inst->fixed){
                 addSEQToIndepSet(indepSet, tile_id * 16 + min_index, false, 19);
-            }
-            for (int i = 0; i < 8; i++){
-                dep_inst[tile_id * 16 + i] = true;
+                tile->seq_choose_num_bank0[min_index]++;
+                SetNum++;
             }
         }
-    }
-    else if (maxSpace > SpaceNum){
-        addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
-        tile->seq_choose_num_bank0[min_index]++;
-        SetNum++;
-        SpaceNum++;
+        else if (maxSpace > SpaceNum){
+            addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
+            tile->seq_choose_num_bank0[min_index]++;
+            SetNum++;
+            SpaceNum++;
+        }
     }
         // }
     
@@ -430,7 +446,12 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
     int totalHPWL = 0;
     int x = index_2_x_inst(new_index);
     int y = index_2_y_inst(new_index);
-    int z = index_2_z_inst(new_index);
+    if (isLUT(Lib)){
+        int z = index_2_z_inst(new_index);
+    }
+    else {
+        int z = new_index % 16;
+    }
     std::list<int> new_instIDs = findSlotInstIds(new_index, Lib);
     std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
     bool old_isSpace;
@@ -456,8 +477,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         }
     }
     else if (Lib == 19){
-        old_isSpace = (old_instIDs.size() == 0);
-        if (old_isSpace) return 0;
+        if (old_instIDs.size()) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
 
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
@@ -468,9 +488,12 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         }
     }
     // 通过上面的操作，可以保证得到old_inst
-    int old_clockregion = ClockRegion_Info.getCRID(std::get<0>(old_inst->Location), std::get<1>(old_inst->Location));
+    int old_clockregion = ClockRegion_Info.getCRID(index_2_x_inst(old_index), index_2_y_inst(old_index));
     int new_clockregion = ClockRegion_Info.getCRID(x, y);
     for (int i = 0; i < old_inst->inpins.size(); i++){
+        if (old_inst->inpins[i]->netID == -1){
+            continue;
+        }
         SNet *net = NetArray[old_inst->inpins[i]->netID];
         if(net->clock && ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].find(net->id) != ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].end()){
             if(old_clockregion != new_clockregion){
@@ -487,7 +510,10 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         totalHPWL += tmp + tmp1;
     }
     for (int i = 0; i < old_inst->outpins.size(); i++){
-        SNet *net = NetArray[old_inst->inpins[i]->netID];
+        if (old_inst->outpins[i]->netID == -1){
+            continue;
+        }
+        SNet *net = NetArray[old_inst->outpins[i]->netID];
         if(net->clock && ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].find(net->id) != ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].end()){
             if(old_clockregion != new_clockregion){
                 if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28){

@@ -56,7 +56,7 @@ public:
 };
 
 void update_instance(IndepSet &ids);
-std::set<int> update_instance_I(IndepSet &ids);
+std::set<int> update_instance_I(IndepSet &ids, int type);
 void update_tile_I(std::set<int> changed_tiles);
 int update_net();
 
