@@ -147,16 +147,79 @@ int main(int, char* argv[])
     {
         inst.second->numMov = 0;
     }
-    num_iter = 5;
+    num_iter = 1;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "IterationI " << i << std::endl;
+        // {
+        // ISMSolver_matching_I solver;
+        // std::vector<IndepSet> indepSets;
+        // // sort priority
+        // for (auto &bkt : movBuckets)
+        //     bkt.clear();
+        // movBuckets.resize(num_iter*2);
+        // for (int i : priority)
+        // {
+        //     movBuckets[InstArray[i]->numMov].push_back(i);
+        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
+        // }
+        // auto it = priority.begin();
+        // for (const auto &bkt : movBuckets)
+        // {
+        //     std::copy(bkt.begin(), bkt.end(), it);
+        //     it += bkt.size();
+        // }
+        // solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+        // std::cout << indepSets.size() << " independent sets." << std::endl;
+        
+        // std::vector<std::thread> threads;
+        // std::mutex mtx;
+        // std::condition_variable cv;
+        // int active_threads = 0;
+        // for (auto &indepSet : indepSets)
+        // {
+        //     {
+        //         std::unique_lock<std::mutex> lock(mtx);
+        //         cv.wait(lock, [&]() { return active_threads < max_threads; });
+        //         ++active_threads;
+        //     }
+
+        //     threads.emplace_back(
+        //         [&solver, &indepSet, &mtx, &cv, &active_threads]()
+        //     {
+        //         ISMMemory mem;
+        //         indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+        //         {
+        //             std::lock_guard<std::mutex> guard(mtx);
+        //             --active_threads;
+        //         }
+        //         cv.notify_one();
+        //     }
+        //     );
+        // }
+        // for (auto &thread : threads)
+        // {
+        //     if (thread.joinable()) {
+        //         thread.join();
+        //     }
+        // }
+        // std::set<int> changed_tiles;
+        // for (auto &indepSet : indepSets)
+        // {
+        //     auto changed = update_instance_I(indepSet, 1);
+        //     changed_tiles.insert(changed.begin(), changed.end());
+        // }
+        // update_tile_I(changed_tiles);
+        // update_net();
+        // }
+
+        {
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
         // sort priority
         for (auto &bkt : movBuckets)
             bkt.clear();
-        movBuckets.resize(num_iter);
+        movBuckets.resize(num_iter*2);
         for (int i : priority)
         {
             movBuckets[InstArray[i]->numMov].push_back(i);
@@ -168,13 +231,9 @@ int main(int, char* argv[])
             std::copy(bkt.begin(), bkt.end(), it);
             it += bkt.size();
         }
-        solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+        solver.buildIndependentIndepSets(indepSets, 10, 50, 19, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
-        // for (int i = 0; i < (int)indepSets.size(); ++i)
-        // {
-        //     if (indepSets[i].inst.size() < 2) continue;
-        //     std::cout << "Independent set " << i << " has " << indepSets[i].inst.size() << " instances." << std::endl;
-        // }
+
         std::vector<std::thread> threads;
         std::mutex mtx;
         std::condition_variable cv;
@@ -191,7 +250,7 @@ int main(int, char* argv[])
                 [&solver, &indepSet, &mtx, &cv, &active_threads]()
             {
                 ISMMemory mem;
-                indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+                indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 19);
                 {
                     std::lock_guard<std::mutex> guard(mtx);
                     --active_threads;
@@ -209,11 +268,12 @@ int main(int, char* argv[])
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
-            auto changed = update_instance_I(indepSet, 1);
+            auto changed = update_instance_I(indepSet, 2);
             changed_tiles.insert(changed.begin(), changed.end());
         }
         update_tile_I(changed_tiles);
         update_net();
+        }
     }
     std::cout << "Instance ISM finish." << std::endl;
 

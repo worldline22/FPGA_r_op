@@ -822,6 +822,7 @@ int update_net()
     int totalHPWL = 0;
     for (auto netpair : NetArray)
     {
+        if (netpair.first == -1) continue;
         auto netp = netpair.second;
         netp->BBox_L = std::numeric_limits<int>::max();
         netp->BBox_R = -1;
@@ -908,7 +909,8 @@ std::set<int> update_instance_I(IndepSet &ids, int type)
         }
         else if (type == 2)
         {
-            inst_from = *(tile_from.instanceMap["SEQ"][detail_from].current_InstIDs.begin());
+            std::list<int>& from_inst = tile_from.instanceMap["SEQ"][detail_from].current_InstIDs;
+            if (from_inst.size() != 0) inst_from = *(from_inst.begin());
         }
 
         int tileID_to = siteID_to / 16;
@@ -949,8 +951,11 @@ std::set<int> update_instance_I(IndepSet &ids, int type)
         {
             if (inst_from != -1)
             {
+                // std::cout << "instance " << inst_from << ":\n";
+                // std::cout << "from: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
                 InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to);
                 InstArray[inst_from]->numMov++;
+                // std::cout << "to: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
             }
             *(tile_to->instanceMap["SEQ"][detail_to].current_InstIDs.begin()) = inst_from;
         }
