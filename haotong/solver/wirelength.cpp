@@ -99,6 +99,48 @@ int calculateInstanceWirelength(const SInstance& instance) {
     return totalWirelength;
 }
 
-int caculateInstanceWirelengthNew(const SInstance& instance, const ){
+int calculateWirelengthIncrease(const SInstance& instance_old, std::tuple<int, int, int> newLocation){
+    std::vector<int> net_IDs;
+    std::vector<int> pin_IDs;
+    std::vector<SNet*> nets_old, nets_new;
 
+    SInstance instance_new{instance_old};
+    instance_new.Location = newLocation;
+
+    for (auto* inpin : instance_new.inpins) {
+        inpin->instanceOwner = &instance_new;
+    }
+
+    for (auto* outpin : instance_new.outpins) {
+        outpin->instanceOwner = &instance_new;
+    }
+
+    for (const auto* inpin : instance_old.inpins) {
+        if (inpin->netID == 0) {
+            continue;
+        }
+        nets_old.push_back(NetArray[inpin->netID]);
+        SNet net_new{*NetArray[inpin->netID]};
+        for (auto* outpin : net_new.outpins) {
+            outpin->instanceOwner = &instance_new;
+        }
+        nets_new.push_back(&net_new);
+    }
+
+    for (const auto* outpin : instance_old.outpins) {
+        if (outpin->netID == 0) {
+            continue;
+        }
+        nets_old.push_back(NetArray[outpin->netID]);
+        SNet net_new{*NetArray[outpin->netID]};
+        net_new.inpin->instanceOwner = &instance_new;
+        nets_new.push_back(&net_new);
+    }
+        
+    int old_wirelength{}, new_wirelength{};
+    for (int i = 0; i < nets_old.size(); i++) {
+        old_wirelength += calculateWirelength(*nets_old[i]);
+        new_wirelength += calculateWirelength(*nets_new[i]);
+    }
+    return new_wirelength - old_wirelength;
 }
