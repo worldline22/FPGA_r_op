@@ -115,7 +115,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 IndepSet indepSet;
                 int Spacechoose = 2;
                 // std::cout<<"Start find a new indepSet"<<std::endl;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 5);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 50);
                 // std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
             }
@@ -130,7 +130,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             if(!dep_inst[index]&&!InstArray[instId]->fixed&&InstArray[instId]->Lib == 19){
                 IndepSet indepSet;
                 int Spacechoose = 2;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 5);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 50);
                 set.push_back(indepSet);
             }
         }

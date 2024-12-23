@@ -1,12 +1,14 @@
 #include "solverObject.h"
 #include <cassert>
 #include <fstream>
+#include <cmath>
 
 std::map<int, SInstance*> InstArray;
 std::map<int, SNet*> NetArray;
 std::map<int, SPin*> PinArray;
 std::vector<STile*> TileArray; 
 SClockRegion ClockRegion_Info;
+std::vector<Instance_Force_Pack> ForceArray;
 
 extern int xy_2_index(int x, int y)
 {
@@ -598,4 +600,81 @@ void file_output(std::string filename)
         out << std::endl;
     }
     
+}
+
+void get_force()
+{
+    for (auto instpiece : ForceArray)
+    {
+        SInstance* instP = InstArray[instpiece.id];
+        if (!(instP->Lib == 19 || (instP->Lib >= 9 && instP->Lib <= 15))) continue;
+        int instID = instpiece.id;
+        assert(instID == instP->id);
+        ForceArray[instID].F_stay = 0;
+        ForceArray[instID].F_leave_x = 0;
+        ForceArray[instID].F_leave_y = 0;
+
+        int xd = std::get<0>(instP->Location);
+        int yd = std::get<1>(instP->Location);
+        for (auto inpinp : instP->inpins)
+        {
+            if (inpinp->netID == -1) continue;
+            SNet* inNet = NetArray[inpinp->netID];
+            if (inNet->clock) {
+                assert(inpinp->prop == PinProp::PIN_PROP_CLOCK);
+            }
+            if (inpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
+            float fmag = 1;
+            if (inpinp->timingCritical) fmag = 2;
+            // get instance's parents
+            
+            SInstance* parent = inNet->inpin->instanceOwner;
+            int xi = std::get<0>(parent->Location);
+            int yi = std::get<1>(parent->Location); 
+            int dx = xi - xd;
+            int dy = yi - yd;
+            if (dx == 0 && dy == 0) {
+                ForceArray[instID].F_stay += fmag;
+            }
+            else {
+                float dist = sqrt(dx * dx + dy * dy);
+                float fx = fmag * dx / dist;
+                float fy = fmag * dy / dist;
+                ForceArray[instID].F_leave_x += fx;
+                ForceArray[instID].F_leave_y += fy;
+            }
+        }
+        for (auto outpinp : instP->outpins)
+        {
+            if (outpinp->netID == -1) continue;
+            SNet* outNet = NetArray[outpinp->netID];
+            if (outNet->clock) {
+                assert(outpinp->prop == PinProp::PIN_PROP_CLOCK);
+            }
+            if (outpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
+            for (auto outpin : outNet->outpins)
+            {
+                SInstance* sink = outpin->instanceOwner;
+                int xi = std::get<0>(sink->Location);
+                int yi = std::get<1>(sink->Location);
+                int dx = xi - xd;
+                int dy = yi - yd;
+                float fmag = 1;
+                if (outpinp->timingCritical) fmag = 2;
+                if (dx == 0 && dy == 0) {
+                    ForceArray[instID].F_stay += fmag;
+                }
+                else {
+                    float dist = sqrt(dx * dx + dy * dy);
+                    float fx = fmag * dx / dist;
+                    float fy = fmag * dy / dist;
+                    ForceArray[instID].F_leave_x += fx;
+                    ForceArray[instID].F_leave_y += fy;
+                }
+            }
+        }
+        float F_leave = sqrt(ForceArray[instID].F_leave_x * ForceArray[instID].F_leave_x + ForceArray[instID].F_leave_y * ForceArray[instID].F_leave_y);
+        if (F_leave < ForceArray[instID].F_stay) ForceArray[instID].F = 0;
+        else ForceArray[instID].F = F_leave - ForceArray[instID].F_stay;
+    }
 }

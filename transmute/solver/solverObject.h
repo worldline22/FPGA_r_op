@@ -127,6 +127,16 @@ struct SInstance
     int numMov = 0;
 };
 
+struct Instance_Force_Pack
+{
+    int id;
+    float F_leave_x, F_leave_y;
+    float F_stay;
+    float F;
+};
+
+extern std::vector<Instance_Force_Pack> ForceArray;
+
 struct SNet
 {
     int id;
@@ -192,3 +202,4 @@ void copy_instances();
 void copy_nets();
 void connection_setup();
 void file_output(std::string filename);
+void get_force();

@@ -57,6 +57,13 @@ int main(int, char* argv[])
     //     }
     // }
     // update_tile_I(press_test);
+    ForceArray.resize(InstArray.size());
+    for (int i = 0; i < int(InstArray.size()); ++i)
+    {
+        ForceArray[i].id = i;
+        ForceArray[i].F = 0;
+    }
+    get_force();
 
     // solve start
     std::vector<int> priority;
@@ -90,6 +97,7 @@ int main(int, char* argv[])
             std::copy(bkt.begin(), bkt.end(), it);
             it += bkt.size();
         }
+        
         solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
 
@@ -142,7 +150,8 @@ int main(int, char* argv[])
     }
     std::cout << "Bank ISM finish." << std::endl;
 
-    
+    priority.clear();
+    priority.resize(InstArray.size());
     for (auto &inst : InstArray)
     {
         inst.second->numMov = 0;
@@ -155,20 +164,25 @@ int main(int, char* argv[])
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
         // sort priority
-        for (auto &bkt : movBuckets)
-            bkt.clear();
-        movBuckets.resize(100);
-        for (int i : priority)
+        // for (auto &bkt : movBuckets)
+        //     bkt.clear();
+        // movBuckets.resize(100);
+        // for (int i : priority)
+        // {
+        //     if (InstArray[i]->numMov>30) std::cout << InstArray[i]->numMov << "_______________________________________________________" << i << std::endl;
+        //     movBuckets[InstArray[i]->numMov].push_back(i);
+        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
+        // }
+        // auto it = priority.begin();
+        // for (const auto &bkt : movBuckets)
+        // {
+        //     std::copy(bkt.begin(), bkt.end(), it);
+        //     it += bkt.size();
+        // }
+        get_force();
+        for (int i = 0; i < int(ForceArray.size()); ++i)
         {
-            if (InstArray[i]->numMov>30) std::cout << InstArray[i]->numMov << "_______________________________________________________" << i << std::endl;
-            movBuckets[InstArray[i]->numMov].push_back(i);
-            // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        }
-        auto it = priority.begin();
-        for (const auto &bkt : movBuckets)
-        {
-            std::copy(bkt.begin(), bkt.end(), it);
-            it += bkt.size();
+            priority[i] = ForceArray[i].id;
         }
         solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
