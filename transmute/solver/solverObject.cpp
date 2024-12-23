@@ -258,6 +258,7 @@ void copy_instances()
                     // process related to netsConneted and pin_in_nets, control set
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
+                    // 需要构建新的tile的对应关系
                     auto tile_ptr = TileArray[tileindex];
                     if (!instance->bank)
                     {
@@ -373,6 +374,7 @@ void copy_instances()
                     // process related to netsConneted and pin_in_nets
                     int findindex = 0;
                     int tileindex = xy_2_index(std::get<0>(instance->Location), std::get<1>(instance->Location));
+                    // 这里关于Tile的信息需要更新，可能是一个产生bug的地方
                     auto tile_ptr = TileArray[tileindex];
                     if (!instance->bank)
                     {

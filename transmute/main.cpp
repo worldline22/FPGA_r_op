@@ -147,71 +147,71 @@ int main(int, char* argv[])
     {
         inst.second->numMov = 0;
     }
-    num_iter = 1;
+    num_iter = 5;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "IterationI " << i << std::endl;
-        // {
-        // ISMSolver_matching_I solver;
-        // std::vector<IndepSet> indepSets;
-        // // sort priority
-        // for (auto &bkt : movBuckets)
-        //     bkt.clear();
-        // movBuckets.resize(num_iter*2);
-        // for (int i : priority)
-        // {
-        //     movBuckets[InstArray[i]->numMov].push_back(i);
-        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        // }
-        // auto it = priority.begin();
-        // for (const auto &bkt : movBuckets)
-        // {
-        //     std::copy(bkt.begin(), bkt.end(), it);
-        //     it += bkt.size();
-        // }
-        // solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
-        // std::cout << indepSets.size() << " independent sets." << std::endl;
+        {
+        ISMSolver_matching_I solver;
+        std::vector<IndepSet> indepSets;
+        // sort priority
+        for (auto &bkt : movBuckets)
+            bkt.clear();
+        movBuckets.resize(num_iter*2);
+        for (int i : priority)
+        {
+            movBuckets[InstArray[i]->numMov].push_back(i);
+            // if(InstArray[i]->numMov>1)std::cout<<"mark";
+        }
+        auto it = priority.begin();
+        for (const auto &bkt : movBuckets)
+        {
+            std::copy(bkt.begin(), bkt.end(), it);
+            it += bkt.size();
+        }
+        solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+        std::cout << indepSets.size() << " independent sets." << std::endl;
         
-        // std::vector<std::thread> threads;
-        // std::mutex mtx;
-        // std::condition_variable cv;
-        // int active_threads = 0;
-        // for (auto &indepSet : indepSets)
-        // {
-        //     {
-        //         std::unique_lock<std::mutex> lock(mtx);
-        //         cv.wait(lock, [&]() { return active_threads < max_threads; });
-        //         ++active_threads;
-        //     }
+        std::vector<std::thread> threads;
+        std::mutex mtx;
+        std::condition_variable cv;
+        int active_threads = 0;
+        for (auto &indepSet : indepSets)
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [&]() { return active_threads < max_threads; });
+                ++active_threads;
+            }
 
-        //     threads.emplace_back(
-        //         [&solver, &indepSet, &mtx, &cv, &active_threads]()
-        //     {
-        //         ISMMemory mem;
-        //         indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-        //         {
-        //             std::lock_guard<std::mutex> guard(mtx);
-        //             --active_threads;
-        //         }
-        //         cv.notify_one();
-        //     }
-        //     );
-        // }
-        // for (auto &thread : threads)
-        // {
-        //     if (thread.joinable()) {
-        //         thread.join();
-        //     }
-        // }
-        // std::set<int> changed_tiles;
-        // for (auto &indepSet : indepSets)
-        // {
-        //     auto changed = update_instance_I(indepSet, 1);
-        //     changed_tiles.insert(changed.begin(), changed.end());
-        // }
-        // update_tile_I(changed_tiles);
-        // update_net();
-        // }
+            threads.emplace_back(
+                [&solver, &indepSet, &mtx, &cv, &active_threads]()
+            {
+                ISMMemory mem;
+                indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+                {
+                    std::lock_guard<std::mutex> guard(mtx);
+                    --active_threads;
+                }
+                cv.notify_one();
+            }
+            );
+        }
+        for (auto &thread : threads)
+        {
+            if (thread.joinable()) {
+                thread.join();
+            }
+        }
+        std::set<int> changed_tiles;
+        for (auto &indepSet : indepSets)
+        {
+            auto changed = update_instance_I(indepSet, 1);
+            changed_tiles.insert(changed.begin(), changed.end());
+        }
+        update_tile_I(changed_tiles);
+        update_net();
+        }
 
         {
         ISMSolver_matching_I solver;
@@ -275,7 +275,147 @@ int main(int, char* argv[])
         update_net();
         }
     }
-    std::cout << "Instance ISM finish." << std::endl;
+    std::cout << "Instance SEQ ISM finish." << std::endl;
+
+    // after instanceISM:
+    // for, update_instance_I
+    // update_tiles_I
+    // update_net
+
+    // for (auto &inst : InstArray)
+    // {
+    //     inst.second->numMov = 0;
+    // }
+    // num_iter = 20;
+    // for (int i = 0; i < num_iter; ++i)
+    // {
+    //     std::cout<< "test" << std::endl;
+    //     std::cout << "IterationI " << i << std::endl;
+    //     {
+    //     ISMSolver_matching_I solver;
+    //     std::vector<IndepSet> indepSets;
+    //     // sort priority
+    //     for (auto &bkt : movBuckets)
+    //         bkt.clear();
+    //     movBuckets.resize(num_iter*2);
+    //     for (int i : priority)
+    //     {
+    //         movBuckets[InstArray[i]->numMov].push_back(i);
+    //         // if(InstArray[i]->numMov>1)std::cout<<"mark";
+    //     }
+    //     auto it = priority.begin();
+    //     for (const auto &bkt : movBuckets)
+    //     {
+    //         std::copy(bkt.begin(), bkt.end(), it);
+    //         it += bkt.size();
+    //     }
+    //     solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+    //     std::cout << indepSets.size() << " independent sets." << std::endl;
+        
+    //     std::vector<std::thread> threads;
+    //     std::mutex mtx;
+    //     std::condition_variable cv;
+    //     int active_threads = 0;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         {
+    //             std::unique_lock<std::mutex> lock(mtx);
+    //             cv.wait(lock, [&]() { return active_threads < max_threads; });
+    //             ++active_threads;
+    //         }
+
+    //         threads.emplace_back(
+    //             [&solver, &indepSet, &mtx, &cv, &active_threads]()
+    //         {
+    //             ISMMemory mem;
+    //             indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+    //             {
+    //                 std::lock_guard<std::mutex> guard(mtx);
+    //                 --active_threads;
+    //             }
+    //             cv.notify_one();
+    //         }
+    //         );
+    //     }
+    //     for (auto &thread : threads)
+    //     {
+    //         if (thread.joinable()) {
+    //             thread.join();
+    //         }
+    //     }
+    //     std::set<int> changed_tiles;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         auto changed = update_instance_I(indepSet, 1);
+    //         changed_tiles.insert(changed.begin(), changed.end());
+    //     }
+    //     update_tile_I(changed_tiles);
+    //     update_net();
+    //     }
+
+    //     {
+    //     ISMSolver_matching_I solver;
+    //     std::vector<IndepSet> indepSets;
+    //     // sort priority
+    //     for (auto &bkt : movBuckets)
+    //         bkt.clear();
+    //     movBuckets.resize(num_iter*2);
+    //     for (int i : priority)
+    //     {
+    //         movBuckets[InstArray[i]->numMov].push_back(i);
+    //         // if(InstArray[i]->numMov>1)std::cout<<"mark";
+    //     }
+    //     auto it = priority.begin();
+    //     for (const auto &bkt : movBuckets)
+    //     {
+    //         std::copy(bkt.begin(), bkt.end(), it);
+    //         it += bkt.size();
+    //     }
+    //     solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+    //     std::cout << indepSets.size() << " independent sets." << std::endl;
+
+    //     std::vector<std::thread> threads;
+    //     std::mutex mtx;
+    //     std::condition_variable cv;
+    //     int active_threads = 0;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         {
+    //             std::unique_lock<std::mutex> lock(mtx);
+    //             cv.wait(lock, [&]() { return active_threads < max_threads; });
+    //             ++active_threads;
+    //         }
+
+    //         threads.emplace_back(
+    //             [&solver, &indepSet, &mtx, &cv, &active_threads]()
+    //         {
+    //             ISMMemory mem;
+    //             indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+    //             {
+    //                 std::lock_guard<std::mutex> guard(mtx);
+    //                 --active_threads;
+    //             }
+    //             cv.notify_one();
+    //         }
+    //         );
+    //     }
+    //     for (auto &thread : threads)
+    //     {
+    //         if (thread.joinable()) {
+    //             thread.join();
+    //         }
+    //     }
+    //     std::set<int> changed_tiles;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         auto changed = update_instance_I(indepSet, 1);
+    //         changed_tiles.insert(changed.begin(), changed.end());
+    //     }
+    //     update_tile_I(changed_tiles);
+    //     update_net();
+    //     }
+    // }
+    // std::cout << "Instance LUT ISM finish." << std::endl;
 
     // after instanceISM:
     // for, update_instance_I
@@ -286,3 +426,5 @@ int main(int, char* argv[])
 
     return 0;
 }
+
+// 现在有个大大大大的问题，就是为什么inst_0的位置总是不对，很器官。

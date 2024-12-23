@@ -27,6 +27,7 @@ extern int index_2_z_inst(int index);
 struct SSlot {
     std::list<int> baseline_InstIDs;
     std::list<int> current_InstIDs;
+    int new_InstID; // special for SEQ
 };
 
 struct STile

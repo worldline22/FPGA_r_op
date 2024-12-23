@@ -248,6 +248,60 @@ void ISMSolver_matching_I::addSEQToIndepSet(IndepSet &indepSet, const int index,
         }
     }
     STile* tile = TileArray[xy_2_index(x, y)];
+    // Update wrong!!!!!!
+    if (x == 40 && y == 125){
+        std::cout << "mark" << std::endl;
+        std::cout << "The structure of tile is " << std::endl;
+        // std::cout << "The seq_choose_num_bank0 is " << std::endl;
+        // for (int i = 0; i < 16; i++){
+        //     std::cout << tile->seq_choose_num_bank0[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // std::cout << "The seq_choose_num_bank1 is " << std::endl;
+        // for (int i = 0; i < 8; i++){
+        //     std::cout << tile->seq_choose_num_bank1[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // for (int i = 0; i < 16; i++){
+        //     std::cout << dep_inst[xy_2_index(x, y) * 16 + i] << " ";
+        // }
+        // std::cout << std::endl;
+        std::cout << "The instanceMap is " << std::endl;
+        for (auto &inst : tile->instanceMap["SEQ"]){
+            if (inst.current_InstIDs.empty()){
+                continue;
+            }
+            std::cout << "the ID is: "<<*inst.current_InstIDs.begin() << " the size is: " << inst.current_InstIDs.size() << " ; ";
+        }
+        std::cout << std::endl;
+        std::cout << "The current instance is " << std::endl;
+        for (auto &inst : tile->instanceMap["SEQ"]){
+            for (auto &instId : inst.current_InstIDs){
+                std::cout << instId << " ";
+            }
+        }
+        std::cout << std::endl;
+        std::cout << "The CE_bank0 is " << std::endl;
+        for (auto &inst : tile->CE_bank0){
+            std::cout << inst << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "The CE_bank1 is " << std::endl;
+        for (auto &inst : tile->CE_bank1){
+            std::cout << inst << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "The RESET_bank0 is " << std::endl;
+        for (auto &inst : tile->RESET_bank0){
+            std::cout << inst << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "The RESET_bank1 is " << std::endl;
+        for (auto &inst : tile->RESET_bank1){
+            std::cout << inst << " ";
+        }
+        std::cout << std::endl;
+    }
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
     if(Inst == nullptr){    //判断是不是空的
@@ -370,7 +424,7 @@ void ISMSolver_matching_I::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&t
                 SetNum++;
             }
         }
-        else if (maxSpace > SpaceNum){
+        else if (maxSpace > SpaceNum){  //空的不能选太多
             addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
             tile->seq_choose_num_bank0[min_index]++;
             SetNum++;
@@ -441,7 +495,7 @@ void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<i
 }
 
 int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int new_index, const int Lib){
-    if (old_index == new_index){
+    if (old_index == new_index){ // 这一步会不会忽略一些应该为无穷的情况？
         return 0;
     }
     int totalHPWL = 0;
@@ -480,7 +534,9 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
     else if (Lib == 19){
         if (!old_instIDs.size()) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
-
+        // if (*old_instIDs.begin() == 707136){
+        //     std::cout<<"This is the key debug point"<<std::endl;
+        // }
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
         STile* tile_new = TileArray[xy_2_index(x, y)];
 
@@ -569,6 +625,9 @@ std::list<int> ISMSolver_matching_I::findSlotInstIds(int index, const int Lib){
     else {
         z = index % 16;
     }
+    // if (x == 92 && y == 294 && !isLUT(Lib)){
+    //     std::cout<<"This is the key debug point"<<std::endl;
+    // }
     int tile_index = xy_2_index(x, y);
     return isLUT(Lib) ? TileArray[tile_index]->instanceMap["LUT"][z].current_InstIDs : TileArray[tile_index]->instanceMap["SEQ"][z].current_InstIDs;
 }
@@ -597,9 +656,10 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
         if (old_inst->inpins[i]->netID == -1){
             continue;
         }
-        if (old_inst->inpins[i]->netID == 5760 || old_inst->inpins[i]->netID == 5761)
-            std::cout << "debug";
+        // if (old_inst->inpins[i]->netID == 5760 || old_inst->inpins[i]->netID == 5761)
+        //     std::cout << "debug";
         SNet *net = NetArray[old_inst->inpins[i]->netID];
+        
         if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CE){
             old_inst_ce.insert(net->id);
         }
@@ -636,6 +696,9 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
         }
         if (new_tile->RESET_bank0.size() == 1){
             if (*new_tile->RESET_bank0.begin() != *old_inst_rs.begin()){ //没找到，超过1的要求
+                if (old_inst_rs.size() > 1){
+                    std::cout<<"This is the key debug point"<<std::endl;
+                }
                 return false;
             }
         }
