@@ -1,5 +1,6 @@
 #include "solverI.h"
 #include "solverObject.h"
+#include "wirelength.h"
 #include <cassert>
 
 std::vector<bool> dep_inst;
@@ -488,10 +489,64 @@ void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<i
         int oldInst = set[i];
         for (int j = 0; j < set.size(); j++){
             int newInst = set[j];
-            mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
+            // mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
+            mem.costMtx[i][j] = instanceWLdifference(oldInst, newInst, Lib);
         }
     }
     return;
+}
+
+int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int new_index, const int Lib){
+    if (old_index == new_index) return 0;
+    int x = index_2_x_inst(new_index);
+    int y = index_2_y_inst(new_index);
+    int z;
+    if (isLUT(Lib)){
+        z = index_2_z_inst(new_index);
+    }
+    else {
+        z = new_index % 16;
+    }
+    std::list<int> new_instIDs = findSlotInstIds(new_index, Lib);
+    std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
+    bool old_isSpace;
+    SInstance* old_inst;
+    if (isLUT(Lib)){
+        old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
+        if (old_isSpace) return 0;
+        old_inst = old_index % 2 == 0 ? InstArray[*old_instIDs.begin()] : InstArray[*old_instIDs.rbegin()];
+        if (new_instIDs.size() == 1){
+            if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
+                if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
+                    return std::numeric_limits<int>::max();
+                }
+            }
+            // 如果本身就是一个LUT，size==1表示他的另一个位置是space，这个site不存在限制条件
+        }
+        if (new_instIDs.size() == 2){
+            // 找出另外一个LUT，看看是不是不满足条件
+            int another_Lib = new_index % 2 == 0 ? InstArray[*new_instIDs.rbegin()] -> Lib : InstArray[*new_instIDs.begin()] -> Lib;    //找出另一个LUT的Lib
+            if ((old_inst -> Lib + another_Lib) > 22){
+                return std::numeric_limits<int>::max();
+            }
+        }
+    }
+    else if (Lib == 19){
+        if (!old_instIDs.size()) return 0;
+        old_inst = InstArray[*old_instIDs.begin()];
+        // if (*old_instIDs.begin() == 707136){
+        //     std::cout<<"This is the key debug point"<<std::endl;
+        // }
+        bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        STile* tile_new = TileArray[xy_2_index(x, y)];
+
+        if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
+    }
+    SInstance old_instance_defined_for_direct_quote = *old_inst;
+    std::tuple<int, int, int> newLoc = std::make_tuple(x, y, z);
+    return calculateWirelengthIncrease(old_instance_defined_for_direct_quote, newLoc);
 }
 
 int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int new_index, const int Lib){

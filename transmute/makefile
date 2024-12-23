@@ -1,6 +1,6 @@
-SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp
+SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp rsmt.cpp
 SRC = $(addprefix checker_legacy/, $(SRC_FILES))
-SRC += solver/solverObject.cpp solver/solver.cpp solver/solverI.cpp
+SRC += solver/solverObject.cpp solver/solver.cpp solver/solverI.cpp solver/wirelength.cpp
 SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
 

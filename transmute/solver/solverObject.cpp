@@ -521,6 +521,7 @@ void connection_setup()
 {
     for (auto netP : NetArray)
     {
+        if (netP.second->clock) continue;
         std::vector<int> pinIDs{};
         pinIDs.push_back(netP.second->inpin->pinID);
         for (auto pin : netP.second->outpins)
@@ -528,12 +529,8 @@ void connection_setup()
             pinIDs.push_back(pin->pinID);
         }
         int size = pinIDs.size();
-            // std::cout << netP.first << " " << size << std::endl;
-            // std::cout << netP.first << " " << netP.second->BBox_L << " " << netP.second->BBox_R << " " << netP.second->BBox_D << " " << netP.second->BBox_U << std::endl;
-        if (size > 15) // parameter: to many pins, not consider
-        {
-            continue;
-        }
+        if (size > 15) continue;
+
         for (int i = 0; i < size; ++i)
         {
             for (int j = i + 1; j < size; ++j)

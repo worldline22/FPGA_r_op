@@ -147,7 +147,7 @@ int main(int, char* argv[])
     {
         inst.second->numMov = 0;
     }
-    num_iter = 5;
+    num_iter = 25;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "IterationI " << i << std::endl;
@@ -157,9 +157,10 @@ int main(int, char* argv[])
         // sort priority
         for (auto &bkt : movBuckets)
             bkt.clear();
-        movBuckets.resize(num_iter*2);
+        movBuckets.resize(100);
         for (int i : priority)
         {
+            if (InstArray[i]->numMov>30) std::cout << InstArray[i]->numMov << "_______________________________________________________" << i << std::endl;
             movBuckets[InstArray[i]->numMov].push_back(i);
             // if(InstArray[i]->numMov>1)std::cout<<"mark";
         }
@@ -219,7 +220,7 @@ int main(int, char* argv[])
         // sort priority
         for (auto &bkt : movBuckets)
             bkt.clear();
-        movBuckets.resize(num_iter*2);
+        movBuckets.resize(100);
         for (int i : priority)
         {
             movBuckets[InstArray[i]->numMov].push_back(i);
