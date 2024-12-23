@@ -1,13 +1,34 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "C/C++ Runner: Debug Session",
-      "type": "lldb",
-      "request": "launch",
-      "args": [],
-      "cwd": "/Users/worldline22/Desktop/FPGA_r_op/ISM_solver",
-      "program": "/Users/worldline22/Desktop/FPGA_r_op/ISM_solver/build/Debug/outDebug"
-    }
-  ]
-}
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++ Debug with Makefile",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/haotong_zhang/Project/FPGA_r_op/haotong_copy/build",
+            "args": [ 
+                "../benchmark/case_1.nodes",
+                "../benchmark/case_1.nets",
+                "../benchmark/case_1.timing",
+                "../../public/Test/MRes/case_1.nodes.out"
+            ],
+            "stopAtEntry": false,
+            "cwd": "/home/haotong_zhang/Project/FPGA_r_op/haotong",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "sourceFileMap": {
+                "/checker_legacy/": "/home/haotong_zhang/Project/FPGA_r_op/haotong_copy/checker_legacy",
+                "/solver/": "/home/haotong_zhang/Project/FPGA_r_op/haotong_copy/solver"
+            }
+        }
+    ]
+}  

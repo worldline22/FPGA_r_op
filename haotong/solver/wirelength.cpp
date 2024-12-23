@@ -51,10 +51,12 @@ int calculateWirelength(const SNet& net) {
        
         mergedPinLocs.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
     }
+    std::cout << "Pin inserted" << std::endl;
 
     for (auto loc : mergedPinLocs) {
         cirtWirelength += std::abs(std::get<0>(loc) - std::get<0>(driverLoc)) +
                     std::abs(std::get<1>(loc) - std::get<1>(driverLoc));
+        std::cout << "Critical wirelength: " << cirtWirelength << std::endl;
     }
 
 
@@ -72,4 +74,31 @@ int calculateWirelength(const SNet& net) {
     }  
     
     return cirtWirelength + nonCritWirelength;
+}
+
+int calculateInstanceWirelength(const SInstance& instance) {
+    int totalWirelength = 0;
+    std::vector<int> net_IDs;
+    for (const auto* inpin : instance.inpins) {
+        if (inpin->netID == 0) {
+            continue;
+        }
+        net_IDs.push_back(inpin->netID);
+    }
+
+    for (const auto* outpin : instance.outpins) {
+        if (outpin->netID == 0) {
+            continue;
+        }
+        net_IDs.push_back(outpin->netID);
+    }
+
+    for (int netID : net_IDs) {
+        totalWirelength += calculateWirelength(*NetArray[netID]);
+    }
+    return totalWirelength;
+}
+
+int caculateInstanceWirelengthNew(const SInstance& instance, const ){
+
 }

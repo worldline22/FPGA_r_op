@@ -2,4 +2,6 @@
 #include "global.h"
 #include "rsmt.h"
 
-int calculateWirelength(const SNet& net)
+int calculateWirelength(const SNet& net);
+
+int calculateInstanceWirelength(const SInstance& instance);

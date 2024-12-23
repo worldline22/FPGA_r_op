@@ -1,6 +1,6 @@
 SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp
 SRC = $(addprefix checker_legacy/, $(SRC_FILES))
-SRC += solver/solverObject.cpp solver/solver.cpp
+SRC += solver/solverObject.cpp solver/solver.cpp solver/solverI.cpp
 SRC += solver/global.cpp solver/rsmt.cpp solver/wirelength.cpp
 SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
@@ -10,10 +10,10 @@ LEMON = -I/usr/local/include -L/usr/local/lib -lemon
 PTHREAD = -lpthread  # add pthread
 
 default: $(OBJ)
-	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) -o build $(OBJ) $(LEMON) $(PTHREAD)
+	g++ -Wall -Wextra -std=c++20 -g $(INCLUDE_PATHS) -o build $(OBJ) $(LEMON) $(PTHREAD)
 
 %.o: %.cpp
-	g++ -Wall -Wextra -std=c++11 -g $(INCLUDE_PATHS) $(LEMON) -c $< -o $@
+	g++ -Wall -Wextra -std=c++20 -g $(INCLUDE_PATHS) $(LEMON) -c $< -o $@
 
 clean:
 	rm -f build.exe $(OBJ)
