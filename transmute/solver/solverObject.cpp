@@ -529,7 +529,7 @@ void connection_setup()
             pinIDs.push_back(pin->pinID);
         }
         int size = pinIDs.size();
-        if (size > 15) continue;
+        // if (size > 15) continue;
 
         for (int i = 0; i < size; ++i)
         {

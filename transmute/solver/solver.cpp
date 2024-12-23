@@ -661,7 +661,7 @@ void update_instance(IndepSet &ids)
                         {
                             if (inpin->netID == -1) continue;
                             // 加入一个新的更新ce, clk, rst的操作
-                            SNet* net = NetArray[inpin->netID];
+                            // SNet* net = NetArray[inpin->netID];
                             if (inpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(inpin->netID);
                             }
@@ -675,7 +675,7 @@ void update_instance(IndepSet &ids)
                         for (auto outpin : inst->outpins)
                         {
                             if (outpin->netID == -1) continue;
-                            SNet* net = NetArray[outpin->netID];
+                            // SNet* net = NetArray[outpin->netID];
                             if (outpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(outpin->netID);
                             }
@@ -738,7 +738,7 @@ void update_instance(IndepSet &ids)
                         {
                             if (inpin->netID == -1) continue;
                             // 加入一个新的更新ce, clk, rst的操作
-                            SNet* net = NetArray[inpin->netID];
+                            // SNet* net = NetArray[inpin->netID];
                             if (inpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(inpin->netID);
                             }
@@ -752,7 +752,7 @@ void update_instance(IndepSet &ids)
                         for (auto outpin : inst->outpins)
                         {
                             if (outpin->netID == -1) continue;
-                            SNet* net = NetArray[outpin->netID];
+                            // SNet* net = NetArray[outpin->netID];
                             if (outpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(outpin->netID);
                             }
@@ -818,7 +818,7 @@ void update_instance(IndepSet &ids)
                         {
                             if (inpin->netID == -1) continue;
                             // 加入一个新的更新ce, clk, rst的操作
-                            SNet* net = NetArray[inpin->netID];
+                            // SNet* net = NetArray[inpin->netID];
                             if (inpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(inpin->netID);
                             }
@@ -832,7 +832,7 @@ void update_instance(IndepSet &ids)
                         for (auto outpin : inst->outpins)
                         {
                             if (outpin->netID == -1) continue;
-                            SNet* net = NetArray[outpin->netID];
+                            // SNet* net = NetArray[outpin->netID];
                             if (outpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(outpin->netID);
                             }
@@ -895,7 +895,7 @@ void update_instance(IndepSet &ids)
                         {
                             if (inpin->netID == -1) continue;
                             // 加入一个新的更新ce, clk, rst的操作
-                            SNet* net = NetArray[inpin->netID];
+                            // SNet* net = NetArray[inpin->netID];
                             if (inpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(inpin->netID);
                             }
@@ -909,7 +909,7 @@ void update_instance(IndepSet &ids)
                         for (auto outpin : inst->outpins)
                         {
                             if (outpin->netID == -1) continue;
-                            SNet* net = NetArray[outpin->netID];
+                            // SNet* net = NetArray[outpin->netID];
                             if (outpin->prop == PinProp::PIN_PROP_CE){
                                 tile_signal_ce.insert(outpin->netID);
                             }

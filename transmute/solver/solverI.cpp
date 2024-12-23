@@ -141,9 +141,9 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
 void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose, int maxSpace){
     int initX = index_2_x_inst(seed);
     int initY = index_2_y_inst(seed);
-    int initZ = index_2_z_inst(seed);
+    // int initZ = index_2_z_inst(seed); unused
     // use the spiral_access to get the instance in the range of maxR
-    std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1;
+    // std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1; unused
     std::vector<std::pair<int, int> > seq;
     seq.push_back(std::make_pair(initX, initY));
     for (int r = 1; r <= maxR; r++){
@@ -168,7 +168,7 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
         int x = point.first;
         int y = point.second;
         int index_tile = xy_2_index(x, y);
-        if (index_tile < 0 || index_tile >= TileArray.size() || x < 0 || x >= 150 || y < 0 || y >= 300){
+        if (index_tile < 0 || index_tile >= int(TileArray.size()) || x < 0 || x >= 150 || y < 0 || y >= 300){
             continue;
         }
         STile* tile = TileArray[index_tile];
@@ -211,7 +211,7 @@ void ISMSolver_matching_I::addLUTToIndepSet(IndepSet &indepSet, const int index,
     // LUT和SEQ的编码方式不同，因此要分开讨论
     dep_inst[xy_2_index(x, y) * 16 + z * 2] = true;
     dep_inst[xy_2_index(x, y) * 16 + z * 2 + 1] = true;
-    STile* tile = TileArray[xy_2_index(x, y)];
+    // STile* tile = TileArray[xy_2_index(x, y)]; unused
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
     if (Inst == nullptr){
@@ -485,9 +485,9 @@ void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<i
     mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
 
     // costMtx[i][j]的意思是i移动到j所在的site时的cost
-    for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
+    for (int i = 0; i < int(set.size()); i++){   //i 移动到 j时的cost
         int oldInst = set[i];
-        for (int j = 0; j < set.size(); j++){
+        for (int j = 0; j < int(set.size()); j++){
             int newInst = set[j];
             // mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
             mem.costMtx[i][j] = instanceWLdifference(oldInst, newInst, Lib);
@@ -544,9 +544,7 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
             return std::numeric_limits<int>::max();
         }
     }
-    SInstance old_instance_defined_for_direct_quote = *old_inst;
-    std::tuple<int, int, int> newLoc = std::make_tuple(x, y, z);
-    return calculateWirelengthIncrease(old_instance_defined_for_direct_quote, newLoc);
+    return calculate_WL_Increase(old_inst, std::make_tuple(x, y, z));
 }
 
 int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int new_index, const int Lib){
@@ -556,12 +554,12 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
     int totalHPWL = 0;
     int x = index_2_x_inst(new_index);
     int y = index_2_y_inst(new_index);
-    if (isLUT(Lib)){
-        int z = index_2_z_inst(new_index);
-    }
-    else {
-        int z = new_index % 16;
-    }
+    // if (isLUT(Lib)){
+    //     int z = index_2_z_inst(new_index);
+    // }
+    // else {
+    //     int z = new_index % 16;
+    // }
     std::list<int> new_instIDs = findSlotInstIds(new_index, Lib);
     std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
     bool old_isSpace;
@@ -602,7 +600,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
     // 通过上面的操作，可以保证得到old_inst
     int old_clockregion = ClockRegion_Info.getCRID(index_2_x_inst(old_index), index_2_y_inst(old_index));
     int new_clockregion = ClockRegion_Info.getCRID(x, y);
-    for (int i = 0; i < old_inst->inpins.size(); i++){
+    for (int i = 0; i < int(old_inst->inpins.size()); i++){
         if (old_inst->inpins[i]->netID == -1){
             continue;
         }
@@ -625,7 +623,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         totalHPWL += tmp + tmp1;
         if (crit) totalHPWL += tmp + tmp1;
     }
-    for (int i = 0; i < old_inst->outpins.size(); i++){
+    for (int i = 0; i < int(old_inst->outpins.size()); i++){
         if (old_inst->outpins[i]->netID == -1){
             continue;
         }
@@ -707,7 +705,7 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
     std::set<int> old_inst_ce;
     std::set<int> old_inst_ck;
     std::set<int> old_inst_rs;
-    for (int i = 0; i < old_inst->inpins.size(); i++){
+    for (int i = 0; i < int(old_inst->inpins.size()); i++){
         if (old_inst->inpins[i]->netID == -1){
             continue;
         }
@@ -726,7 +724,7 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
         }
     }
 
-    for (int i = 0; i < old_inst->outpins.size(); i++){
+    for (int i = 0; i < int(old_inst->outpins.size()); i++){
         if (old_inst->outpins[i]->netID == -1){
             continue;
         }
