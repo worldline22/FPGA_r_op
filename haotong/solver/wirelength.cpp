@@ -138,7 +138,7 @@ int calculateWirelengthIncrease(const SInstance& instance_old, std::tuple<int, i
     }
         
     int old_wirelength{}, new_wirelength{};
-    for (int i = 0; i < nets_old.size(); i++) {
+    for (size_t i = 0; i < nets_old.size(); i++) {
         old_wirelength += calculateWirelength(*nets_old[i]);
         new_wirelength += calculateWirelength(*nets_new[i]);
     }
