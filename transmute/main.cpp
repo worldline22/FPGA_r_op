@@ -7,10 +7,12 @@
 #include "solver/solverObject.h"
 #include "solver/solver.h"
 #include "solver/solverI.h"
+#include "helper/debug.h"
 #include <cassert>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <fstream>
 
 int main(int, char* argv[])
 {
@@ -25,6 +27,8 @@ int main(int, char* argv[])
     // on server: "/home/public/Arch/fpga.scl"
     std::string clkFileName = "../benchmark/fpga.clk";
     // on server: "/home/public/Arch/fpga.clk"
+    std::string dbinfo_file = "helper/dbinfo.log";
+    std::ofstream dbinfo(dbinfo_file);
 
     readAndCreateLib(libFileName);  // from lib.cpp
     chip.readArch(sclFileName, clkFileName);
@@ -217,6 +221,10 @@ int main(int, char* argv[])
             if (thread.joinable()) {
                 thread.join();
             }
+        }
+        for (IndepSet Set : indepSets)
+        {
+            show_site_in_set(Set, dbinfo);
         }
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)

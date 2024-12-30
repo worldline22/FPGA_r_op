@@ -1,10 +1,11 @@
 SRC_FILES = global.cpp arch.cpp lib.cpp object.cpp netlist.cpp rsmt.cpp
 SRC = $(addprefix checker_legacy/, $(SRC_FILES))
 SRC += solver/solverObject.cpp solver/solver.cpp solver/solverI.cpp solver/wirelength.cpp
+SRC += helper/debug.cpp
 SRC += main.cpp
 OBJ = $(SRC:.cpp=.o)
 
-INCLUDE_PATHS = -I. -Ichecker_legacy -Isolver
+INCLUDE_PATHS = -I. -Ichecker_legacy -Isolver -Ihelper
 LEMON = -I/usr/local/include -L/usr/local/lib -lemon
 
 default: $(OBJ)
