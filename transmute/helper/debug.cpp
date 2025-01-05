@@ -3,7 +3,7 @@
 
 void show_site_in_set(IndepSet const &set, std::ostream &out)
 {
-    out << "Independent Set:";
+    // out << "Independent Set:";
     if (set.type == 1) out << " LUT" << std::endl;
     else if (set.type == 2) out << " SEQ" << std::endl;
 
@@ -13,7 +13,7 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
         int pre_x = index_2_x_inst(inst_site);
         int pre_y = index_2_y_inst(inst_site);
         int pre_z = inst_site % 16;
-        int solution_site = set.solution[i];
+        int solution_site = set.inst[set.solution[i]];
         int post_x = index_2_x_inst(solution_site);
         int post_y = index_2_y_inst(solution_site);
         int post_z = solution_site % 16;
@@ -30,7 +30,7 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
         else if (set.type == 2) {
             std::list<int> &instIDs = tile->instanceMap["SEQ"][pre_z].current_InstIDs;
             inst = InstArray[*instIDs.begin()];
-            assert(instIDs.size() == 1);
+            assert(instIDs.size() == 1 || instIDs.size() == 0);
         }
         int inst_id;
         if (inst != nullptr) inst_id = inst->id;

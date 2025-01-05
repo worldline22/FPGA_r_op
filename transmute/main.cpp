@@ -163,6 +163,7 @@ int main(int, char* argv[])
     num_iter = 6;
     for (int i = 0; i < num_iter; ++i)
     {
+        dbinfo << ">>>> IterationI " << i << std::endl;
         std::cout << "IterationI " << i << std::endl;
         {
         ISMSolver_matching_I solver;
@@ -222,9 +223,11 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-        for (IndepSet Set : indepSets)
+
+        for (int j = 0; j < int(indepSets.size()); ++j)
         {
-            show_site_in_set(Set, dbinfo);
+            dbinfo << "Independent Set " << j << " : ";
+            show_site_in_set(indepSets[j], dbinfo);
         }
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
@@ -287,6 +290,12 @@ int main(int, char* argv[])
             if (thread.joinable()) {
                 thread.join();
             }
+        }
+
+        for (int j = 0; j < int(indepSets.size()); ++j)
+        {
+            dbinfo << "Independent Set " << j << " : ";
+            show_site_in_set(indepSets[j], dbinfo);
         }
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
