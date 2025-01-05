@@ -1022,19 +1022,6 @@ std::set<int> update_instance_I(IndepSet &ids, int type)
     {
         tmpTile[i] = STile(*TileArray[ids.inst[i]/16]);
     }
-    // 初始化这些InstID
-    if (type == 2){
-        for (int i = 0; i < size; i++){
-            int siteID_to = ids.inst[ids.solution[i]];
-            STile* tile_to = TileArray[siteID_to/16];
-            int detail_to = siteID_to % 16;
-            for(auto inst : tile_to->instanceMap["SEQ"][detail_to].current_InstIDs){
-                tile_to->instanceMap["SEQ"][detail_to].new_InstID = inst;
-            }
-        }
-    }
-    // (150 * y + x) * 8 * 2 + z * 2
-    // 先挪instance坐标，然后记录哪些tile发生了变化，然后直接重新计算这些tile的基本信息
     std::set<int> changed_tiles;
     for (int i = 0; i < size; ++i)
     {
@@ -1080,11 +1067,8 @@ std::set<int> update_instance_I(IndepSet &ids, int type)
         {
             if (inst_from != -1)
             {
-                // std::cout << "instance " << inst_from << ":\n";
-                // std::cout << "from: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
                 InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to / 2);
                 InstArray[inst_from]->numMov++;
-                // std::cout << "to: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
             }
             int z = detail_to / 2;
             int zz = detail_to % 2;
@@ -1108,25 +1092,18 @@ std::set<int> update_instance_I(IndepSet &ids, int type)
         {
             if (inst_from != -1)
             {
-                // std::cout << "instance " << inst_from << ":\n";
-                // std::cout << "from: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
                 InstArray[inst_from]->Location = std::make_tuple(index_2_x(tileID_to), index_2_y(tileID_to), detail_to);
                 InstArray[inst_from]->numMov++;
-                // std::cout << "to: " << std::get<0>(InstArray[inst_from]->Location) << " " << std::get<1>(InstArray[inst_from]->Location) << " " << std::get<2>(InstArray[inst_from]->Location) << std::endl;
             }
-            tile_to->instanceMap["SEQ"][detail_to].new_InstID = inst_from;
-            // 这样直接改tile_to和tile_from的instanceMap是不是有问题？
-            // 因为会覆盖掉原来的instanceMap，如果目标位置也是需要挪的，那么就会出问题
-        }
-    }
-    // update current_InstIDs
-    if (type == 2){
-        for (int i = 0; i < size; i++){
-            int siteID_to = ids.inst[ids.solution[i]];
-            STile* tile_to = TileArray[siteID_to/16];
-            int detail_to = siteID_to % 16;
-            tile_to->instanceMap["SEQ"][detail_to].current_InstIDs.clear();
-            tile_to->instanceMap["SEQ"][detail_to].current_InstIDs.push_front(tile_to->instanceMap["SEQ"][detail_to].new_InstID);
+            std::list<int>& to_list = tile_to->instanceMap["SEQ"][detail_to].current_InstIDs;
+            if (to_list.size() == 0)
+            {
+                to_list.insert(to_list.begin(), inst_from);
+            }
+            else if (to_list.size() == 1)
+            {
+                *(to_list.begin()) = inst_from;
+            }
         }
     }
     return changed_tiles;
