@@ -7,6 +7,8 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
     if (set.type == 1) out << " LUT" << std::endl;
     else if (set.type == 2) out << " SEQ" << std::endl;
 
+    int totalCost = set.totalCost;
+
     for (int i = 0; i < int(set.inst.size()); i++)
     {
         int inst_site = set.inst[i];
@@ -37,4 +39,6 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
         else inst_id = -1;
         out << "Site " << i << " | " << "("  << pre_x << ", " << pre_y << ", " << pre_z << ") -> (" << post_x << ", " << post_y << ", " << post_z << ") | Instance:" << inst_id << std::endl;
     }
+
+    out << "Total Cost: " << totalCost << std::endl;
 }

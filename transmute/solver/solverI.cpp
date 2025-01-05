@@ -40,13 +40,17 @@ bool ISMSolver_matching_I::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph:
         return false;
     }
 
+    int totalCost = 0;
     mem.sol.resize(mem.lNodes.size(), -1);
     for (size_t i = 0; i < mem.mArcs.size(); ++i) {
         if (ns.flow(mem.mArcs[i]) > 0) {
             const auto& p = mem.mArcPairs[i];
             mem.sol[p.first] = p.second;
+            totalCost += mem.costMtx[p.first][p.second];
         }
     }
+
+    mem.totalCost = totalCost;
 
     return true;
 }

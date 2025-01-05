@@ -26,6 +26,7 @@ struct ISMMemory {
     std::vector<int> rangeSet;
     std::vector<std::vector<int> > bboxSet;
     std::vector<std::vector<int> > netIds;
+    int totalCost;
 };
 
 extern std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
@@ -35,6 +36,7 @@ struct IndepSet{
     std::vector<int> inst;
     std::vector<size_t> solution;
     int space_cnt;
+    int totalCost;
     // int cksr;
     // std::vector<int> ce;
 };

@@ -209,6 +209,7 @@ int main(int, char* argv[])
             {
                 ISMMemory mem;
                 indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
+                indepSet.totalCost = mem.totalCost;
                 {
                     std::lock_guard<std::mutex> guard(mtx);
                     --active_threads;
