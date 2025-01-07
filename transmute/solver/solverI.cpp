@@ -117,6 +117,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             int index = ((inst_y * 150 + inst_x) * 8 * 2) + (inst_z * 2);
             if(!dep_inst[index]&&!dep_inst[index+1]&&!InstArray[instId]->fixed&&isLUT(InstArray[instId]->Lib)){
                 IndepSet indepSet;
+                addLUTToIndepSet(indepSet, index, false, Lib);
                 indepSet.type = 1;
                 int Spacechoose = 2;
                 // std::cout<<"Start find a new indepSet"<<std::endl;
@@ -134,8 +135,11 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             int index = (inst_y * 150 + inst_x) * 16 + inst_z;
             if(!dep_inst[index]&&!InstArray[instId]->fixed&&InstArray[instId]->Lib == 19){
                 IndepSet indepSet;
+                addSEQToIndepSet(indepSet, index, 50, 19);
                 indepSet.type = 2;
                 int Spacechoose = 2;
+                if (index == 0) std::cout<<"Start from a new slot"<<std::endl;
+                if (instId == 0) std::cout<<"Error: start from an empty instance!"<<std::endl;
                 buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 50);
                 set.push_back(indepSet);
             }
@@ -165,6 +169,12 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
         for (int x = 0, y = -r; y < 0; x++, y++){
             seq.push_back(std::make_pair(initX + x, initY + y));
         }
+    }
+    for (int r = maxR + 1; r < 3 * maxR; r++){
+        seq.push_back(std::make_pair(initX + r, initY));
+        seq.push_back(std::make_pair(initX - r, initY));
+        seq.push_back(std::make_pair(initX, initY + r));
+        seq.push_back(std::make_pair(initX, initY - r));
     }
     // std::cout<<"Start addInstToIndepSet"<<std::endl;
     int SetNum = 1;
@@ -256,59 +266,59 @@ void ISMSolver_matching_I::addSEQToIndepSet(IndepSet &indepSet, const int index,
     }
     STile* tile = TileArray[xy_2_index(x, y)];
     // Update wrong!!!!!!
-    if (x == 40 && y == 125){
-        std::cout << "mark" << std::endl;
-        std::cout << "The structure of tile is " << std::endl;
-        // std::cout << "The seq_choose_num_bank0 is " << std::endl;
-        // for (int i = 0; i < 16; i++){
-        //     std::cout << tile->seq_choose_num_bank0[i] << " ";
-        // }
-        // std::cout << std::endl;
-        // std::cout << "The seq_choose_num_bank1 is " << std::endl;
-        // for (int i = 0; i < 8; i++){
-        //     std::cout << tile->seq_choose_num_bank1[i] << " ";
-        // }
-        // std::cout << std::endl;
-        // for (int i = 0; i < 16; i++){
-        //     std::cout << dep_inst[xy_2_index(x, y) * 16 + i] << " ";
-        // }
-        // std::cout << std::endl;
-        std::cout << "The instanceMap is " << std::endl;
-        for (auto &inst : tile->instanceMap["SEQ"]){
-            if (inst.current_InstIDs.empty()){
-                continue;
-            }
-            std::cout << "the ID is: "<<*inst.current_InstIDs.begin() << " the size is: " << inst.current_InstIDs.size() << " ; ";
-        }
-        std::cout << std::endl;
-        std::cout << "The current instance is " << std::endl;
-        for (auto &inst : tile->instanceMap["SEQ"]){
-            for (auto &instId : inst.current_InstIDs){
-                std::cout << instId << " ";
-            }
-        }
-        std::cout << std::endl;
-        std::cout << "The CE_bank0 is " << std::endl;
-        for (auto &inst : tile->CE_bank0){
-            std::cout << inst << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "The CE_bank1 is " << std::endl;
-        for (auto &inst : tile->CE_bank1){
-            std::cout << inst << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "The RESET_bank0 is " << std::endl;
-        for (auto &inst : tile->RESET_bank0){
-            std::cout << inst << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "The RESET_bank1 is " << std::endl;
-        for (auto &inst : tile->RESET_bank1){
-            std::cout << inst << " ";
-        }
-        std::cout << std::endl;
-    }
+    // if (x == 40 && y == 125){
+    //     std::cout << "mark" << std::endl;
+    //     std::cout << "The structure of tile is " << std::endl;
+    //     // std::cout << "The seq_choose_num_bank0 is " << std::endl;
+    //     // for (int i = 0; i < 16; i++){
+    //     //     std::cout << tile->seq_choose_num_bank0[i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     // std::cout << "The seq_choose_num_bank1 is " << std::endl;
+    //     // for (int i = 0; i < 8; i++){
+    //     //     std::cout << tile->seq_choose_num_bank1[i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     // for (int i = 0; i < 16; i++){
+    //     //     std::cout << dep_inst[xy_2_index(x, y) * 16 + i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     std::cout << "The instanceMap is " << std::endl;
+    //     for (auto &inst : tile->instanceMap["SEQ"]){
+    //         if (inst.current_InstIDs.empty()){
+    //             continue;
+    //         }
+    //         std::cout << "the ID is: "<<*inst.current_InstIDs.begin() << " the size is: " << inst.current_InstIDs.size() << " ; ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The current instance is " << std::endl;
+    //     for (auto &inst : tile->instanceMap["SEQ"]){
+    //         for (auto &instId : inst.current_InstIDs){
+    //             std::cout << instId << " ";
+    //         }
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The CE_bank0 is " << std::endl;
+    //     for (auto &inst : tile->CE_bank0){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The CE_bank1 is " << std::endl;
+    //     for (auto &inst : tile->CE_bank1){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The RESET_bank0 is " << std::endl;
+    //     for (auto &inst : tile->RESET_bank0){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The RESET_bank1 is " << std::endl;
+    //     for (auto &inst : tile->RESET_bank1){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
     if(Inst == nullptr){    //判断是不是空的
@@ -627,7 +637,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
-        if (crit) totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += 2 * (tmp + tmp1);
     }
     for (int i = 0; i < int(old_inst->outpins.size()); i++){
         if (old_inst->outpins[i]->netID == -1){
@@ -650,7 +660,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
-        if (crit) totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += 2 * (tmp + tmp1);
     }
     return totalHPWL;
 }

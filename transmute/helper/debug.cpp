@@ -26,12 +26,17 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
         SInstance *inst = nullptr;
         if (set.type == 1) {
             std::list<int> &instIDs = tile->instanceMap["LUT"][pre_z/2].current_InstIDs;
-            if (pre_z % 2 == 0) inst = InstArray[*instIDs.begin()];
-            else inst = InstArray[*instIDs.rbegin()];
+            if (instIDs.size() == 0) inst = nullptr;
+            else if (instIDs.size() == 1) inst = InstArray[*instIDs.begin()];
+            else if (instIDs.size() == 2){
+                if (pre_z % 2 == 0) inst = InstArray[*instIDs.begin()];
+                else inst = InstArray[*instIDs.rbegin()];
+            }
         }
         else if (set.type == 2) {
             std::list<int> &instIDs = tile->instanceMap["SEQ"][pre_z].current_InstIDs;
-            inst = InstArray[*instIDs.begin()];
+            if (instIDs.size() == 0) inst = nullptr;
+            else inst = InstArray[*instIDs.begin()];
             assert(instIDs.size() == 1 || instIDs.size() == 0);
         }
         int inst_id;

@@ -78,7 +78,7 @@ int main(int, char* argv[])
         inst.second->numMov = 0;
     }
 
-    int num_iter = 30;
+    int num_iter = 50;
     int max_threads = 7;
     int HPWL_est = 1e8;
     for (int i = 0; i < num_iter; ++i)
@@ -160,7 +160,7 @@ int main(int, char* argv[])
     {
         inst.second->numMov = 0;
     }
-    num_iter = 6;
+    num_iter = 30;
     for (int i = 0; i < num_iter; ++i)
     {
         dbinfo << ">>>> IterationI " << i << std::endl;
@@ -189,7 +189,7 @@ int main(int, char* argv[])
         {
             priority[i] = ForceArray[i].id;
         }
-        solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
+        solver.buildIndependentIndepSets(indepSets, 10, 125, 9, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
         std::vector<std::thread> threads;
@@ -224,12 +224,15 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-
+        int total_cost_sum = 0;
         for (int j = 0; j < int(indepSets.size()); ++j)
         {
             dbinfo << "Independent Set " << j << " : ";
             show_site_in_set(indepSets[j], dbinfo);
+            total_cost_sum += indepSets[j].totalCost;
         }
+        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
+        dbinfo << "----------------------------------------------------LUT Search Over----------------------------------------------------" << std::endl;
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
@@ -258,7 +261,7 @@ int main(int, char* argv[])
             std::copy(bkt.begin(), bkt.end(), it);
             it += bkt.size();
         }
-        solver.buildIndependentIndepSets(indepSets, 10, 50, 19, priority);
+        solver.buildIndependentIndepSets(indepSets, 10, 125, 19, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
 
         std::vector<std::thread> threads;
@@ -292,12 +295,14 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-
+        int total_cost_sum = 0;
         for (int j = 0; j < int(indepSets.size()); ++j)
         {
             dbinfo << "Independent Set " << j << " : ";
             show_site_in_set(indepSets[j], dbinfo);
+            total_cost_sum += indepSets[j].totalCost;
         }
+        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
