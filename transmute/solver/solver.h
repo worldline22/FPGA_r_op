@@ -37,6 +37,7 @@ struct IndepSet{
     std::vector<size_t> solution;
     int space_cnt;
     int totalCost;
+    std::vector<int> partCost;
     // int cksr;
     // std::vector<int> ce;
 };

@@ -61,13 +61,17 @@ int main(int, char* argv[])
     //     }
     // }
     // update_tile_I(press_test);
-    ForceArray.resize(InstArray.size());
+    // ForceArray.resize(InstArray.size());
+    ForceArray.clear();
     for (int i = 0; i < int(InstArray.size()); ++i)
     {
-        ForceArray[i].id = i;
-        ForceArray[i].F = 0;
+        if (InstArray[i]->fixed) continue;
+        if (!(InstArray[i]->Lib == 19 || (InstArray[i]->Lib >= 9 && InstArray[i]->Lib <= 15))) continue;
+        Instance_Force_Pack new_fp = Instance_Force_Pack{i,0,0,0,0};
+        ForceArray.push_back(new_fp);
+        // 这玩意tm有病吧，不能用构造函数，用了就会报莫名奇妙的segfault
     }
-    get_force();
+    // get_force();
 
     // solve start
     std::vector<int> priority;
@@ -153,9 +157,13 @@ int main(int, char* argv[])
         else HPWL_est = HPWL;
     }
     std::cout << "Bank ISM finish." << std::endl;
-
+    int overall_cost = 0;
     priority.clear();
-    priority.resize(InstArray.size());
+    priority.resize(ForceArray.size());
+    for (int i = 0; i < int(ForceArray.size()); ++i)
+    {
+        priority[i] = ForceArray[i].id;
+    }
     for (auto &inst : InstArray)
     {
         inst.second->numMov = 0;
@@ -185,9 +193,10 @@ int main(int, char* argv[])
         //     it += bkt.size();
         // }
         get_force();
+        sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a].F > ForceArray[b].F; });
         for (int i = 0; i < int(ForceArray.size()); ++i)
         {
-            priority[i] = ForceArray[i].id;
+            dbinfo << priority[i] << " " << ForceArray[priority[i]].F << std::endl;
         }
         solver.buildIndependentIndepSets(indepSets, 10, 125, 9, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
@@ -209,7 +218,7 @@ int main(int, char* argv[])
             {
                 ISMMemory mem;
                 indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-                indepSet.totalCost = mem.totalCost;
+                // indepSet.totalCost = mem.totalCost;
                 {
                     std::lock_guard<std::mutex> guard(mtx);
                     --active_threads;
@@ -231,6 +240,7 @@ int main(int, char* argv[])
             show_site_in_set(indepSets[j], dbinfo);
             total_cost_sum += indepSets[j].totalCost;
         }
+        overall_cost += total_cost_sum;
         dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         dbinfo << "----------------------------------------------------LUT Search Over----------------------------------------------------" << std::endl;
         std::set<int> changed_tiles;
@@ -263,7 +273,6 @@ int main(int, char* argv[])
         }
         solver.buildIndependentIndepSets(indepSets, 10, 125, 19, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
-
         std::vector<std::thread> threads;
         std::mutex mtx;
         std::condition_variable cv;
@@ -302,6 +311,7 @@ int main(int, char* argv[])
             show_site_in_set(indepSets[j], dbinfo);
             total_cost_sum += indepSets[j].totalCost;
         }
+        overall_cost += total_cost_sum;
         dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
@@ -314,6 +324,7 @@ int main(int, char* argv[])
         }
     }
     std::cout << "Instance SEQ ISM finish." << std::endl;
+    std::cout << "Overall Cost: " << overall_cost << std::endl;
 
     // after instanceISM:
     // for, update_instance_I
@@ -461,6 +472,7 @@ int main(int, char* argv[])
     // update_net
 
     file_output(outputFileName);
+    std::cout << "Output file generated." << std::endl;
 
     return 0;
 }

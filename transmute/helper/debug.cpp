@@ -43,6 +43,9 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
         if (inst != nullptr) inst_id = inst->id;
         else inst_id = -1;
         out << "Site " << i << " | " << "("  << pre_x << ", " << pre_y << ", " << pre_z << ") -> (" << post_x << ", " << post_y << ", " << post_z << ") | Instance:" << inst_id << std::endl;
+        
+            out << "PartCost: " << set.partCost[i] << std::endl;
+        
     }
 
     out << "Total Cost: " << totalCost << std::endl;

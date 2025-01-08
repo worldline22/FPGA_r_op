@@ -40,17 +40,17 @@ bool ISMSolver_matching_I::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph:
         return false;
     }
 
-    int totalCost = 0;
+    // int totalCost = 0;
     mem.sol.resize(mem.lNodes.size(), -1);
     for (size_t i = 0; i < mem.mArcs.size(); ++i) {
         if (ns.flow(mem.mArcs[i]) > 0) {
             const auto& p = mem.mArcPairs[i];
             mem.sol[p.first] = p.second;
-            totalCost += mem.costMtx[p.first][p.second];
+            // totalCost += mem.costMtx[p.first][p.second];
         }
     }
 
-    mem.totalCost = totalCost;
+    // mem.totalCost = totalCost;
 
     return true;
 }
@@ -91,8 +91,15 @@ void ISMSolver_matching_I::computeMatching(ISMMemory &mem) const {
 }
 
 std::vector<size_t> ISMSolver_matching_I::realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet, const int Lib){
+    indepSet.partCost.resize(indepSet.inst.size(), 0);
     computeCostMatrix(mem, indepSet.inst, Lib);
     computeMatching(mem);
+    indepSet.totalCost = 0;
+    for (size_t i = 0; i < indepSet.inst.size(); ++i){
+        // indepSet.totalCost += mem.costMtx[i][mem.sol[i]];
+        indepSet.partCost[i] = mem.costMtx[i][mem.sol[i]];
+        indepSet.totalCost += mem.costMtx[i][mem.sol[i]];
+    }
     return mem.sol;
 }
 
