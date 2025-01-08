@@ -149,7 +149,8 @@ RecSteinerMinTree rsmt;
 int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> newLoc) {
     // calculate the previous wirelength
     int result = 0;
-
+    // std::cout << "inst_old_ptr->id: " << inst_old_ptr->id << std::endl;
+    // if (inst_old_ptr->id == 1970) std::cout << "newLoc: " << std::get<0>(newLoc) << " " << std::get<1>(newLoc) << " " << std::get<2>(newLoc) << std::endl;
     std::set<int> netID_set;
     for (auto inpin : inst_old_ptr->inpins) {
         if (inpin->netID != -1) netID_set.insert(inpin->netID);
@@ -158,6 +159,7 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
         if (outpin->netID != -1) netID_set.insert(outpin->netID);
     }
     for (int netID : netID_set) {
+        // std::cout << "netID: " << netID << std::endl;
         assert(netID >= 0 && netID < int(NetArray.size()));
         const SNet* net = NetArray[netID];
 
@@ -168,6 +170,14 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
         if (!driverPin) continue;
 
         std::tuple<int, int, int> driverLoc = driverPin->instanceOwner->Location;
+        // Don't forget to modify the driver location!
+        std::tuple<int, int, int> driverLoc_new;
+        if (driverPin->instanceOwner == inst_old_ptr) {
+            driverLoc_new = newLoc;
+        }
+        else {
+            driverLoc_new = driverLoc;
+        }
         std::set<std::pair<int, int>> mergedPinLocs_prev{};
         std::set<std::pair<int, int>> mergedPinLocs_new{};
         for (auto outpin : net->outpins) {
@@ -186,10 +196,11 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
             crit_prev += std::abs(std::get<0>(loc) - std::get<0>(driverLoc)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc));
         }
         for (auto loc : mergedPinLocs_new) {
-            crit_new += std::abs(std::get<0>(loc) - std::get<0>(driverLoc)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc));
+            crit_new += std::abs(std::get<0>(loc) - std::get<0>(driverLoc_new)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc_new));
         }
         // 更优化地，可以直接只放入更新的pin
         result += (crit_new - crit_prev) * 2;
+        // if (inst_old_ptr->id == 1970) std::cout << "crit_new: " << crit_new << " crit_prev: " << crit_prev << std::endl;
 
         ////////////////////////////////////////////////////////////////////////
         // non-crit wirelength of this net
@@ -198,7 +209,7 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
         std::set<std::pair<int, int>> rsmtPinLocs_prev{};
         std::set<std::pair<int, int>> rsmtPinLocs_new{};
         rsmtPinLocs_prev.insert(std::make_pair(std::get<0>(driverLoc), std::get<1>(driverLoc)));
-        rsmtPinLocs_new.insert(std::make_pair(std::get<0>(driverLoc), std::get<1>(driverLoc)));
+        rsmtPinLocs_new.insert(std::make_pair(std::get<0>(driverLoc_new), std::get<1>(driverLoc_new)));
         for (auto outpin : net->outpins) {
             if (outpin->timingCritical) continue;
             std::tuple<int, int, int> sinkLoc = outpin->instanceOwner->Location;
@@ -230,6 +241,7 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
             noncrit_new = rsmt.wirelength(mst_new);
         }
         result += noncrit_new - noncrit_prev;
+        // if (inst_old_ptr->id == 1970) std::cout << "noncrit_new: " << noncrit_new << " noncrit_prev: " << noncrit_prev << std::endl;
     }
     return result;
 }

@@ -116,6 +116,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
     }
     // 编码方式SEQ：（y * 150 + x）* 16 + z，z from 0 to 15
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
+    int set_cnt = 0;
     if (isLUT(Lib)){
         for (auto instId : priority){
             int inst_x = std::get<0>(InstArray[instId]->Location);
@@ -131,7 +132,9 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 50);
                 // std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
+                set_cnt++;
             }
+            if (set_cnt >= 20) break;
         }
     }
     else {
@@ -149,7 +152,9 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 if (instId == 0) std::cout<<"Error: start from an empty instance!"<<std::endl;
                 buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 50);
                 set.push_back(indepSet);
+                set_cnt++;
             }
+            if (set_cnt >= 20) break;
         }
     }
     return;

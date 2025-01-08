@@ -84,79 +84,79 @@ int main(int, char* argv[])
 
     int num_iter = 50;
     int max_threads = 7;
-    int HPWL_est = 1e8;
-    for (int i = 0; i < num_iter; ++i)
-    {
-        std::cout << "Iteration " << i << std::endl;
-        ISMSolver_matching solver;
-        std::vector<IndepSet> indepSets;
-        // sort priority
-        for (auto &bkt : movBuckets)
-            bkt.clear();
-        movBuckets.resize(num_iter);
-        for (int i : priority)
-        {
-            movBuckets[InstArray[i]->numMov].push_back(i);
-            // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        }
-        auto it = priority.begin();
-        for (const auto &bkt : movBuckets)
-        {
-            std::copy(bkt.begin(), bkt.end(), it);
-            it += bkt.size();
-        }
+    // int HPWL_est = 1e8;
+    // for (int i = 0; i < num_iter; ++i)
+    // {
+    //     std::cout << "Iteration " << i << std::endl;
+    //     ISMSolver_matching solver;
+    //     std::vector<IndepSet> indepSets;
+    //     // sort priority
+    //     for (auto &bkt : movBuckets)
+    //         bkt.clear();
+    //     movBuckets.resize(num_iter);
+    //     for (int i : priority)
+    //     {
+    //         movBuckets[InstArray[i]->numMov].push_back(i);
+    //         // if(InstArray[i]->numMov>1)std::cout<<"mark";
+    //     }
+    //     auto it = priority.begin();
+    //     for (const auto &bkt : movBuckets)
+    //     {
+    //         std::copy(bkt.begin(), bkt.end(), it);
+    //         it += bkt.size();
+    //     }
         
-        solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
-        std::cout << indepSets.size() << " independent sets." << std::endl;
+    //     solver.buildIndependentIndepSets(indepSets, 10, 50, priority);
+    //     std::cout << indepSets.size() << " independent sets." << std::endl;
 
-        std::vector<std::thread> threads;
-        std::mutex mtx;
-        std::condition_variable cv;
-        int active_threads = 0;
-        for (auto &indepSet : indepSets)
-        {
-            {
-                std::unique_lock<std::mutex> lock(mtx);
-                cv.wait(lock, [&]() { return active_threads < max_threads; });
-                ++active_threads;
-            }
+    //     std::vector<std::thread> threads;
+    //     std::mutex mtx;
+    //     std::condition_variable cv;
+    //     int active_threads = 0;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         {
+    //             std::unique_lock<std::mutex> lock(mtx);
+    //             cv.wait(lock, [&]() { return active_threads < max_threads; });
+    //             ++active_threads;
+    //         }
 
-            threads.emplace_back(
-                [&solver, &indepSet, &mtx, &cv, &active_threads]()
-            {
-                ISMMemory mem;
-                indepSet.solution = solver.realizeMatching(mem, indepSet);
-                {
-                    std::lock_guard<std::mutex> guard(mtx);
-                    --active_threads;
-                }
-                cv.notify_one();
-            }
-            );
+    //         threads.emplace_back(
+    //             [&solver, &indepSet, &mtx, &cv, &active_threads]()
+    //         {
+    //             ISMMemory mem;
+    //             indepSet.solution = solver.realizeMatching(mem, indepSet);
+    //             {
+    //                 std::lock_guard<std::mutex> guard(mtx);
+    //                 --active_threads;
+    //             }
+    //             cv.notify_one();
+    //         }
+    //         );
 
 
-            // the fuction to be executed in non-parellel way :
-            // ISMMemory mem;
-            // indepSet.solution = solver.realizeMatching(mem, indepSet);
-        }
+    //         // the fuction to be executed in non-parellel way :
+    //         // ISMMemory mem;
+    //         // indepSet.solution = solver.realizeMatching(mem, indepSet);
+    //     }
 
-        for (auto &thread : threads)
-        {
-            if (thread.joinable()) {
-                thread.join();
-            }
-        }
+    //     for (auto &thread : threads)
+    //     {
+    //         if (thread.joinable()) {
+    //             thread.join();
+    //         }
+    //     }
         
-        // std::cout << "Matching Complete." << std::endl;
-        for (auto &indepSet : indepSets)
-        {
-            update_instance(indepSet);
-        }
-        int HPWL = update_net();
-        if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 3)) break;
-        else HPWL_est = HPWL;
-    }
-    std::cout << "Bank ISM finish." << std::endl;
+    //     // std::cout << "Matching Complete." << std::endl;
+    //     for (auto &indepSet : indepSets)
+    //     {
+    //         update_instance(indepSet);
+    //     }
+    //     int HPWL = update_net();
+    //     if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 3)) break;
+    //     else HPWL_est = HPWL;
+    // }
+    // std::cout << "Bank ISM finish." << std::endl;
     int overall_cost = 0;
     priority.clear();
     priority.resize(ForceArray.size());
@@ -192,13 +192,13 @@ int main(int, char* argv[])
         //     std::copy(bkt.begin(), bkt.end(), it);
         //     it += bkt.size();
         // }
-        get_force();
+        get_force(i);
         sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a].F > ForceArray[b].F; });
         for (int i = 0; i < int(ForceArray.size()); ++i)
         {
             dbinfo << priority[i] << " " << ForceArray[priority[i]].F << std::endl;
         }
-        solver.buildIndependentIndepSets(indepSets, 10, 125, 9, priority);
+        solver.buildIndependentIndepSets(indepSets, 15, 100, 9, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
         std::vector<std::thread> threads;
@@ -271,7 +271,7 @@ int main(int, char* argv[])
             std::copy(bkt.begin(), bkt.end(), it);
             it += bkt.size();
         }
-        solver.buildIndependentIndepSets(indepSets, 10, 125, 19, priority);
+        solver.buildIndependentIndepSets(indepSets, 15, 100, 19, priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         std::vector<std::thread> threads;
         std::mutex mtx;

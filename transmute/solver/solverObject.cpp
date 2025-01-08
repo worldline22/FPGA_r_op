@@ -602,7 +602,7 @@ void file_output(std::string filename)
     
 }
 
-void get_force()
+void get_force(int iter)
 {
     for (auto instpiece : ForceArray)
     {
@@ -613,6 +613,7 @@ void get_force()
         ForceArray[instID].F_stay = 0;
         ForceArray[instID].F_leave_x = 0;
         ForceArray[instID].F_leave_y = 0;
+        float netsize = 0;
 
         int xd = std::get<0>(instP->Location);
         int yd = std::get<1>(instP->Location);
@@ -620,6 +621,7 @@ void get_force()
         {
             if (inpinp->netID == -1) continue;
             SNet* inNet = NetArray[inpinp->netID];
+            netsize += inNet->outpins.size() + 1;
             if (inNet->clock) {
                 assert(inpinp->prop == PinProp::PIN_PROP_CLOCK);
             }
@@ -648,6 +650,7 @@ void get_force()
         {
             if (outpinp->netID == -1) continue;
             SNet* outNet = NetArray[outpinp->netID];
+            netsize += outNet->outpins.size() + 1;
             if (outNet->clock) {
                 assert(outpinp->prop == PinProp::PIN_PROP_CLOCK);
             }
@@ -674,7 +677,12 @@ void get_force()
             }
         }
         float F_leave = sqrt(ForceArray[instID].F_leave_x * ForceArray[instID].F_leave_x + ForceArray[instID].F_leave_y * ForceArray[instID].F_leave_y);
+        netsize = pow(netsize, (60-iter)/60);
         if (F_leave < ForceArray[instID].F_stay) ForceArray[instID].F = 0;
-        else ForceArray[instID].F = F_leave - ForceArray[instID].F_stay;
+        else 
+        {
+            ForceArray[instID].F = F_leave - ForceArray[instID].F_stay;
+            ForceArray[instID].F /= netsize;
+        }
     }
 }
