@@ -325,7 +325,7 @@ int main(int, char* argv[])
         std::mutex mtx;
         std::condition_variable cv;
         int active_threads = 0;
-        auto start_matching_count = std::chrono::high_resolution_clock::now();
+        // auto start_matching_count = std::chrono::high_resolution_clock::now();
         for (auto &indepSet : indepSets)
         {
             {

@@ -1,6 +1,10 @@
 #include "solver.h"
 #include "solverObject.h"
 #include <cassert>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 std::vector<bool> dep;  //全局的dep数组，用于记录instance是否被占用
 
@@ -506,13 +510,47 @@ void ISMSolver_matching::computeCostMatrix_new(ISMMemory &mem, const std::vector
     mem.rangeSet.clear();
     mem.rangeSet.push_back(0);
     mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
-    for (int i = 0; i < (int)set.size(); i++){
-        int oldT = set[i];
-        for (int j = 0; j < (int)set.size(); j++){
-            int newT = set[j];
-            mem.costMtx[i][j] = bankWLdifference(oldT, newT);
+    // for (int i = 0; i < (int)set.size(); i++){
+    //     int oldT = set[i];
+    //     for (int j = 0; j < (int)set.size(); j++){
+    //         int newT = set[j];
+    //         mem.costMtx[i][j] = bankWLdifference(oldT, newT);
+    //     }
+    // }
+    int max_threads = 7;
+    std::vector<std::thread> threads(max_threads);
+    std::atomic<int> task_index(0); // 当前任务索引（线程安全）
+
+    auto worker = [&]() {
+        while (true) {
+            int i = task_index++;
+            if (i >= int(set.size()) * int(set.size())) break;
+
+            try {
+                int m = i / int(set.size());
+                int n = i % int(set.size());
+                int oldT = set[m];
+                int newT = set[n];
+                mem.costMtx[m][n] = bankWLdifference(oldT, newT);
+            } catch (const std::exception &e) {
+                std::cerr << "Thread exception: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown exception in thread." << std::endl;
+            }
+        }
+    };
+
+    for (auto &thread : threads) {
+        thread = std::thread(worker);
+    }
+
+    for (auto &thread : threads) {
+        if (thread.joinable()) {
+            thread.join();
         }
     }
+
+    return;
 }
 
 int ISMSolver_matching::bankWLdifference(const int oldT, const int newT){

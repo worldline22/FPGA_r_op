@@ -2,6 +2,10 @@
 #include "solverObject.h"
 #include "wirelength.h"
 #include <cassert>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 std::vector<bool> dep_inst;
 
@@ -513,14 +517,48 @@ void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<i
     mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
 
     // costMtx[i][j]的意思是i移动到j所在的site时的cost
-    for (int i = 0; i < int(set.size()); i++){   //i 移动到 j时的cost
-        int oldInst = set[i];
-        for (int j = 0; j < int(set.size()); j++){
-            int newInst = set[j];
-            // mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
-            mem.costMtx[i][j] = instanceWLdifference(oldInst, newInst, Lib);
+    // for (int i = 0; i < int(set.size()); i++){   //i 移动到 j时的cost
+    //     int oldInst = set[i];
+    //     for (int j = 0; j < int(set.size()); j++){
+    //         int newInst = set[j];
+    //         // mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
+    //         mem.costMtx[i][j] = instanceWLdifference(oldInst, newInst, Lib);
+    //     }
+    // }
+
+    int max_threads = 7;
+    std::vector<std::thread> threads(max_threads);
+    std::atomic<int> task_index(0); // 当前任务索引（线程安全）
+
+    auto worker = [&]() {
+        while (true) {
+            int i = task_index++;
+            if (i >= int(set.size()) * int(set.size())) break;
+
+            try {
+                int m = i / int(set.size());
+                int n = i % int(set.size());
+                int oldInst = set[m];
+                int newInst = set[n];
+                mem.costMtx[m][n] = instanceWLdifference(oldInst, newInst, Lib);
+            } catch (const std::exception &e) {
+                std::cerr << "Thread exception: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown exception in thread." << std::endl;
+            }
+        }
+    };
+
+    for (auto &thread : threads) {
+        thread = std::thread(worker);
+    }
+
+    for (auto &thread : threads) {
+        if (thread.joinable()) {
+            thread.join();
         }
     }
+
     return;
 }
 
