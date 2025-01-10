@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include "solverObject.h"
+#include "wirelength.h"
 #include <lemon/list_graph.h>
 #include <lemon/network_simplex.h>
 
@@ -52,6 +53,10 @@ public:
     std::vector<size_t> realizeMatching(ISMMemory &mem, IndepSet &indepSet);
     int HPWL(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
     int tileHPWLdifference(STile* &tile, const std::pair<int, int> &newLoc, bool bank);
+
+    void computeCostMatrix_new(ISMMemory &mem, const std::vector<int> &set);
+    int bankWLdifference(const int oldT, const int newT);
+
     bool inBox(const int x, const int y, const int BBox_R, const int BBox_L, const int BBox_U, const int BBox_D);
     bool checkPinInTile(STile* &tile, SPin* &thisPin, bool bank);
     void buildIndependentIndepSets(std::vector<IndepSet> &set, const int maxR, const int maxIndepSetSize, std::vector<int> &priority);

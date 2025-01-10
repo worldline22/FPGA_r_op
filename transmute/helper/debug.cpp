@@ -6,6 +6,28 @@ void show_site_in_set(IndepSet const &set, std::ostream &out)
     // out << "Independent Set:";
     if (set.type == 1) out << " LUT" << std::endl;
     else if (set.type == 2) out << " SEQ" << std::endl;
+    else 
+    {
+        out << " Bank" << std::endl;
+        for (int i = 0; i < int(set.inst.size()); i++)
+        {
+            int bank_site = set.inst[i];
+            int x = index_2_x(bank_site/2);
+            int y = index_2_y(bank_site/2);
+            int z = bank_site % 2;
+            int solution_site = set.inst[set.solution[i]];
+            int post_x = index_2_x(solution_site/2);
+            int post_y = index_2_y(solution_site/2);
+            int post_z = solution_site % 2;
+
+            out << "Site " << i << " | " << "("  << x << ", " << y << ", " << z << ") -> (" << post_x << ", " << post_y << ", " << post_z << ")" << std::endl;
+
+            out << "PartCost: " << set.partCost[i] << std::endl;
+            
+        }
+        out << "Total Cost: " << set.totalCost << std::endl;
+        return;
+    }
 
     int totalCost = set.totalCost;
 

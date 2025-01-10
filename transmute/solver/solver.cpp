@@ -498,6 +498,41 @@ void ISMSolver_matching::computeCostMatrix(ISMMemory &mem, const std::vector<int
     return;
 }
 
+// draft: cost matrix new version
+void ISMSolver_matching::computeCostMatrix_new(ISMMemory &mem, const std::vector<int> &set)
+{
+    mem.bboxSet.clear();
+    mem.netIds.clear();
+    mem.rangeSet.clear();
+    mem.rangeSet.push_back(0);
+    mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
+    for (int i = 0; i < (int)set.size(); i++){
+        int oldT = set[i];
+        for (int j = 0; j < (int)set.size(); j++){
+            int newT = set[j];
+            mem.costMtx[i][j] = bankWLdifference(oldT, newT);
+        }
+    }
+}
+
+int ISMSolver_matching::bankWLdifference(const int oldT, const int newT){
+    STile* oldTile = TileArray[oldT/2];
+    bool oldbank = oldT % 2;
+    STile* newTile = TileArray[newT/2];
+    int new_x = newTile->X;
+    int new_y = newTile->Y;
+    // bool newbank = newT % 2;
+    
+    // check clockregion, uncompleted
+
+    if (oldbank == false){
+        return calculate_bank_WL_Increase(oldTile, false, std::make_pair(new_x, new_y));
+    }
+    else{
+        return calculate_bank_WL_Increase(oldTile, true, std::make_pair(new_x, new_y));
+    }
+}
+
 bool ISMSolver_matching::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
     using Graph = lemon::ListDigraph;
     using NS = lemon::NetworkSimplex<Graph>;
@@ -580,10 +615,16 @@ void ISMSolver_matching::computeMatching(ISMMemory &mem) const {
 }
 
 std::vector<size_t> ISMSolver_matching::realizeMatching(ISMMemory &mem, IndepSet &indepSet){
-    computeCostMatrix(mem, indepSet.inst);
+    indepSet.partCost.resize(indepSet.inst.size(), 0);
+    computeCostMatrix_new(mem, indepSet.inst);
     computeMatching(mem);
     // int number = indepSet.inst.size();
     // size_t noMatch = -1;
+    indepSet.totalCost = 0;
+    for (size_t i = 0; i < mem.sol.size(); ++i){
+        indepSet.partCost[i] = mem.costMtx[i][mem.sol[i]];
+        indepSet.totalCost += indepSet.partCost[i]; 
+    }
     return mem.sol;
     // bool err = false;
     // for (size_t i = 0; i < mem.sol.size(); ++i){

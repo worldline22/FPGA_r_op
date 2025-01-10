@@ -1,0 +1,6 @@
+bank_iteration= 2
+instance_iteration= 3
+
+indepSet_radius= 10
+indepSet_volume= 70
+indepSet_number= 20

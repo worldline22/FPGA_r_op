@@ -33,6 +33,9 @@ int main(int, char* argv[])
     std::string dbinfo_file = "helper/dbinfo.log";
     std::ofstream dbinfo(dbinfo_file);
 
+    std::ifstream config_file("config.txt");
+    parse_config(config_file);
+
     readAndCreateLib(libFileName);  // from lib.cpp
     chip.readArch(sclFileName, clkFileName);
     // chip.reportArch();
@@ -70,7 +73,8 @@ int main(int, char* argv[])
     {
         if (InstArray[i]->fixed) continue;
         if (!(InstArray[i]->Lib == 19 || (InstArray[i]->Lib >= 9 && InstArray[i]->Lib <= 15))) continue;
-        Instance_Force_Pack new_fp = Instance_Force_Pack{i,0,0,0,0};
+        Instance_Force_Pack* new_fp = new Instance_Force_Pack;
+        new_fp->id = i;
         ForceArray.push_back(new_fp);
         // 这玩意tm有病吧，不能用构造函数，用了就会报莫名奇妙的segfault
     }
@@ -85,9 +89,11 @@ int main(int, char* argv[])
         inst.second->numMov = 0;
     }
 
-    int num_iter = 50;
+    int overall_cost = 0;
+
+    int num_iter = bank_iteration;
     int max_threads = 7;
-    int HPWL_est = 1e8;
+    // int HPWL_est = 1e8;
     for (int i = 0; i < num_iter; ++i)
     {
         std::cout << "Iteration " << i << std::endl;
@@ -149,33 +155,67 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
+
+        int total_cost_sum = 0;
+        for (int j = 0; j < int(indepSets.size()); ++j)
+        {
+            dbinfo << "Independent Set " << j << " : ";
+            show_site_in_set(indepSets[j], dbinfo);
+            total_cost_sum += indepSets[j].totalCost;
+        }
+        overall_cost += total_cost_sum;
+        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         
         // std::cout << "Matching Complete." << std::endl;
         for (auto &indepSet : indepSets)
         {
             update_instance(indepSet);
         }
-        int HPWL = update_net();
-        if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 3)) break;
-        else HPWL_est = HPWL;
+        update_net();
+        // int HPWL = update_net();
+        // if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 3)) break;
+        // else HPWL_est = HPWL;
     }
     std::cout << "Bank ISM finish." << std::endl;
-    int overall_cost = 0;
     priority.clear();
     priority.resize(ForceArray.size());
     for (int i = 0; i < int(ForceArray.size()); ++i)
     {
-        priority[i] = ForceArray[i].id;
+        priority[i] = i;
     }
     for (auto &inst : InstArray)
     {
         inst.second->numMov = 0;
     }
-    num_iter = 5;
+    num_iter = instance_iteration;
     for (int i = 0; i < num_iter; ++i)
     {
         dbinfo << ">>>> IterationI " << i << std::endl;
         std::cout << "IterationI " << i << std::endl;
+        get_force(i);
+
+        for (auto* ptr : ForceArray) {
+            if (ptr == nullptr) {
+                throw std::runtime_error("Null pointer in ForceArray!");
+            }
+        }
+        // sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a]->F > ForceArray[b]->F; });
+        sort(priority.begin(), priority.end(), [&](int a, int b) {
+            if (a < 0 || a >= ForceArray.size() || b < 0 || b >= ForceArray.size()) {
+                throw std::out_of_range("Invalid index in priority!");
+            }
+            return ForceArray[a]->F > ForceArray[b]->F;
+        });
+        for (int i = 0; i < int(ForceArray.size()); ++i)
+        {
+            dbinfo << priority[i] << " " << ForceArray[priority[i]]->F << std::endl;
+        }
+        std::vector<int> inst_priority;
+        inst_priority.resize(ForceArray.size());
+        for (int i = 0; i < int(ForceArray.size()); ++i)
+        {
+            inst_priority[i] = ForceArray[priority[i]]->id;
+        }
         {
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
@@ -195,20 +235,15 @@ int main(int, char* argv[])
         //     std::copy(bkt.begin(), bkt.end(), it);
         //     it += bkt.size();
         // }
-        auto start_prioroty = std::chrono::high_resolution_clock::now();
-        get_force(i);
-        sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a].F > ForceArray[b].F; });
-        for (int i = 0; i < int(ForceArray.size()); ++i)
-        {
-            dbinfo << priority[i] << " " << ForceArray[priority[i]].F << std::endl;
-        }
-        auto end_priority = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_priority = end_priority - start_prioroty;
-        std::cout << "Priority Sort Time: " << elapsed_priority.count() << "s" << std::endl;
+        // auto start_prioroty = std::chrono::high_resolution_clock::now();
+        
+        // auto end_priority = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_priority = end_priority - start_prioroty;
+        // std::cout << "Priority Sort Time: " << elapsed_priority.count() << "s" << std::endl;
 
 
         auto start_LUT_build = std::chrono::high_resolution_clock::now();
-        solver.buildIndependentIndepSets(indepSets, 15, 100, 9, priority);
+        solver.buildIndependentIndepSets(indepSets, 15, 100, 9, inst_priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
         std::vector<std::thread> threads;
@@ -291,7 +326,7 @@ int main(int, char* argv[])
         }
         auto start_SEQ_build = std::chrono::high_resolution_clock::now();
         auto start_SEQ_build1 = std::chrono::high_resolution_clock::now();
-        solver.buildIndependentIndepSets(indepSets, 15, 100, 19, priority);
+        solver.buildIndependentIndepSets(indepSets, 15, 100, 19, inst_priority);
         auto end_SEQ_build1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed_SEQ_build1 = end_SEQ_build1 - start_SEQ_build1;
         std::cout << "SEQ Build Time1: " << elapsed_SEQ_build1.count() << "s" << std::endl;
@@ -333,13 +368,13 @@ int main(int, char* argv[])
         std::chrono::duration<double> elapsed_matching_count = end_matching_count - start_matching_count;
         std::cout << "SEQ Matching Count Time: " << elapsed_matching_count.count() << "s" << std::endl;
         int total_cost_sum = 0;
-        // for (int j = 0; j < int(indepSets.size()); ++j)
-        // {
-        //     dbinfo << "Independent Set " << j << " : ";
-        //     show_site_in_set(indepSets[j], dbinfo);
-        //     total_cost_sum += indepSets[j].totalCost;
-        // }
-        // overall_cost += total_cost_sum;
+        for (int j = 0; j < int(indepSets.size()); ++j)
+        {
+            dbinfo << "Independent Set " << j << " : ";
+            show_site_in_set(indepSets[j], dbinfo);
+            total_cost_sum += indepSets[j].totalCost;
+        }
+        overall_cost += total_cost_sum;
         dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         dbinfo << "----------------------------------------------------SEQ Search Over----------------------------------------------------" << std::endl;
         auto end_SEQ_build = std::chrono::high_resolution_clock::now();

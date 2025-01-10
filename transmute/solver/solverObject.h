@@ -134,7 +134,7 @@ struct Instance_Force_Pack
     float F;
 };
 
-extern std::vector<Instance_Force_Pack> ForceArray;
+extern std::vector<Instance_Force_Pack*> ForceArray;
 
 struct SNet
 {
@@ -196,9 +196,17 @@ extern SClockRegion ClockRegion_Info;
 // Tile Map 的索引规则: X是列有150个，Y是行有300个，这样子会产生150*300=45000个位置
 // 45000*30
 
+// parameters
+extern int bank_iteration;
+extern int instance_iteration;
+extern int indepSet_radius;
+extern int indepSet_volume;
+extern int indepSet_number;
+
 void init_tiles();
 void copy_instances();
 void copy_nets();
 void connection_setup();
 void file_output(std::string filename);
 void get_force(int iter);
+void parse_config(std::ifstream &infile);

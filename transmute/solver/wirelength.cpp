@@ -245,3 +245,210 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
     }
     return result;
 }
+
+int calculate_bank_WL_Increase(STile* tile_old_ptr, bool oldbank, std::pair<int, int> newLoc) {
+    int result = 0;
+    std::set<SInstance*> inst_set{};
+    if (oldbank == false) {
+        for (int ii = 0; ii < 4; ++ii)
+        {
+            //// 考虑将其单独做为数据结构
+            for (auto InstID : tile_old_ptr->instanceMap["LUT"][ii].current_InstIDs)
+            {
+                assert(InstID >= 0 && InstID < int(InstArray.size()));
+                assert(InstID != 0);
+                inst_set.insert(InstArray[InstID]);
+            }
+        }
+        for (int ii = 0; ii < 8; ++ii)
+        {
+            for (auto InstID : tile_old_ptr->instanceMap["SEQ"][ii].current_InstIDs)
+            {
+                assert(InstID >= 0 && InstID < int(InstArray.size()));
+                assert(InstID != 0);
+                inst_set.insert(InstArray[InstID]);
+            }
+        }
+        if (inst_set.size() == 0) return 0;
+        // std::cout << "inst_set size: " << inst_set.size() << std::endl;
+        ////////////////////////////////////
+        for (int i = 0; i < (int)tile_old_ptr->netsConnected_bank0.size(); i++){
+            SNet *net = NetArray[tile_old_ptr->netsConnected_bank0[i]];
+
+            // crit
+            int crit_prev = 0;
+            int crit_new = 0;
+            const SPin* driverPin = net->inpin;
+            if (!driverPin) continue;
+
+            std::tuple<int, int, int> driverLoc = driverPin->instanceOwner->Location;
+            std::tuple<int, int, int> driverLoc_new;
+            if (inst_set.find(driverPin->instanceOwner) != inst_set.end()) {
+                driverLoc_new = std::make_tuple(newLoc.first, newLoc.second, 0);
+            }
+            else {
+                driverLoc_new = driverLoc;
+            }
+
+            std::set<std::pair<int, int>> mergedPinLocs_prev{};
+            std::set<std::pair<int, int>> mergedPinLocs_new{};
+            for (auto outpin : net->outpins) {
+                if (!outpin->timingCritical) continue;
+                std::tuple<int, int, int> sinkLoc = outpin->instanceOwner->Location;
+                mergedPinLocs_prev.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                if (inst_set.find(outpin->instanceOwner) != inst_set.end()) {
+                    mergedPinLocs_new.insert(std::make_pair(newLoc.first, newLoc.second));
+                }
+                else {
+                    mergedPinLocs_new.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                }
+            }
+
+            for (auto loc : mergedPinLocs_prev) {
+                crit_prev += std::abs(std::get<0>(loc) - std::get<0>(driverLoc)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc));
+            }
+            for (auto loc : mergedPinLocs_new) {
+                crit_new += std::abs(std::get<0>(loc) - std::get<0>(driverLoc_new)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc_new));
+            }
+            result += (crit_new - crit_prev) * 2;
+
+            // non-crit
+            int noncrit_prev = 0;
+            int noncrit_new = 0;
+            std::set<std::pair<int, int>> rsmtPinLocs_prev{};
+            std::set<std::pair<int, int>> rsmtPinLocs_new{};
+            rsmtPinLocs_prev.insert(std::make_pair(std::get<0>(driverLoc), std::get<1>(driverLoc)));
+            rsmtPinLocs_new.insert(std::make_pair(std::get<0>(driverLoc_new), std::get<1>(driverLoc_new)));
+            for (auto outpin : net->outpins) {
+                if (outpin->timingCritical) continue;
+                std::tuple<int, int, int> sinkLoc = outpin->instanceOwner->Location;
+                rsmtPinLocs_prev.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                if (inst_set.find(outpin->instanceOwner) != inst_set.end()) {
+                    rsmtPinLocs_new.insert(std::make_pair(newLoc.first, newLoc.second));
+                }
+                else {
+                    rsmtPinLocs_new.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                }
+            }
+            std::vector<int> xCoords_prev, yCoords_prev;
+            std::vector<int> xCoords_new, yCoords_new;
+            for (auto loc : rsmtPinLocs_prev) {
+                xCoords_prev.push_back(loc.first);
+                yCoords_prev.push_back(loc.second);
+            }
+            for (auto loc : rsmtPinLocs_new) {
+                xCoords_new.push_back(loc.first);
+                yCoords_new.push_back(loc.second);
+            }
+            if (xCoords_prev.size() > 1) {
+                Tree mst_prev = rsmt.fltTree(xCoords_prev, yCoords_prev);
+                noncrit_prev = rsmt.wirelength(mst_prev);
+            }
+            if (xCoords_new.size() > 1) {
+                Tree mst_new = rsmt.fltTree(xCoords_new, yCoords_new);
+                noncrit_new = rsmt.wirelength(mst_new);
+            }
+            result += noncrit_new - noncrit_prev;
+        }
+    }
+    else {
+        for (int ii = 4; ii < 8; ++ii)
+        {
+            for (auto InstID : tile_old_ptr->instanceMap["LUT"][ii].current_InstIDs)
+            {
+                assert(InstID >= 0 && InstID < int(InstArray.size()));
+                assert(InstID != 0);
+                inst_set.insert(InstArray[InstID]);
+            }
+        }
+        for (int ii = 8; ii < 16; ++ii)
+        {
+            for (auto InstID : tile_old_ptr->instanceMap["SEQ"][ii].current_InstIDs)
+            {
+                assert(InstID >= 0 && InstID < int(InstArray.size()));
+                assert(InstID != 0);
+                inst_set.insert(InstArray[InstID]);
+            }
+        }
+        ////////////////////////////////////
+        for (int i = 0; i < (int)tile_old_ptr->netsConnected_bank1.size(); i++){
+            SNet *net = NetArray[tile_old_ptr->netsConnected_bank1[i]];
+
+            // crit
+            int crit_prev = 0;
+            int crit_new = 0;
+            const SPin* driverPin = net->inpin;
+            if (!driverPin) continue;
+
+            std::tuple<int, int, int> driverLoc = driverPin->instanceOwner->Location;
+            std::tuple<int, int, int> driverLoc_new;
+            if (inst_set.find(driverPin->instanceOwner) != inst_set.end()) {
+                driverLoc_new = std::make_tuple(newLoc.first, newLoc.second, 0);
+            }
+            else {
+                driverLoc_new = driverLoc;
+            }
+
+            std::set<std::pair<int, int>> mergedPinLocs_prev{};
+            std::set<std::pair<int, int>> mergedPinLocs_new{};
+            for (auto outpin : net->outpins) {
+                if (!outpin->timingCritical) continue;
+                std::tuple<int, int, int> sinkLoc = outpin->instanceOwner->Location;
+                mergedPinLocs_prev.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                if (inst_set.find(outpin->instanceOwner) != inst_set.end()) {
+                    mergedPinLocs_new.insert(std::make_pair(newLoc.first, newLoc.second));
+                }
+                else {
+                    mergedPinLocs_new.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                }
+            }
+
+            for (auto loc : mergedPinLocs_prev) {
+                crit_prev += std::abs(std::get<0>(loc) - std::get<0>(driverLoc)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc));
+            }
+            for (auto loc : mergedPinLocs_new) {
+                crit_new += std::abs(std::get<0>(loc) - std::get<0>(driverLoc_new)) + std::abs(std::get<1>(loc) - std::get<1>(driverLoc_new));
+            }
+            result += (crit_new - crit_prev) * 2;
+
+            // non-crit
+            int noncrit_prev = 0;
+            int noncrit_new = 0;
+            std::set<std::pair<int, int>> rsmtPinLocs_prev{};
+            std::set<std::pair<int, int>> rsmtPinLocs_new{};
+            rsmtPinLocs_prev.insert(std::make_pair(std::get<0>(driverLoc), std::get<1>(driverLoc)));
+            rsmtPinLocs_new.insert(std::make_pair(std::get<0>(driverLoc_new), std::get<1>(driverLoc_new)));
+            for (auto outpin : net->outpins) {
+                if (outpin->timingCritical) continue;
+                std::tuple<int, int, int> sinkLoc = outpin->instanceOwner->Location;
+                rsmtPinLocs_prev.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                if (inst_set.find(outpin->instanceOwner) != inst_set.end()) {
+                    rsmtPinLocs_new.insert(std::make_pair(newLoc.first, newLoc.second));
+                }
+                else {
+                    rsmtPinLocs_new.insert(std::make_pair(std::get<0>(sinkLoc), std::get<1>(sinkLoc)));
+                }
+            }
+            std::vector<int> xCoords_prev, yCoords_prev;
+            std::vector<int> xCoords_new, yCoords_new;
+            for (auto loc : rsmtPinLocs_prev) {
+                xCoords_prev.push_back(loc.first);
+                yCoords_prev.push_back(loc.second);
+            }
+            for (auto loc : rsmtPinLocs_new) {
+                xCoords_new.push_back(loc.first);
+                yCoords_new.push_back(loc.second);
+            }
+            if (xCoords_prev.size() > 1) {
+                Tree mst_prev = rsmt.fltTree(xCoords_prev, yCoords_prev);
+                noncrit_prev = rsmt.wirelength(mst_prev);
+            }
+            if (xCoords_new.size() > 1) {
+                Tree mst_new = rsmt.fltTree(xCoords_new, yCoords_new);
+                noncrit_new = rsmt.wirelength(mst_new);
+            }
+            result += noncrit_new - noncrit_prev;
+        }
+    }
+    return result; 
+}

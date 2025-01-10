@@ -8,7 +8,13 @@ std::map<int, SNet*> NetArray;
 std::map<int, SPin*> PinArray;
 std::vector<STile*> TileArray; 
 SClockRegion ClockRegion_Info;
-std::vector<Instance_Force_Pack> ForceArray;
+std::vector<Instance_Force_Pack*> ForceArray;
+
+int bank_iteration;
+int instance_iteration;
+int indepSet_radius;
+int indepSet_volume;
+int indepSet_number;
 
 extern int xy_2_index(int x, int y)
 {
@@ -606,13 +612,13 @@ void get_force(int iter)
 {
     for (auto instpiece : ForceArray)
     {
-        SInstance* instP = InstArray[instpiece.id];
+        SInstance* instP = InstArray[instpiece->id];
         if (!(instP->Lib == 19 || (instP->Lib >= 9 && instP->Lib <= 15))) continue;
-        int instID = instpiece.id;
+        int instID = instpiece->id;
         assert(instID == instP->id);
-        ForceArray[instID].F_stay = 0;
-        ForceArray[instID].F_leave_x = 0;
-        ForceArray[instID].F_leave_y = 0;
+        instpiece->F_stay = 0;
+        instpiece->F_leave_x = 0;
+        instpiece->F_leave_y = 0;
         float netsize = 0;
 
         int xd = std::get<0>(instP->Location);
@@ -636,14 +642,14 @@ void get_force(int iter)
             int dx = xi - xd;
             int dy = yi - yd;
             if (dx == 0 && dy == 0) {
-                ForceArray[instID].F_stay += fmag;
+                instpiece->F_stay += fmag;
             }
             else {
                 float dist = sqrt(dx * dx + dy * dy);
                 float fx = fmag * dx / dist;
                 float fy = fmag * dy / dist;
-                ForceArray[instID].F_leave_x += fx;
-                ForceArray[instID].F_leave_y += fy;
+                instpiece->F_leave_x += fx;
+                instpiece->F_leave_y += fy;
             }
         }
         for (auto outpinp : instP->outpins)
@@ -665,24 +671,34 @@ void get_force(int iter)
                 float fmag = 1;
                 if (outpinp->timingCritical) fmag = 2;
                 if (dx == 0 && dy == 0) {
-                    ForceArray[instID].F_stay += fmag;
+                    instpiece->F_stay += fmag;
                 }
                 else {
                     float dist = sqrt(dx * dx + dy * dy);
                     float fx = fmag * dx / dist;
                     float fy = fmag * dy / dist;
-                    ForceArray[instID].F_leave_x += fx;
-                    ForceArray[instID].F_leave_y += fy;
+                    instpiece->F_leave_x += fx;
+                    instpiece->F_leave_y += fy;
                 }
             }
         }
-        float F_leave = sqrt(ForceArray[instID].F_leave_x * ForceArray[instID].F_leave_x + ForceArray[instID].F_leave_y * ForceArray[instID].F_leave_y);
+        float F_leave = sqrt(instpiece->F_leave_x * instpiece->F_leave_x + instpiece->F_leave_y * instpiece->F_leave_y);
         netsize = pow(netsize, (60-iter)/60);
-        if (F_leave < ForceArray[instID].F_stay) ForceArray[instID].F = 0;
+        if (F_leave < instpiece->F_stay) instpiece->F = 0;
         else 
         {
-            ForceArray[instID].F = F_leave - ForceArray[instID].F_stay;
-            ForceArray[instID].F /= netsize;
+            instpiece->F = F_leave - instpiece->F_stay;
+            instpiece->F /= netsize;
         }
     }
+}
+
+void parse_config(std::ifstream &infile)
+{
+    std::string dump;
+    infile >> dump >> bank_iteration;
+    infile >> dump >> instance_iteration;
+    infile >> dump >> indepSet_radius;
+    infile >> dump >> indepSet_volume;
+    infile >> dump >> indepSet_number;
 }
