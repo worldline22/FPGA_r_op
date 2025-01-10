@@ -1,9 +1,16 @@
+#pragma once
 #include "solverObject.h"
-#include "global.h"
-#include "rsmt.h"
+#include "checker_legacy/rsmt.h"
+#include <cassert>
 
-int calculateWirelength(const SNet& net);
+extern RecSteinerMinTree rsmt;
 
-int calculateInstanceWirelength(const SInstance& instance);
+// void getMergedNonCritPinLocs(const SNet& net, std::vector<int>& xCoords, std::vector<int>& yCoords);
 
-int calculateWirelengthIncrease(const SInstance& instance_old, std::tuple<int, int, int> newLocation);
+// int calculateWirelength(const SNet& net);
+
+// int calculateInstanceWirelength(const SInstance& instance);
+
+// int calculateWirelengthIncrease(const SInstance& instance_old, std::tuple<int, int, int> newLocation);
+
+int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> newLoc);

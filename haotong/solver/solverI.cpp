@@ -1,7 +1,11 @@
 #include "solverI.h"
 #include "solverObject.h"
-#include <cassert>
 #include "wirelength.h"
+#include <cassert>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 std::vector<bool> dep_inst;
 
@@ -40,13 +44,17 @@ bool ISMSolver_matching_I::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph:
         return false;
     }
 
+    // int totalCost = 0;
     mem.sol.resize(mem.lNodes.size(), -1);
     for (size_t i = 0; i < mem.mArcs.size(); ++i) {
         if (ns.flow(mem.mArcs[i]) > 0) {
             const auto& p = mem.mArcPairs[i];
             mem.sol[p.first] = p.second;
+            // totalCost += mem.costMtx[p.first][p.second];
         }
     }
+
+    // mem.totalCost = totalCost;
 
     return true;
 }
@@ -87,8 +95,15 @@ void ISMSolver_matching_I::computeMatching(ISMMemory &mem) const {
 }
 
 std::vector<size_t> ISMSolver_matching_I::realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet, const int Lib){
+    indepSet.partCost.resize(indepSet.inst.size(), 0);
     computeCostMatrix(mem, indepSet.inst, Lib);
     computeMatching(mem);
+    indepSet.totalCost = 0;
+    for (size_t i = 0; i < indepSet.inst.size(); ++i){
+        // indepSet.totalCost += mem.costMtx[i][mem.sol[i]];
+        indepSet.partCost[i] = mem.costMtx[i][mem.sol[i]];
+        indepSet.totalCost += mem.costMtx[i][mem.sol[i]];
+    }
     return mem.sol;
 }
 
@@ -105,6 +120,7 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
     }
     // 编码方式SEQ：（y * 150 + x）* 16 + z，z from 0 to 15
     // 编码方式LUT：（y * 150 + x）* 8 * 2 + z * 2（+0 or +1），z from 0 to 7
+    int set_cnt = 0;
     if (isLUT(Lib)){
         for (auto instId : priority){
             int inst_x = std::get<0>(InstArray[instId]->Location);
@@ -113,12 +129,16 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             int index = ((inst_y * 150 + inst_x) * 8 * 2) + (inst_z * 2);
             if(!dep_inst[index]&&!dep_inst[index+1]&&!InstArray[instId]->fixed&&isLUT(InstArray[instId]->Lib)){
                 IndepSet indepSet;
+                addLUTToIndepSet(indepSet, index, false, Lib);
+                indepSet.type = 1;
                 int Spacechoose = 2;
                 // std::cout<<"Start find a new indepSet"<<std::endl;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 5);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 50);
                 // std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
+                set_cnt++;
             }
+            if (set_cnt >= 20) break;
         }
     }
     else {
@@ -129,10 +149,16 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
             int index = (inst_y * 150 + inst_x) * 16 + inst_z;
             if(!dep_inst[index]&&!InstArray[instId]->fixed&&InstArray[instId]->Lib == 19){
                 IndepSet indepSet;
+                addSEQToIndepSet(indepSet, index, 50, 19);
+                indepSet.type = 2;
                 int Spacechoose = 2;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 5);
+                if (index == 0) std::cout<<"Start from a new slot"<<std::endl;
+                if (instId == 0) std::cout<<"Error: start from an empty instance!"<<std::endl;
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 50);
                 set.push_back(indepSet);
+                set_cnt++;
             }
+            if (set_cnt >= 20) break;
         }
     }
     return;
@@ -141,9 +167,9 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
 void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, const int maxR, const int maxIndepSetSize, int Lib, int Spacechoose, int maxSpace){
     int initX = index_2_x_inst(seed);
     int initY = index_2_y_inst(seed);
-    int initZ = index_2_z_inst(seed);
+    // int initZ = index_2_z_inst(seed); unused
     // use the spiral_access to get the instance in the range of maxR
-    std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1;
+    // std::size_t maxNumPoints = 2 * (maxR + 1) * (maxR) + 1; unused
     std::vector<std::pair<int, int> > seq;
     seq.push_back(std::make_pair(initX, initY));
     for (int r = 1; r <= maxR; r++){
@@ -160,6 +186,12 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
             seq.push_back(std::make_pair(initX + x, initY + y));
         }
     }
+    for (int r = maxR + 1; r < 3 * maxR; r++){
+        seq.push_back(std::make_pair(initX + r, initY));
+        seq.push_back(std::make_pair(initX - r, initY));
+        seq.push_back(std::make_pair(initX, initY + r));
+        seq.push_back(std::make_pair(initX, initY - r));
+    }
     // std::cout<<"Start addInstToIndepSet"<<std::endl;
     int SetNum = 1;
     int seq_space_num = 0;
@@ -168,7 +200,7 @@ void ISMSolver_matching_I::buildIndepSet(IndepSet &indepSet, const int seed, con
         int x = point.first;
         int y = point.second;
         int index_tile = xy_2_index(x, y);
-        if (index_tile < 0 || index_tile >= TileArray.size() || x < 0 || x >= 150 || y < 0 || y >= 300){
+        if (index_tile < 0 || index_tile >= int(TileArray.size()) || x < 0 || x >= 150 || y < 0 || y >= 300){
             continue;
         }
         STile* tile = TileArray[index_tile];
@@ -211,7 +243,7 @@ void ISMSolver_matching_I::addLUTToIndepSet(IndepSet &indepSet, const int index,
     // LUT和SEQ的编码方式不同，因此要分开讨论
     dep_inst[xy_2_index(x, y) * 16 + z * 2] = true;
     dep_inst[xy_2_index(x, y) * 16 + z * 2 + 1] = true;
-    STile* tile = TileArray[xy_2_index(x, y)];
+    // STile* tile = TileArray[xy_2_index(x, y)]; unused
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
     if (Inst == nullptr){
@@ -249,6 +281,60 @@ void ISMSolver_matching_I::addSEQToIndepSet(IndepSet &indepSet, const int index,
         }
     }
     STile* tile = TileArray[xy_2_index(x, y)];
+    // Update wrong!!!!!!
+    // if (x == 40 && y == 125){
+    //     std::cout << "mark" << std::endl;
+    //     std::cout << "The structure of tile is " << std::endl;
+    //     // std::cout << "The seq_choose_num_bank0 is " << std::endl;
+    //     // for (int i = 0; i < 16; i++){
+    //     //     std::cout << tile->seq_choose_num_bank0[i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     // std::cout << "The seq_choose_num_bank1 is " << std::endl;
+    //     // for (int i = 0; i < 8; i++){
+    //     //     std::cout << tile->seq_choose_num_bank1[i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     // for (int i = 0; i < 16; i++){
+    //     //     std::cout << dep_inst[xy_2_index(x, y) * 16 + i] << " ";
+    //     // }
+    //     // std::cout << std::endl;
+    //     std::cout << "The instanceMap is " << std::endl;
+    //     for (auto &inst : tile->instanceMap["SEQ"]){
+    //         if (inst.current_InstIDs.empty()){
+    //             continue;
+    //         }
+    //         std::cout << "the ID is: "<<*inst.current_InstIDs.begin() << " the size is: " << inst.current_InstIDs.size() << " ; ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The current instance is " << std::endl;
+    //     for (auto &inst : tile->instanceMap["SEQ"]){
+    //         for (auto &instId : inst.current_InstIDs){
+    //             std::cout << instId << " ";
+    //         }
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The CE_bank0 is " << std::endl;
+    //     for (auto &inst : tile->CE_bank0){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The CE_bank1 is " << std::endl;
+    //     for (auto &inst : tile->CE_bank1){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The RESET_bank0 is " << std::endl;
+    //     for (auto &inst : tile->RESET_bank0){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    //     std::cout << "The RESET_bank1 is " << std::endl;
+    //     for (auto &inst : tile->RESET_bank1){
+    //         std::cout << inst << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     std::list<int> instIDs = findSlotInstIds(index, Lib);
     SInstance* Inst = fromListToInst(instIDs, index);
     if(Inst == nullptr){    //判断是不是空的
@@ -371,7 +457,7 @@ void ISMSolver_matching_I::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&t
                 SetNum++;
             }
         }
-        else if (maxSpace > SpaceNum){
+        else if (maxSpace > SpaceNum){  //空的不能选太多
             addSEQToIndepSet(indepSet, tile_id * 16 + min_index, true, 19);
             tile->seq_choose_num_bank0[min_index]++;
             SetNum++;
@@ -422,7 +508,70 @@ void ISMSolver_matching_I::buildSEQIndepSetPerTile(IndepSet &indepSet, STile *&t
 /************************/
 
 
-void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib){
+// void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib){
+//     mem.bboxSet.clear();
+//     mem.netIds.clear();
+//     mem.rangeSet.clear();
+
+//     mem.rangeSet.push_back(0);
+//     mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
+
+//     // costMtx[i][j]的意思是i移动到j所在的site时的cost
+//     // for (int i = 0; i < int(set.size()); i++){   //i 移动到 j时的cost
+//     //     int oldInst = set[i];
+//     //     for (int j = 0; j < int(set.size()); j++){
+//     //         int newInst = set[j];
+//     //         // mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
+//     //         mem.costMtx[i][j] = instanceWLdifference(oldInst, newInst, Lib);
+//     //     }
+//     // }
+//     // return;
+
+//     int max_threads = 2;
+//     std::vector<std::thread> threads;
+//     std::mutex mtx;
+//     std::condition_variable cv;
+//     int active_threads = 0;
+//     for (int i = 0; i < int(set.size()) * int(set.size()); i++){
+//         {
+//             std::unique_lock<std::mutex> lock(mtx);
+//             cv.wait(lock, [&]() { return active_threads < max_threads; });
+//             ++active_threads;
+//         }
+
+//         threads.emplace_back(
+//             [this, &mem, &set, &mtx, &cv, &active_threads, i, Lib]()
+//         {
+//             try {
+//                 int m = i / int(set.size());
+//                 int n = i % int(set.size());
+//                 int oldInst = set[m];
+//                 int newInst = set[n];
+//                 mem.costMtx[m][n] = instanceWLdifference(oldInst, newInst, Lib);
+//             } catch (const std::exception& e) {
+//                 std::cerr << "Thread exception: " << e.what() << std::endl;
+//             } catch (...) {
+//                 std::cerr << "Unknown exception in thread." << std::endl;
+//             }
+//             {
+//                 std::lock_guard<std::mutex> guard(mtx);
+//                 --active_threads;
+//             }
+//             cv.notify_one();
+//         }
+//         );
+//     }
+
+//     for (auto &thread : threads)
+//     {
+//         if (thread.joinable()) {
+//             thread.join();
+//         }
+//     }
+//     return;
+// }
+
+void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib) {
     mem.bboxSet.clear();
     mem.netIds.clear();
     mem.rangeSet.clear();
@@ -430,80 +579,152 @@ void ISMSolver_matching_I::computeCostMatrix(ISMMemory &mem, const std::vector<i
     mem.rangeSet.push_back(0);
     mem.costMtx.resize(set.size(), std::vector<int>(set.size(), std::numeric_limits<int>::max()));
 
-    // costMtx[i][j]的意思是i移动到j所在的site时的cost
-    for (int i = 0; i < set.size(); i++){   //i 移动到 j时的cost
-        int oldInst = set[i];
-        // int wirelength_old = calculateWirelength(*net);
-        for (int j = 0; j < set.size(); j++){
-            int newInst = set[j];
-            mem.costMtx[i][j] = instanceHPWLdifference(oldInst, newInst, Lib);
+    int max_threads = 7;
+    std::vector<std::thread> threads(max_threads);
+    std::atomic<int> task_index = 0; // 当前任务索引（线程安全）
+
+    auto worker = [&]() {
+        while (true) {
+            int i = task_index++;
+            if (i >= int(set.size()) * int(set.size())) break;
+
+            try {
+                int m = i / int(set.size());
+                int n = i % int(set.size());
+                int oldInst = set[m];
+                int newInst = set[n];
+                mem.costMtx[m][n] = instanceWLdifference(oldInst, newInst, Lib);
+            } catch (const std::exception &e) {
+                std::cerr << "Thread exception: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown exception in thread." << std::endl;
+            }
+        }
+    };
+
+    for (auto &thread : threads) {
+        thread = std::thread(worker);
+    }
+
+    for (auto &thread : threads) {
+        if (thread.joinable()) {
+            thread.join();
         }
     }
+
     return;
 }
 
-int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int new_index, const int Lib){
-    if (old_index == new_index){
-        return 0;
-    }
-    int totalHPWL = 0;
+
+int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int new_index, const int Lib){
+    if (old_index == new_index) return 0;
     int x = index_2_x_inst(new_index);
     int y = index_2_y_inst(new_index);
+    int z;
     if (isLUT(Lib)){
-        int z = index_2_z_inst(new_index);
+        z = index_2_z_inst(new_index);
     }
     else {
-        int z = new_index % 16;
+        z = new_index % 16;
     }
     std::list<int> new_instIDs = findSlotInstIds(new_index, Lib);
     std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
     bool old_isSpace;
     SInstance* old_inst;
-    int old_inst_wirelength{};
     if (isLUT(Lib)){
         old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
         if (old_isSpace) return 0;
         old_inst = old_index % 2 == 0 ? InstArray[*old_instIDs.begin()] : InstArray[*old_instIDs.rbegin()];
-        old_inst_wirelength = calculateInstanceWirelength(*old_inst);
-
-        // if (new_instIDs.size() == 1){
-        //     if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
-        //         if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
-        //             return std::numeric_limits<int>::max();
-        //         }
-        //     }
-        //     // 如果本身就是一个LUT，size==1表示他的另一个位置是space，这个site不存在限制条件
-        // }
-        // if (new_instIDs.size() == 2){
-        //     // 找出另外一个LUT，看看是不是不满足条件
-        //     int another_Lib = new_index % 2 == 0 ? InstArray[*new_instIDs.rbegin()] -> Lib : InstArray[*new_instIDs.begin()] -> Lib;    //找出另一个LUT的Lib
-        //     if ((old_inst -> Lib + another_Lib) > 22){
-        //         return std::numeric_limits<int>::max();
-        //     }
-        // }
+        if (new_instIDs.size() == 1){
+            if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
+                if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
+                    return std::numeric_limits<int>::max();
+                }
+            }
+            // 如果本身就是一个LUT，size==1表示他的另一个位置是space，这个site不存在限制条件
+        }
+        if (new_instIDs.size() == 2){
+            // 找出另外一个LUT，看看是不是不满足条件
+            int another_Lib = new_index % 2 == 0 ? InstArray[*new_instIDs.rbegin()] -> Lib : InstArray[*new_instIDs.begin()] -> Lib;    //找出另一个LUT的Lib
+            if ((old_inst -> Lib + another_Lib) > 22){
+                return std::numeric_limits<int>::max();
+            }
+        }
     }
     else if (Lib == 19){
         if (!old_instIDs.size()) return 0;
         old_inst = InstArray[*old_instIDs.begin()];
-        old_inst_wirelength = calculateInstanceWirelength(*old_inst);
-
-        // bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
-        // STile* tile_new = TileArray[xy_2_index(x, y)];
-
-        // if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
-        //     return std::numeric_limits<int>::max();
+        // if (*old_instIDs.begin() == 707136){
+        //     std::cout<<"This is the key debug point"<<std::endl;
         // }
+        bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        STile* tile_new = TileArray[xy_2_index(x, y)];
+
+        if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
+    }
+    return calculate_WL_Increase(old_inst, std::make_tuple(x, y, z));
+}
+
+int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int new_index, const int Lib){
+    if (old_index == new_index){ // 这一步会不会忽略一些应该为无穷的情况？
+        return 0;
+    }
+    int totalHPWL = 0;
+    int x = index_2_x_inst(new_index);
+    int y = index_2_y_inst(new_index);
+    // if (isLUT(Lib)){
+    //     int z = index_2_z_inst(new_index);
+    // }
+    // else {
+    //     int z = new_index % 16;
+    // }
+    std::list<int> new_instIDs = findSlotInstIds(new_index, Lib);
+    std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
+    bool old_isSpace;
+    SInstance* old_inst;
+    if (isLUT(Lib)){
+        old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
+        if (old_isSpace) return 0;
+        old_inst = old_index % 2 == 0 ? InstArray[*old_instIDs.begin()] : InstArray[*old_instIDs.rbegin()];
+        if (new_instIDs.size() == 1){
+            if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
+                if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
+                    return std::numeric_limits<int>::max();
+                }
+            }
+            // 如果本身就是一个LUT，size==1表示他的另一个位置是space，这个site不存在限制条件
+        }
+        if (new_instIDs.size() == 2){
+            // 找出另外一个LUT，看看是不是不满足条件
+            int another_Lib = new_index % 2 == 0 ? InstArray[*new_instIDs.rbegin()] -> Lib : InstArray[*new_instIDs.begin()] -> Lib;    //找出另一个LUT的Lib
+            if ((old_inst -> Lib + another_Lib) > 22){
+                return std::numeric_limits<int>::max();
+            }
+        }
+    }
+    else if (Lib == 19){
+        if (!old_instIDs.size()) return 0;
+        old_inst = InstArray[*old_instIDs.begin()];
+        // if (*old_instIDs.begin() == 707136){
+        //     std::cout<<"This is the key debug point"<<std::endl;
+        // }
+        bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        STile* tile_new = TileArray[xy_2_index(x, y)];
+
+        if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
     }
     // 通过上面的操作，可以保证得到old_inst
     int old_clockregion = ClockRegion_Info.getCRID(index_2_x_inst(old_index), index_2_y_inst(old_index));
     int new_clockregion = ClockRegion_Info.getCRID(x, y);
-    for (int i = 0; i < old_inst->inpins.size(); i++){
+    for (int i = 0; i < int(old_inst->inpins.size()); i++){
         if (old_inst->inpins[i]->netID == -1){
             continue;
         }
         SNet *net = NetArray[old_inst->inpins[i]->netID];
-        // int wirelength = calculateWirelength(*net);
-        // std::cout << " wirelength: " << wirelength << std::endl;
         if(net->clock && ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].find(net->id) != ClockRegion_Info.clockNets[ClockRegion_Info.getCRID(x, y)].end()){
             if(old_clockregion != new_clockregion){
                 if(ClockRegion_Info.clockNets[new_clockregion].size() + 1 > 28){
@@ -520,9 +741,9 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
-        if (crit) totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += 2 * (tmp + tmp1);
     }
-    for (int i = 0; i < old_inst->outpins.size(); i++){
+    for (int i = 0; i < int(old_inst->outpins.size()); i++){
         if (old_inst->outpins[i]->netID == -1){
             continue;
         }
@@ -543,7 +764,7 @@ int ISMSolver_matching_I::instanceHPWLdifference(const int old_index, const int 
         int tmp1 = std::max(net->BBox_D - y, y - net->BBox_U);
         tmp1 = std::max(0, tmp1);
         totalHPWL += tmp + tmp1;
-        if (crit) totalHPWL += tmp + tmp1;
+        if (crit) totalHPWL += 2 * (tmp + tmp1);
     }
     return totalHPWL;
 }
@@ -577,6 +798,9 @@ std::list<int> ISMSolver_matching_I::findSlotInstIds(int index, const int Lib){
     else {
         z = index % 16;
     }
+    // if (x == 92 && y == 294 && !isLUT(Lib)){
+    //     std::cout<<"This is the key debug point"<<std::endl;
+    // }
     int tile_index = xy_2_index(x, y);
     return isLUT(Lib) ? TileArray[tile_index]->instanceMap["LUT"][z].current_InstIDs : TileArray[tile_index]->instanceMap["SEQ"][z].current_InstIDs;
 }
@@ -601,13 +825,14 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
     std::set<int> old_inst_ce;
     std::set<int> old_inst_ck;
     std::set<int> old_inst_rs;
-    for (int i = 0; i < old_inst->inpins.size(); i++){
+    for (int i = 0; i < int(old_inst->inpins.size()); i++){
         if (old_inst->inpins[i]->netID == -1){
             continue;
         }
-        if (old_inst->inpins[i]->netID == 5760 || old_inst->inpins[i]->netID == 5761)
-            std::cout << "debug";
+        // if (old_inst->inpins[i]->netID == 5760 || old_inst->inpins[i]->netID == 5761)
+        //     std::cout << "debug";
         SNet *net = NetArray[old_inst->inpins[i]->netID];
+        
         if(old_inst->inpins[i]->prop == PinProp::PIN_PROP_CE){
             old_inst_ce.insert(net->id);
         }
@@ -619,7 +844,7 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
         }
     }
 
-    for (int i = 0; i < old_inst->outpins.size(); i++){
+    for (int i = 0; i < int(old_inst->outpins.size()); i++){
         if (old_inst->outpins[i]->netID == -1){
             continue;
         }
@@ -644,6 +869,9 @@ bool ISMSolver_matching_I::isControlSetCondition(SInstance *old_inst, STile *new
         }
         if (new_tile->RESET_bank0.size() == 1){
             if (*new_tile->RESET_bank0.begin() != *old_inst_rs.begin()){ //没找到，超过1的要求
+                if (old_inst_rs.size() > 1){
+                    std::cout<<"This is the key debug point"<<std::endl;
+                }
                 return false;
             }
         }

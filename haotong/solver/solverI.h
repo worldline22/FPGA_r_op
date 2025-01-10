@@ -34,6 +34,7 @@ public:
     // 用于计算权重矩阵
     void computeCostMatrix(ISMMemory &mem, const std::vector<int> &set, const int Lib);
     int instanceHPWLdifference(const int old_index, const int new_index, const int Lib);
+    int instanceWLdifference(const int old_index, const int new_index, const int Lib);
 
     // 判断是否是LUT
     bool isLUT(int Lib);
