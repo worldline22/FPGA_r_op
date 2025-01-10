@@ -92,9 +92,9 @@ void ISMSolver_matching_I::computeMatching(ISMMemory &mem) const {
 
 std::vector<size_t> ISMSolver_matching_I::realizeMatching_Instance(ISMMemory &mem, IndepSet &indepSet, const int Lib){
     indepSet.partCost.resize(indepSet.inst.size(), 0);
+    indepSet.totalCost = 0;
     computeCostMatrix(mem, indepSet.inst, Lib);
     computeMatching(mem);
-    indepSet.totalCost = 0;
     for (size_t i = 0; i < indepSet.inst.size(); ++i){
         // indepSet.totalCost += mem.costMtx[i][mem.sol[i]];
         indepSet.partCost[i] = mem.costMtx[i][mem.sol[i]];
