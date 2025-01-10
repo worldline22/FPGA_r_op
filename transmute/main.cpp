@@ -194,18 +194,7 @@ int main(int, char* argv[])
         std::cout << "IterationI " << i << std::endl;
         get_force(i);
 
-        for (auto* ptr : ForceArray) {
-            if (ptr == nullptr) {
-                throw std::runtime_error("Null pointer in ForceArray!");
-            }
-        }
-        // sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a]->F > ForceArray[b]->F; });
-        sort(priority.begin(), priority.end(), [&](int a, int b) {
-            if (a < 0 || a >= ForceArray.size() || b < 0 || b >= ForceArray.size()) {
-                throw std::out_of_range("Invalid index in priority!");
-            }
-            return ForceArray[a]->F > ForceArray[b]->F;
-        });
+        sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a]->F > ForceArray[b]->F; });
         for (int i = 0; i < int(ForceArray.size()); ++i)
         {
             dbinfo << priority[i] << " " << ForceArray[priority[i]]->F << std::endl;
@@ -242,7 +231,7 @@ int main(int, char* argv[])
         // std::cout << "Priority Sort Time: " << elapsed_priority.count() << "s" << std::endl;
 
 
-        auto start_LUT_build = std::chrono::high_resolution_clock::now();
+        // auto start_LUT_build = std::chrono::high_resolution_clock::now();
         solver.buildIndependentIndepSets(indepSets, 15, 100, 9, inst_priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
@@ -288,11 +277,11 @@ int main(int, char* argv[])
         overall_cost += total_cost_sum;
         dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         dbinfo << "----------------------------------------------------LUT Search Over----------------------------------------------------" << std::endl;
-        auto end_LUT_build = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_LUT_build = end_LUT_build - start_LUT_build;
-        std::cout << "LUT Build Time: " << elapsed_LUT_build.count() << "s" << std::endl;
+        // auto end_LUT_build = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_LUT_build = end_LUT_build - start_LUT_build;
+        // std::cout << "LUT Build Time: " << elapsed_LUT_build.count() << "s" << std::endl;
 
-        auto start_updateLUT = std::chrono::high_resolution_clock::now();
+        // auto start_updateLUT = std::chrono::high_resolution_clock::now();
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
@@ -301,9 +290,9 @@ int main(int, char* argv[])
         }
         update_tile_I(changed_tiles);
         update_net();
-        auto end_updateLUT = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_updateLUT = end_updateLUT - start_updateLUT;
-        std::cout << "LUT Update Time: " << elapsed_updateLUT.count() << "s" << std::endl;
+        // auto end_updateLUT = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_updateLUT = end_updateLUT - start_updateLUT;
+        // std::cout << "LUT Update Time: " << elapsed_updateLUT.count() << "s" << std::endl;
         }
 
         {
@@ -324,12 +313,12 @@ int main(int, char* argv[])
             std::copy(bkt.begin(), bkt.end(), it);
             it += bkt.size();
         }
-        auto start_SEQ_build = std::chrono::high_resolution_clock::now();
-        auto start_SEQ_build1 = std::chrono::high_resolution_clock::now();
+        // auto start_SEQ_build = std::chrono::high_resolution_clock::now();
+        // auto start_SEQ_build1 = std::chrono::high_resolution_clock::now();
         solver.buildIndependentIndepSets(indepSets, 15, 100, 19, inst_priority);
-        auto end_SEQ_build1 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_SEQ_build1 = end_SEQ_build1 - start_SEQ_build1;
-        std::cout << "SEQ Build Time1: " << elapsed_SEQ_build1.count() << "s" << std::endl;
+        // auto end_SEQ_build1 = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_SEQ_build1 = end_SEQ_build1 - start_SEQ_build1;
+        // std::cout << "SEQ Build Time1: " << elapsed_SEQ_build1.count() << "s" << std::endl;
 
         std::cout << indepSets.size() << " independent sets." << std::endl;
         std::vector<std::thread> threads;
@@ -364,9 +353,10 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-        auto end_matching_count = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_matching_count = end_matching_count - start_matching_count;
-        std::cout << "SEQ Matching Count Time: " << elapsed_matching_count.count() << "s" << std::endl;
+        std::cout << "Matching Complete." << std::endl;
+        // auto end_matching_count = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_matching_count = end_matching_count - start_matching_count;
+        // std::cout << "SEQ Matching Count Time: " << elapsed_matching_count.count() << "s" << std::endl;
         int total_cost_sum = 0;
         for (int j = 0; j < int(indepSets.size()); ++j)
         {
@@ -377,11 +367,11 @@ int main(int, char* argv[])
         overall_cost += total_cost_sum;
         dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         dbinfo << "----------------------------------------------------SEQ Search Over----------------------------------------------------" << std::endl;
-        auto end_SEQ_build = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_SEQ_build = end_SEQ_build - start_SEQ_build;
-        std::cout << "SEQ Build Time: " << elapsed_SEQ_build.count() << "s" << std::endl;
+        // auto end_SEQ_build = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_SEQ_build = end_SEQ_build - start_SEQ_build;
+        // std::cout << "SEQ Build Time: " << elapsed_SEQ_build.count() << "s" << std::endl;
 
-        auto start_updateSEQ = std::chrono::high_resolution_clock::now();
+        // auto start_updateSEQ = std::chrono::high_resolution_clock::now();
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
@@ -390,9 +380,9 @@ int main(int, char* argv[])
         }
         update_tile_I(changed_tiles);
         update_net();
-        auto end_updateSEQ = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_updateSEQ = end_updateSEQ - start_updateSEQ;
-        std::cout << "SEQ Update Time: " << elapsed_updateSEQ.count() << "s" << std::endl;
+        // auto end_updateSEQ = std::chrono::high_resolution_clock::now();
+        // std::chrono::duration<double> elapsed_updateSEQ = end_updateSEQ - start_updateSEQ;
+        // std::cout << "SEQ Update Time: " << elapsed_updateSEQ.count() << "s" << std::endl;
         }
     }
     std::cout << "Instance SEQ ISM finish." << std::endl;
