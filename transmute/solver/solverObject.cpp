@@ -537,18 +537,57 @@ int pindensity_setup()
     std::multimap<double, STile*> baselinePinDensityMap;  
     for (auto tile : TileArray)
     {
+        int x = tile->X;
+        int y = tile->Y;
         if (tile->type != 1) continue;
         int total_pin = 0;
+        std::set<int> net_set_in;
+        std::set<int> net_set_out;
+        int empty_flag = 1;
         for (int i = 0; i < 8 ;i++){
+            if (tile->instanceMap["LUT"][i].baseline_InstIDs.size() != 0){
+                empty_flag = 0;
+            }
             for (auto instID : tile->instanceMap["LUT"][i].baseline_InstIDs){
-                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+                for (auto pin : InstArray[instID]->inpins){
+                    if (pin->netID != -1){
+                        if (in_pinset(pin->netID, instID, pin)){
+                            net_set_in.insert(pin->netID);
+                        }
+                    }
+                }
+                for (auto pin : InstArray[instID]->outpins){
+                    if (pin->netID != -1){
+                        if (out_pinset(pin->netID, instID, pin)){
+                            net_set_out.insert(pin->netID);
+                        }
+                    }
+                }
             }
         }
         for (int i = 0; i < 16;i++){
+            if (tile->instanceMap["SEQ"][i].baseline_InstIDs.size() != 0){
+                empty_flag = 0;
+            }
             for (auto instID : tile->instanceMap["SEQ"][i].baseline_InstIDs){
-                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+                for (auto pin : InstArray[instID]->inpins){
+                    if (pin->netID != -1){
+                        if (in_pinset(pin->netID, instID, pin)){
+                            net_set_in.insert(pin->netID);
+                        }
+                    }
+                }
+                for (auto pin : InstArray[instID]->outpins){
+                    if (pin->netID != -1){
+                        if (out_pinset(pin->netID, instID, pin)){
+                            net_set_out.insert(pin->netID);
+                        }   
+                    }
+                }
             }
         }
+        if (empty_flag) continue;
+        total_pin = net_set_in.size() + net_set_out.size();
         tile->pin_density = total_pin;
         double ratio = (double)(total_pin) / (MAX_TILE_PIN_INPUT_COUNT + MAX_TILE_PIN_OUTPUT_COUNT);
         baselinePinDensityMap.insert(std::pair<double, STile*>(ratio, tile));
@@ -563,7 +602,9 @@ int pindensity_setup()
     {
         STile* tile = it->second;
         double ratio = it->first;
-        if (top5PctCnt <= top5Pct)
+        std::cout << "Tile " << tile->X << " " << tile->Y << " " << tile->pin_density << " " << ratio << std::endl;
+        std::cout << "Total pin count: " << tile->pin_density << std::endl;
+        if (top5PctCnt < top5Pct)
         {
             totalPct += ratio;
             top5PctCnt++;
@@ -574,8 +615,35 @@ int pindensity_setup()
         }
     }
     double avgPct = totalPct / top5Pct;
+    std::cout << "Tile number: " << top5Pct << std::endl;
+    std::cout << "Average pin density: " << avgPct << std::endl;
     int pinMax = (int)((MAX_TILE_PIN_INPUT_COUNT + MAX_TILE_PIN_OUTPUT_COUNT) * avgPct);
     return pinMax;
+}
+
+bool in_pinset(int netID, int instID, SPin* pin) {
+    SInstance* inst = NetArray[pin->netID]->inpin->instanceOwner;
+    if (get<0>(inst->Location) != get<0>(InstArray[instID]->Location) || get<1>(inst->Location) != get<1>(InstArray[instID]->Location)){
+        return true;
+    }
+    return false;
+}
+
+bool out_pinset(int netID, int instID, SPin* pin) {
+    SNet* net = NetArray[pin->netID];
+    SInstance* in_inst = net->inpin->instanceOwner;
+    int flag = 0;
+    for (auto pin : net->outpins){
+        SInstance* inst = pin->instanceOwner;
+        if (get<0>(in_inst->Location) != get<0>(inst->Location) || get<1>(in_inst->Location) != get<1>(inst->Location)){
+            flag = 1;
+            break;
+        }
+    }
+    if (flag){
+        return true;
+    }
+    return false;
 }
 
 void connection_setup()

@@ -210,6 +210,8 @@ void copy_instances();
 void copy_nets();
 void connection_setup();
 int pindensity_setup();
+bool in_pinset(int netID, int instID, SPin* pin);
+bool out_pinset(int netID, int instID, SPin* pin);
 void file_output(std::string filename);
 void get_force(int iter);
 void parse_config(std::ifstream &infile);
