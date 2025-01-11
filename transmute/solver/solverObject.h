@@ -208,6 +208,7 @@ void init_tiles();
 void copy_instances();
 void copy_nets();
 void connection_setup();
+int pindensity_setup();
 void file_output(std::string filename);
 void get_force(int iter);
 void parse_config(std::ifstream &infile);

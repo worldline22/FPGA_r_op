@@ -3,6 +3,9 @@
 #include <fstream>
 #include <cmath>
 
+#define MAX_TILE_PIN_INPUT_COUNT 112.0   // 48 LUT input pins + 16 SEQ input pins (D) + 48 SEQ ctrl pins (CE CLK SR)
+#define MAX_TILE_PIN_OUTPUT_COUNT 32.0   // 16 LUT output pins + 16 SEQ output pins 
+
 std::map<int, SInstance*> InstArray;
 std::map<int, SNet*> NetArray;
 std::map<int, SPin*> PinArray;
@@ -485,22 +488,6 @@ void copy_instances()
         // check tile connect info
     }
 
-
-    for (auto tile : TileArray)
-    {
-        int total_pin = 0;
-        for (int i = 0; i < 8 ;i++){
-            for (auto instID : tile->instanceMap["LUT"][i].baseline_InstIDs){
-                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
-            }
-        }
-        for (int i = 0; i < 16;i++){
-            for (auto instID : tile->instanceMap["SEQ"][i].baseline_InstIDs){
-                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
-            }
-        }
-        tile->pin_density = total_pin;
-    }
     // for (int i = 0; i < 45000; ++i)
     //     {
     //         auto tile_ptr = TileArray[i]; 
@@ -541,6 +528,53 @@ void copy_instances()
     //     }
     //     std::cout << std::endl;
     // }
+}
+
+int pindensity_setup()
+{
+    int checkedTileCnt = 0;
+    std::multimap<double, STile*> baselinePinDensityMap;  
+    for (auto tile : TileArray)
+    {
+        if (tile->type != 1) continue;
+        int total_pin = 0;
+        for (int i = 0; i < 8 ;i++){
+            for (auto instID : tile->instanceMap["LUT"][i].baseline_InstIDs){
+                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+            }
+        }
+        for (int i = 0; i < 16;i++){
+            for (auto instID : tile->instanceMap["SEQ"][i].baseline_InstIDs){
+                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+            }
+        }
+        tile->pin_density = total_pin;
+        double ratio = (double)(total_pin) / (MAX_TILE_PIN_INPUT_COUNT + MAX_TILE_PIN_OUTPUT_COUNT);
+        baselinePinDensityMap.insert(std::pair<double, STile*>(ratio, tile));
+        checkedTileCnt++;
+    }
+
+    const int top5Pct = checkedTileCnt * 0.05;
+
+    int top5PctCnt = 0;
+    double totalPct = 0;
+    for (auto it = baselinePinDensityMap.rbegin(); it != baselinePinDensityMap.rend(); ++it)
+    {
+        STile* tile = it->second;
+        double ratio = it->first;
+        if (top5PctCnt <= top5Pct)
+        {
+            totalPct += ratio;
+            top5PctCnt++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    double avgPct = totalPct / top5Pct;
+    int pinMax = (int)((MAX_TILE_PIN_INPUT_COUNT + MAX_TILE_PIN_OUTPUT_COUNT) * avgPct);
+    return pinMax;
 }
 
 void connection_setup()

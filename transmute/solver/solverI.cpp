@@ -9,6 +9,8 @@
 
 std::vector<bool> dep_inst;
 
+int pin_denMax;
+
 bool ISMSolver_matching_I::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
     using Graph = lemon::ListDigraph;
     using NS = lemon::NetworkSimplex<Graph>;

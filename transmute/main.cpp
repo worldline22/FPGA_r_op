@@ -52,6 +52,9 @@ int main(int, char* argv[])
     std::cout << "Successfully copied instances." << std::endl;
     connection_setup();
     std::cout << "Successfully set up connections." << std::endl;
+    pin_denMax = pindensity_setup();
+
+
     // for (auto tilep : TileArray)
     // {
     //     if (tilep->type != 1) continue;
