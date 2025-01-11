@@ -18,6 +18,7 @@ int instance_iteration;
 int indepSet_radius;
 int indepSet_volume;
 int indepSet_number;
+bool dbinfo_enable;
 
 extern int xy_2_index(int x, int y)
 {
@@ -589,6 +590,7 @@ void connection_setup()
             pinIDs.push_back(pin->pinID);
         }
         int size = pinIDs.size();
+        if (size > 10000) continue;
         // if (size > 15) continue;
 
         for (int i = 0; i < size; ++i)
@@ -683,10 +685,12 @@ void get_force(int iter)
             if (inpinp->netID == -1) continue;
             SNet* inNet = NetArray[inpinp->netID];
             netsize += inNet->outpins.size() + 1;
-            if (inNet->clock) {
-                assert(inpinp->prop == PinProp::PIN_PROP_CLOCK);
-            }
-            if (inpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
+            if (inNet->clock) continue;
+            if (inNet->outpins.size() > 9999) continue;
+            // {
+            //     assert(inpinp->prop == PinProp::PIN_PROP_CLOCK);
+            // }
+            // if (inpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
             float fmag = 1;
             if (inpinp->timingCritical) fmag = 2;
             // get instance's parents
@@ -712,10 +716,12 @@ void get_force(int iter)
             if (outpinp->netID == -1) continue;
             SNet* outNet = NetArray[outpinp->netID];
             netsize += outNet->outpins.size() + 1;
-            if (outNet->clock) {
-                assert(outpinp->prop == PinProp::PIN_PROP_CLOCK);
-            }
-            if (outpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
+            if (outNet->clock) continue; 
+            if (outNet->outpins.size() > 9999) continue;
+            // {
+            //     assert(outpinp->prop == PinProp::PIN_PROP_CLOCK);
+            // }
+            // if (outpinp->prop == PinProp::PIN_PROP_CLOCK) continue;
             for (auto outpin : outNet->outpins)
             {
                 SInstance* sink = outpin->instanceOwner;
@@ -756,4 +762,5 @@ void parse_config(std::ifstream &infile)
     infile >> dump >> indepSet_radius;
     infile >> dump >> indepSet_volume;
     infile >> dump >> indepSet_number;
+    infile >> dump >> dbinfo_enable;
 }

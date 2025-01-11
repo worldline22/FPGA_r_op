@@ -158,16 +158,18 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-
-        int total_cost_sum = 0;
-        for (int j = 0; j < int(indepSets.size()); ++j)
+        if (dbinfo_enable)
         {
-            dbinfo << "Independent Set " << j << " : ";
-            show_site_in_set(indepSets[j], dbinfo);
-            total_cost_sum += indepSets[j].totalCost;
+            int total_cost_sum = 0;
+            for (int j = 0; j < int(indepSets.size()); ++j)
+            {
+                dbinfo << "Independent Set " << j << " : ";
+                show_site_in_set(indepSets[j], dbinfo);
+                total_cost_sum += indepSets[j].totalCost;
+            }
+            overall_cost += total_cost_sum;
+            dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         }
-        overall_cost += total_cost_sum;
-        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
         
         // std::cout << "Matching Complete." << std::endl;
         for (auto &indepSet : indepSets)
@@ -175,9 +177,6 @@ int main(int, char* argv[])
             update_instance(indepSet);
         }
         update_net();
-        // int HPWL = update_net();
-        // if (HPWL_est - HPWL < 2 || (num_iter > 15 && HPWL_est - HPWL < 3)) break;
-        // else HPWL_est = HPWL;
     }
     std::cout << "Bank ISM finish." << std::endl;
     priority.clear();
@@ -193,19 +192,16 @@ int main(int, char* argv[])
     num_iter = instance_iteration;
     const int MaxR = indepSet_radius;
     const int MaxIndepSetSize = indepSet_volume;
-    MaxIndepSetNum = indepSet_number;
+    MaxIndepSetNum = ForceArray.size() / 300;
     MaxEmptyNum = MaxIndepSetSize - 10;
     for (int i = 0; i < num_iter; ++i)
     {
-        dbinfo << ">>>> IterationI " << i << std::endl;
+        if (dbinfo_enable) dbinfo << ">>>> IterationI " << i << std::endl;
         std::cout << "IterationI " << i << std::endl;
         get_force(i);
 
         sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a]->F > ForceArray[b]->F; });
-        // for (int i = 0; i < int(ForceArray.size()); ++i)
-        // {
-        //     dbinfo << priority[i] << " " << ForceArray[priority[i]]->F << std::endl;
-        // }
+        
         std::vector<int> inst_priority;
         inst_priority.resize(ForceArray.size());
         for (int i = 0; i < int(ForceArray.size()); ++i)
@@ -215,30 +211,7 @@ int main(int, char* argv[])
         {
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
-        // sort priority
-        // for (auto &bkt : movBuckets)
-        //     bkt.clear();
-        // movBuckets.resize(100);
-        // for (int i : priority)
-        // {
-        //     if (InstArray[i]->numMov>30) std::cout << InstArray[i]->numMov << "_______________________________________________________" << i << std::endl;
-        //     movBuckets[InstArray[i]->numMov].push_back(i);
-        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        // }
-        // auto it = priority.begin();
-        // for (const auto &bkt : movBuckets)
-        // {
-        //     std::copy(bkt.begin(), bkt.end(), it);
-        //     it += bkt.size();
-        // }
-        // auto start_prioroty = std::chrono::high_resolution_clock::now();
         
-        // auto end_priority = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_priority = end_priority - start_prioroty;
-        // std::cout << "Priority Sort Time: " << elapsed_priority.count() << "s" << std::endl;
-
-
-        // auto start_LUT_build = std::chrono::high_resolution_clock::now();
         solver.buildIndependentIndepSets(indepSets, MaxR, MaxIndepSetSize, 9, inst_priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
@@ -274,21 +247,20 @@ int main(int, char* argv[])
                 thread.join();
             }
         }
-        int total_cost_sum = 0;
-        for (int j = 0; j < int(indepSets.size()); ++j)
+        if (dbinfo_enable)
         {
-            dbinfo << "Independent Set " << j << " : ";
-            show_site_in_set(indepSets[j], dbinfo);
-            total_cost_sum += indepSets[j].totalCost;
+            int total_cost_sum = 0;
+            for (int j = 0; j < int(indepSets.size()); ++j)
+            {
+                dbinfo << "Independent Set " << j << " : ";
+                show_site_in_set(indepSets[j], dbinfo);
+                total_cost_sum += indepSets[j].totalCost;
+            }
+            overall_cost += total_cost_sum;
+            dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
+            dbinfo << "----------------------------------------------------LUT Search Over----------------------------------------------------" << std::endl;
         }
-        overall_cost += total_cost_sum;
-        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
-        dbinfo << "----------------------------------------------------LUT Search Over----------------------------------------------------" << std::endl;
-        // auto end_LUT_build = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_LUT_build = end_LUT_build - start_LUT_build;
-        // std::cout << "LUT Build Time: " << elapsed_LUT_build.count() << "s" << std::endl;
-
-        // auto start_updateLUT = std::chrono::high_resolution_clock::now();
+        
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {
@@ -364,21 +336,19 @@ int main(int, char* argv[])
         // auto end_matching_count = std::chrono::high_resolution_clock::now();
         // std::chrono::duration<double> elapsed_matching_count = end_matching_count - start_matching_count;
         // std::cout << "SEQ Matching Count Time: " << elapsed_matching_count.count() << "s" << std::endl;
-        int total_cost_sum = 0;
-        for (int j = 0; j < int(indepSets.size()); ++j)
+        if (dbinfo_enable)
         {
-            dbinfo << "Independent Set " << j << " : ";
-            show_site_in_set(indepSets[j], dbinfo);
-            total_cost_sum += indepSets[j].totalCost;
+            int total_cost_sum = 0;
+            for (int j = 0; j < int(indepSets.size()); ++j)
+            {
+                dbinfo << "Independent Set " << j << " : ";
+                show_site_in_set(indepSets[j], dbinfo);
+                total_cost_sum += indepSets[j].totalCost;
+            }
+            overall_cost += total_cost_sum;
+            dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
+            dbinfo << "----------------------------------------------------SEQ Search Over----------------------------------------------------" << std::endl;
         }
-        overall_cost += total_cost_sum;
-        dbinfo << "Total Cost Sum: " << total_cost_sum << std::endl;
-        dbinfo << "----------------------------------------------------SEQ Search Over----------------------------------------------------" << std::endl;
-        // auto end_SEQ_build = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_SEQ_build = end_SEQ_build - start_SEQ_build;
-        // std::cout << "SEQ Build Time: " << elapsed_SEQ_build.count() << "s" << std::endl;
-
-        // auto start_updateSEQ = std::chrono::high_resolution_clock::now();
         std::set<int> changed_tiles;
         for (auto &indepSet : indepSets)
         {

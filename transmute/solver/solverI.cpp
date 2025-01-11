@@ -589,7 +589,9 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
         old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
         if (old_isSpace) return 0;
         old_inst = old_index % 2 == 0 ? InstArray[*old_instIDs.begin()] : InstArray[*old_instIDs.rbegin()];
-        pin_add = old_inst->inpins.size() + old_inst->outpins.size();
+        // if (old_inst == nullptr) pin_add = 0;
+        if (old_inst == nullptr) return 0;
+        else pin_add = old_inst->inpins.size() + old_inst->outpins.size();
         if (new_instIDs.size() == 1){
             if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
                 if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
@@ -617,7 +619,8 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
         //     std::cout<<"This is the key debug point"<<std::endl;
         // }
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
-        pin_add = old_inst->inpins.size() + old_inst->outpins.size();
+        if (old_inst == nullptr) return 0;
+        else pin_add = old_inst->inpins.size() + old_inst->outpins.size();
 
         if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
             return std::numeric_limits<int>::max();

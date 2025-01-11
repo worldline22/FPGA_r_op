@@ -203,6 +203,7 @@ extern int instance_iteration;
 extern int indepSet_radius;
 extern int indepSet_volume;
 extern int indepSet_number;
+extern bool dbinfo_enable;
 
 void init_tiles();
 void copy_instances();

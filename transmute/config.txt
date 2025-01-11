@@ -1,6 +1,8 @@
-bank_iteration= 20
-instance_iteration= 200
+bank_iteration= 10
+instance_iteration= 12
 
 indepSet_radius= 20
 indepSet_volume= 250
 indepSet_number= 25
+
+dbinfo_enable= 0

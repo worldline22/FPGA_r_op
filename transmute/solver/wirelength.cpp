@@ -155,12 +155,14 @@ int calculate_WL_Increase(SInstance* inst_old_ptr, std::tuple<int, int, int> new
     for (auto inpin : inst_old_ptr->inpins) {
         if (inpin->netID != -1) {
             if (NetArray[inpin->netID]->clock) continue;
+            if (NetArray[inpin->netID]->outpins.size() > 9999) continue;
             netID_set.insert(inpin->netID);
         }
     }
     for (auto outpin : inst_old_ptr->outpins) {
         if (outpin->netID != -1) {
             if (NetArray[outpin->netID]->clock) continue;
+            if (NetArray[outpin->netID]->outpins.size() > 9999) continue;
             netID_set.insert(outpin->netID);
         }
     }
@@ -281,6 +283,7 @@ int calculate_bank_WL_Increase(STile* tile_old_ptr, bool oldbank, std::pair<int,
         for (int i = 0; i < (int)tile_old_ptr->netsConnected_bank0.size(); i++){
             SNet *net = NetArray[tile_old_ptr->netsConnected_bank0[i]];
             if (net->clock) continue;
+            if (net->outpins.size() > 9999) continue;
 
             // crit
             int crit_prev = 0;
@@ -381,6 +384,7 @@ int calculate_bank_WL_Increase(STile* tile_old_ptr, bool oldbank, std::pair<int,
         for (int i = 0; i < (int)tile_old_ptr->netsConnected_bank1.size(); i++){
             SNet *net = NetArray[tile_old_ptr->netsConnected_bank1[i]];
             if (net->clock) continue;
+            if (net->outpins.size() > 9999) continue;
 
             // crit
             int crit_prev = 0;

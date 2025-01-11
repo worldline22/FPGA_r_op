@@ -1910,6 +1910,7 @@ DTYPE RecSteinerMinTree::wirelength(Tree t) {
                 j = t.branch[i].n;
                 l += ADIFF(t.branch[i].x, t.branch[j].x) + ADIFF(t.branch[i].y, t.branch[j].y);
         }
+        free(t.branch);
 
         return l;
 }
