@@ -1,11 +1,8 @@
 read_arch ../../Arch/fpga.lib ../../Arch/fpga.scl ../../Arch/fpga.clk
 report_arch
-
 read_design ../../Benchmark/public_release/case_1.nodes ../../Benchmark/public_release/case_1.nets ../../Benchmark/public_release/case_1.timing
 report_design 
-
 read_output ../../Test/MRes/case_1.nodes.out
-
 legal_check
 report_wirelength
 report_pin_density
