@@ -590,7 +590,7 @@ void connection_setup()
             pinIDs.push_back(pin->pinID);
         }
         int size = pinIDs.size();
-        if (size > 10000) continue;
+        if (size > 9900) continue;
         // if (size > 15) continue;
 
         for (int i = 0; i < size; ++i)
@@ -686,7 +686,7 @@ void get_force(int iter)
             SNet* inNet = NetArray[inpinp->netID];
             netsize += inNet->outpins.size() + 1;
             if (inNet->clock) continue;
-            if (inNet->outpins.size() > 9999) continue;
+            if (inNet->outpins.size() > 9900) continue;
             // {
             //     assert(inpinp->prop == PinProp::PIN_PROP_CLOCK);
             // }
@@ -717,7 +717,7 @@ void get_force(int iter)
             SNet* outNet = NetArray[outpinp->netID];
             netsize += outNet->outpins.size() + 1;
             if (outNet->clock) continue; 
-            if (outNet->outpins.size() > 9999) continue;
+            if (outNet->outpins.size() > 9900) continue;
             // {
             //     assert(outpinp->prop == PinProp::PIN_PROP_CLOCK);
             // }
