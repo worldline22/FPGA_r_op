@@ -1,0 +1,12 @@
+read_arch ../../Arch/fpga.lib ../../Arch/fpga.scl ../../Arch/fpga.clk
+report_arch
+
+read_design ../../Benchmark/public_release/case_4.nodes ../../Benchmark/public_release/case_4.nets ../../Benchmark/public_release/case_4.timing
+report_design 
+
+read_output ../../Test/MRes/case_4.nodes.out
+
+legal_check
+report_wirelength
+report_pin_density
+exit

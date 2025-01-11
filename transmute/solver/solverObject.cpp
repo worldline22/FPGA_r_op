@@ -555,7 +555,7 @@ int pindensity_setup()
         checkedTileCnt++;
     }
 
-    const int top5Pct = checkedTileCnt * 0.02;
+    const int top5Pct = checkedTileCnt * 0.05;
 
     int top5PctCnt = 0;
     double totalPct = 0;

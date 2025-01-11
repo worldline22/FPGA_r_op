@@ -1,5 +1,5 @@
-bank_iteration= 10
-instance_iteration= 12
+bank_iteration= 12
+instance_iteration= 15
 
 indepSet_radius= 20
 indepSet_volume= 250
