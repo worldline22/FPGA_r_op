@@ -554,7 +554,7 @@ int pindensity_setup()
         checkedTileCnt++;
     }
 
-    const int top5Pct = checkedTileCnt * 0.05;
+    const int top5Pct = checkedTileCnt * 0.02;
 
     int top5PctCnt = 0;
     double totalPct = 0;
@@ -662,6 +662,9 @@ void file_output(std::string filename)
 
 void get_force(int iter)
 {
+    std::ifstream config_file("config.txt");
+    parse_config(config_file);
+    int max_iter = instance_iteration;
     for (auto instpiece : ForceArray)
     {
         SInstance* instP = InstArray[instpiece->id];
@@ -735,7 +738,7 @@ void get_force(int iter)
             }
         }
         float F_leave = sqrt(instpiece->F_leave_x * instpiece->F_leave_x + instpiece->F_leave_y * instpiece->F_leave_y);
-        netsize = pow(netsize, (60-iter)/60);
+        netsize = pow(netsize, (max_iter-iter)/60);
         if (F_leave < instpiece->F_stay) instpiece->F = 0;
         else 
         {

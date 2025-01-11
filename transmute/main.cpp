@@ -191,6 +191,10 @@ int main(int, char* argv[])
         inst.second->numMov = 0;
     }
     num_iter = instance_iteration;
+    const int MaxR = indepSet_radius;
+    const int MaxIndepSetSize = indepSet_volume;
+    MaxIndepSetNum = indepSet_number;
+    MaxEmptyNum = MaxIndepSetSize - 10;
     for (int i = 0; i < num_iter; ++i)
     {
         dbinfo << ">>>> IterationI " << i << std::endl;
@@ -198,10 +202,10 @@ int main(int, char* argv[])
         get_force(i);
 
         sort(priority.begin(), priority.end(), [&](int a, int b) { return ForceArray[a]->F > ForceArray[b]->F; });
-        for (int i = 0; i < int(ForceArray.size()); ++i)
-        {
-            dbinfo << priority[i] << " " << ForceArray[priority[i]]->F << std::endl;
-        }
+        // for (int i = 0; i < int(ForceArray.size()); ++i)
+        // {
+        //     dbinfo << priority[i] << " " << ForceArray[priority[i]]->F << std::endl;
+        // }
         std::vector<int> inst_priority;
         inst_priority.resize(ForceArray.size());
         for (int i = 0; i < int(ForceArray.size()); ++i)
@@ -235,7 +239,7 @@ int main(int, char* argv[])
 
 
         // auto start_LUT_build = std::chrono::high_resolution_clock::now();
-        solver.buildIndependentIndepSets(indepSets, 15, 100, 9, inst_priority);
+        solver.buildIndependentIndepSets(indepSets, MaxR, MaxIndepSetSize, 9, inst_priority);
         std::cout << indepSets.size() << " independent sets." << std::endl;
         
         std::vector<std::thread> threads;
@@ -302,23 +306,23 @@ int main(int, char* argv[])
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
         // sort priority
-        for (auto &bkt : movBuckets)
-            bkt.clear();
-        movBuckets.resize(100);
-        for (int i : priority)
-        {
-            movBuckets[InstArray[i]->numMov].push_back(i);
-            // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        }
-        auto it = priority.begin();
-        for (const auto &bkt : movBuckets)
-        {
-            std::copy(bkt.begin(), bkt.end(), it);
-            it += bkt.size();
-        }
+        // for (auto &bkt : movBuckets)
+        //     bkt.clear();
+        // movBuckets.resize(100);
+        // for (int i : priority)
+        // {
+        //     movBuckets[InstArray[i]->numMov].push_back(i);
+        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
+        // }
+        // auto it = priority.begin();
+        // for (const auto &bkt : movBuckets)
+        // {
+        //     std::copy(bkt.begin(), bkt.end(), it);
+        //     it += bkt.size();
+        // }
         // auto start_SEQ_build = std::chrono::high_resolution_clock::now();
         // auto start_SEQ_build1 = std::chrono::high_resolution_clock::now();
-        solver.buildIndependentIndepSets(indepSets, 15, 100, 19, inst_priority);
+        solver.buildIndependentIndepSets(indepSets, MaxR, MaxIndepSetSize, 19, inst_priority);
         // auto end_SEQ_build1 = std::chrono::high_resolution_clock::now();
         // std::chrono::duration<double> elapsed_SEQ_build1 = end_SEQ_build1 - start_SEQ_build1;
         // std::cout << "SEQ Build Time1: " << elapsed_SEQ_build1.count() << "s" << std::endl;

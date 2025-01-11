@@ -18,6 +18,10 @@ extern std::vector<bool> dep_inst;
 
 extern int pin_denMax;
 
+extern int MaxIndepSetNum;
+
+extern int MaxEmptyNum;
+
 class ISMSolver_matching_I {
 public:
     // 用于求解匹配问题

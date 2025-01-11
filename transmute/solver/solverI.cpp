@@ -11,6 +11,10 @@ std::vector<bool> dep_inst;
 
 int pin_denMax;
 
+int MaxIndepSetNum;
+
+int MaxEmptyNum;
+
 bool ISMSolver_matching_I::runNetworkSimplex(ISMMemory &mem, lemon::ListDigraph::Node s, lemon::ListDigraph::Node t, int supply) const {
     using Graph = lemon::ListDigraph;
     using NS = lemon::NetworkSimplex<Graph>;
@@ -135,12 +139,12 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 indepSet.type = 1;
                 int Spacechoose = 2;
                 // std::cout<<"Start find a new indepSet"<<std::endl;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, 50);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, Lib, Spacechoose, MaxEmptyNum);
                 // std::cout<<"Finish find a new indepSet"<<std::endl;
                 set.push_back(indepSet);
                 set_cnt++;
             }
-            if (set_cnt >= 20) break;
+            if (set_cnt >= MaxIndepSetNum) break;
         }
     }
     else {
@@ -156,11 +160,11 @@ void ISMSolver_matching_I::buildIndependentIndepSets(std::vector<IndepSet> &set,
                 int Spacechoose = 2;
                 if (index == 0) std::cout<<"Start from a new slot"<<std::endl;
                 if (instId == 0) std::cout<<"Error: start from an empty instance!"<<std::endl;
-                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, 50);
+                buildIndepSet(indepSet, index, maxR, maxIndepSetSize, 19, Spacechoose, MaxEmptyNum);
                 set.push_back(indepSet);
                 set_cnt++;
             }
-            if (set_cnt >= 20) break;
+            if (set_cnt >= MaxIndepSetNum) break;
         }
     }
     return;
@@ -585,6 +589,7 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
         old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
         if (old_isSpace) return 0;
         old_inst = old_index % 2 == 0 ? InstArray[*old_instIDs.begin()] : InstArray[*old_instIDs.rbegin()];
+        pin_add = old_inst->inpins.size() + old_inst->outpins.size();
         if (new_instIDs.size() == 1){
             if (new_index % 2 == 1){    //表示只装了一个LUT且这个new_index是奇数，表示一个空位
                 if(( old_inst -> Lib + InstArray[*new_instIDs.begin()] -> Lib) > 22){
@@ -612,6 +617,7 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
         //     std::cout<<"This is the key debug point"<<std::endl;
         // }
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
+        pin_add = old_inst->inpins.size() + old_inst->outpins.size();
 
         if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
             return std::numeric_limits<int>::max();
