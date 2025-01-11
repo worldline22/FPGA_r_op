@@ -480,8 +480,26 @@ void copy_instances()
         // std::cout << std::endl;
         
         InstArray.insert(std::make_pair(instance->id, instance));
+
         // std::cout << InstArray[instance->id]->id << " " << InstArray[instance->id]->Lib << " " << InstArray[instance->id]->fixed << " " << std::get<0>(InstArray[instance->id]->baseLocation) << " " << std::get<1>(InstArray[instance->id]->baseLocation) << " " << std::get<2>(InstArray[instance->id]->baseLocation) << InstArray[instance->id]->inpins.size() << " " << InstArray[instance->id]->outpins.size() << std::endl; 
         // check tile connect info
+    }
+
+
+    for (auto tile : TileArray)
+    {
+        int total_pin = 0;
+        for (int i = 0; i < 8 ;i++){
+            for (auto instID : tile->instanceMap["LUT"][i].baseline_InstIDs){
+                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+            }
+        }
+        for (int i = 0; i < 16;i++){
+            for (auto instID : tile->instanceMap["SEQ"][i].baseline_InstIDs){
+                total_pin+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+            }
+        }
+        tile->pin_density = total_pin;
     }
     // for (int i = 0; i < 45000; ++i)
     //     {

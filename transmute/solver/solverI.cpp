@@ -577,6 +577,8 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
     std::list<int> old_instIDs = findSlotInstIds(old_index, Lib);
     bool old_isSpace;
     SInstance* old_inst;
+    STile* tile_new = TileArray[xy_2_index(x, y)];
+    int pin_add = 0;
     if (isLUT(Lib)){
         old_isSpace = (old_instIDs.size() == 0) || (old_instIDs.size() == 1 && old_index % 2 == 1);
         if (old_isSpace) return 0;
@@ -596,6 +598,10 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
                 return std::numeric_limits<int>::max();
             }
         }
+        // pindensity constraint
+        if(tile_new->pin_density + pin_add > pin_denMax){
+            return std::numeric_limits<int>::max();
+        }
     }
     else if (Lib == 19){
         if (!old_instIDs.size()) return 0;
@@ -604,9 +610,12 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
         //     std::cout<<"This is the key debug point"<<std::endl;
         // }
         bool new_seq_bank = (new_index/8)%2 == 0 ? false : true;    //表示new_index是bank0还是bank1
-        STile* tile_new = TileArray[xy_2_index(x, y)];
 
         if(!isControlSetCondition(old_inst, tile_new, new_seq_bank)){
+            return std::numeric_limits<int>::max();
+        }
+        // pindensity constraint
+        if(tile_new->pin_density + pin_add > pin_denMax){
             return std::numeric_limits<int>::max();
         }
     }

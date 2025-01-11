@@ -1207,6 +1207,7 @@ void update_tile_I(std::set<int> changed_tiles)
         tile->RESET_bank1.clear();
         tile->CLOCK_bank0.clear();
         tile->CLOCK_bank1.clear();
+        int pin_total = 0;
         for (int i = 0; i < 4; ++i)
         {
             auto map = tile->instanceMap;
@@ -1219,6 +1220,9 @@ void update_tile_I(std::set<int> changed_tiles)
                     auto it = std::find(tile->instanceMap["LUT"][i].current_InstIDs.begin(), tile->instanceMap["LUT"][i].current_InstIDs.end(), -1);
                     tile->instanceMap["LUT"][i].current_InstIDs.erase(it);
                     continue;
+                }
+                else {
+                    pin_total+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
                 }
                 // SInstance* inst = InstArray[instID];
                 // for (auto inpinp : inst->inpins)
@@ -1284,6 +1288,9 @@ void update_tile_I(std::set<int> changed_tiles)
                     tile->instanceMap["LUT"][i].current_InstIDs.erase(it);
                     continue;
                 }
+                else {
+                    pin_total+=InstArray[instID]->inpins.size() + InstArray[instID]->outpins.size();
+                }
                 // SInstance* inst = InstArray[instID];
                 // for (auto inpinp : inst->inpins)
                 // {
@@ -1348,6 +1355,7 @@ void update_tile_I(std::set<int> changed_tiles)
                     continue;
                 }
                 SInstance* inst = InstArray[instID];
+                pin_total+=inst->inpins.size() + inst->outpins.size();
                 for (auto inpinp : inst->inpins)
                 {
                     if (inpinp->netID == -1) continue;
@@ -1411,6 +1419,7 @@ void update_tile_I(std::set<int> changed_tiles)
                     continue;
                 }
                 SInstance* inst = InstArray[instID];
+                pin_total+=inst->inpins.size() + inst->outpins.size();
                 for (auto inpinp : inst->inpins)
                 {
                     if (inpinp->netID == -1) continue;
@@ -1460,6 +1469,7 @@ void update_tile_I(std::set<int> changed_tiles)
                             tile->RESET_bank1.insert(outpinp->netID);}}
                 }
             }
+            tile->pin_density = pin_total;
         }
     }
 }
