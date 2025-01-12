@@ -744,7 +744,7 @@ void get_force(int iter)
             }
         }
         float F_leave = sqrt(instpiece->F_leave_x * instpiece->F_leave_x + instpiece->F_leave_y * instpiece->F_leave_y);
-        netsize = pow(netsize, (max_iter-iter)/60);
+        netsize = pow(netsize, (max_iter-iter)/max_iter);
         if (F_leave < instpiece->F_stay) instpiece->F = 0;
         else 
         {

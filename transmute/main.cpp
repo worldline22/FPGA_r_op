@@ -54,23 +54,6 @@ int main(int, char* argv[])
     std::cout << "Successfully set up connections." << std::endl;
     pin_denMax = pindensity_setup();
 
-
-    // for (auto tilep : TileArray)
-    // {
-    //     if (tilep->type != 1) continue;
-    //     std::cout << "Tile " << tilep->X << " " << tilep->Y << " " << tilep->netsConnected_bank0.size() << " " << tilep->netsConnected_bank1.size() << std::endl;
-    // }
-    // std::set<int> press_test;
-    // for (int i = 0; i < 45000; ++i)
-    // {
-    //     auto tile_ptr = TileArray[i];
-    //     if (tile_ptr->type == 1)
-    //     {
-    //         press_test.insert(i);
-    //     }
-    // }
-    // update_tile_I(press_test);
-    // ForceArray.resize(InstArray.size());
     ForceArray.clear();
     for (int i = 0; i < int(InstArray.size()); ++i)
     {
@@ -82,6 +65,7 @@ int main(int, char* argv[])
         // 这玩意tm有病吧，不能用构造函数，用了就会报莫名奇妙的segfault
     }
     // get_force();
+    std::cout << "Instance Moveable: " << ForceArray.size() << std::endl;
 
     // solve start
     std::vector<int> priority;
@@ -179,6 +163,7 @@ int main(int, char* argv[])
         update_net();
     }
     std::cout << "Bank ISM finish." << std::endl;
+    pin_denMax = pin_denMax * 2;
     priority.clear();
     priority.resize(ForceArray.size());
     for (int i = 0; i < int(ForceArray.size()); ++i)
@@ -232,7 +217,6 @@ int main(int, char* argv[])
             {
                 ISMMemory mem;
                 indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-                // indepSet.totalCost = mem.totalCost;
                 {
                     std::lock_guard<std::mutex> guard(mtx);
                     --active_threads;
@@ -269,42 +253,18 @@ int main(int, char* argv[])
         }
         update_tile_I(changed_tiles);
         update_net();
-        // auto end_updateLUT = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_updateLUT = end_updateLUT - start_updateLUT;
-        // std::cout << "LUT Update Time: " << elapsed_updateLUT.count() << "s" << std::endl;
         }
 
         {
         ISMSolver_matching_I solver;
         std::vector<IndepSet> indepSets;
-        // sort priority
-        // for (auto &bkt : movBuckets)
-        //     bkt.clear();
-        // movBuckets.resize(100);
-        // for (int i : priority)
-        // {
-        //     movBuckets[InstArray[i]->numMov].push_back(i);
-        //     // if(InstArray[i]->numMov>1)std::cout<<"mark";
-        // }
-        // auto it = priority.begin();
-        // for (const auto &bkt : movBuckets)
-        // {
-        //     std::copy(bkt.begin(), bkt.end(), it);
-        //     it += bkt.size();
-        // }
-        // auto start_SEQ_build = std::chrono::high_resolution_clock::now();
-        // auto start_SEQ_build1 = std::chrono::high_resolution_clock::now();
         solver.buildIndependentIndepSets(indepSets, MaxR, MaxIndepSetSize, 19, inst_priority);
-        // auto end_SEQ_build1 = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_SEQ_build1 = end_SEQ_build1 - start_SEQ_build1;
-        // std::cout << "SEQ Build Time1: " << elapsed_SEQ_build1.count() << "s" << std::endl;
 
         std::cout << indepSets.size() << " independent sets." << std::endl;
         std::vector<std::thread> threads;
         std::mutex mtx;
         std::condition_variable cv;
         int active_threads = 0;
-        // auto start_matching_count = std::chrono::high_resolution_clock::now();
         for (auto &indepSet : indepSets)
         {
             {
@@ -333,9 +293,6 @@ int main(int, char* argv[])
             }
         }
         std::cout << "Matching Complete." << std::endl;
-        // auto end_matching_count = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_matching_count = end_matching_count - start_matching_count;
-        // std::cout << "SEQ Matching Count Time: " << elapsed_matching_count.count() << "s" << std::endl;
         if (dbinfo_enable)
         {
             int total_cost_sum = 0;
@@ -357,158 +314,11 @@ int main(int, char* argv[])
         }
         update_tile_I(changed_tiles);
         update_net();
-        // auto end_updateSEQ = std::chrono::high_resolution_clock::now();
-        // std::chrono::duration<double> elapsed_updateSEQ = end_updateSEQ - start_updateSEQ;
-        // std::cout << "SEQ Update Time: " << elapsed_updateSEQ.count() << "s" << std::endl;
         }
     }
     std::cout << "Instance SEQ ISM finish." << std::endl;
-    std::cout << "Overall Cost: " << overall_cost << std::endl;
+    // std::cout << "Overall Cost: " << overall_cost << std::endl;
 
-    // after instanceISM:
-    // for, update_instance_I
-    // update_tiles_I
-    // update_net
-
-    // for (auto &inst : InstArray)
-    // {
-    //     inst.second->numMov = 0;
-    // }
-    // num_iter = 20;
-    // for (int i = 0; i < num_iter; ++i)
-    // {
-    //     std::cout<< "test" << std::endl;
-    //     std::cout << "IterationI " << i << std::endl;
-    //     {
-    //     ISMSolver_matching_I solver;
-    //     std::vector<IndepSet> indepSets;
-    //     // sort priority
-    //     for (auto &bkt : movBuckets)
-    //         bkt.clear();
-    //     movBuckets.resize(num_iter*2);
-    //     for (int i : priority)
-    //     {
-    //         movBuckets[InstArray[i]->numMov].push_back(i);
-    //         // if(InstArray[i]->numMov>1)std::cout<<"mark";
-    //     }
-    //     auto it = priority.begin();
-    //     for (const auto &bkt : movBuckets)
-    //     {
-    //         std::copy(bkt.begin(), bkt.end(), it);
-    //         it += bkt.size();
-    //     }
-    //     solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
-    //     std::cout << indepSets.size() << " independent sets." << std::endl;
-        
-    //     std::vector<std::thread> threads;
-    //     std::mutex mtx;
-    //     std::condition_variable cv;
-    //     int active_threads = 0;
-    //     for (auto &indepSet : indepSets)
-    //     {
-    //         {
-    //             std::unique_lock<std::mutex> lock(mtx);
-    //             cv.wait(lock, [&]() { return active_threads < max_threads; });
-    //             ++active_threads;
-    //         }
-
-    //         threads.emplace_back(
-    //             [&solver, &indepSet, &mtx, &cv, &active_threads]()
-    //         {
-    //             ISMMemory mem;
-    //             indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-    //             {
-    //                 std::lock_guard<std::mutex> guard(mtx);
-    //                 --active_threads;
-    //             }
-    //             cv.notify_one();
-    //         }
-    //         );
-    //     }
-    //     for (auto &thread : threads)
-    //     {
-    //         if (thread.joinable()) {
-    //             thread.join();
-    //         }
-    //     }
-    //     std::set<int> changed_tiles;
-    //     for (auto &indepSet : indepSets)
-    //     {
-    //         auto changed = update_instance_I(indepSet, 1);
-    //         changed_tiles.insert(changed.begin(), changed.end());
-    //     }
-    //     update_tile_I(changed_tiles);
-    //     update_net();
-    //     }
-
-    //     {
-    //     ISMSolver_matching_I solver;
-    //     std::vector<IndepSet> indepSets;
-    //     // sort priority
-    //     for (auto &bkt : movBuckets)
-    //         bkt.clear();
-    //     movBuckets.resize(num_iter*2);
-    //     for (int i : priority)
-    //     {
-    //         movBuckets[InstArray[i]->numMov].push_back(i);
-    //         // if(InstArray[i]->numMov>1)std::cout<<"mark";
-    //     }
-    //     auto it = priority.begin();
-    //     for (const auto &bkt : movBuckets)
-    //     {
-    //         std::copy(bkt.begin(), bkt.end(), it);
-    //         it += bkt.size();
-    //     }
-    //     solver.buildIndependentIndepSets(indepSets, 10, 50, 9, priority);
-    //     std::cout << indepSets.size() << " independent sets." << std::endl;
-
-    //     std::vector<std::thread> threads;
-    //     std::mutex mtx;
-    //     std::condition_variable cv;
-    //     int active_threads = 0;
-    //     for (auto &indepSet : indepSets)
-    //     {
-    //         {
-    //             std::unique_lock<std::mutex> lock(mtx);
-    //             cv.wait(lock, [&]() { return active_threads < max_threads; });
-    //             ++active_threads;
-    //         }
-
-    //         threads.emplace_back(
-    //             [&solver, &indepSet, &mtx, &cv, &active_threads]()
-    //         {
-    //             ISMMemory mem;
-    //             indepSet.solution = solver.realizeMatching_Instance(mem, indepSet, 9);
-    //             {
-    //                 std::lock_guard<std::mutex> guard(mtx);
-    //                 --active_threads;
-    //             }
-    //             cv.notify_one();
-    //         }
-    //         );
-    //     }
-    //     for (auto &thread : threads)
-    //     {
-    //         if (thread.joinable()) {
-    //             thread.join();
-    //         }
-    //     }
-    //     std::set<int> changed_tiles;
-    //     for (auto &indepSet : indepSets)
-    //     {
-    //         auto changed = update_instance_I(indepSet, 1);
-    //         changed_tiles.insert(changed.begin(), changed.end());
-    //     }
-    //     update_tile_I(changed_tiles);
-    //     update_net();
-    //     }
-    // }
-    // std::cout << "Instance LUT ISM finish." << std::endl;
-
-    // after instanceISM:
-    // for, update_instance_I
-    // update_tiles_I
-    // update_net
 
     file_output(outputFileName);
     std::cout << "Output file generated." << std::endl;
@@ -516,4 +326,3 @@ int main(int, char* argv[])
     return 0;
 }
 
-// 现在有个大大大大的问题，就是为什么inst_0的位置总是不对，很器官。

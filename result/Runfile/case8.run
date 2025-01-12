@@ -5,5 +5,4 @@ report_design
 read_output ../result/case_8.nodes.out
 legal_check
 report_wirelength
-report_pin_density
 exit

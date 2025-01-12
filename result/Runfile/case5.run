@@ -1,9 +1,8 @@
-read_arch ../../Arch/fpga.lib ../../Arch/fpga.scl ../../Arch/fpga.clk
+read_arch ../benchmark/fpga.lib ../benchmark/fpga.scl ../benchmark/fpga.clk
 report_arch
-read_design ../../Benchmark/public_release/case_5.nodes ../../Benchmark/public_release/case_5.nets ../../Benchmark/public_release/case_5.timing
+read_design ../benchmark/case_5.nodes ../benchmark/case_5.nets ../benchmark/case_5.timing
 report_design 
-read_output ../../Test/MRes/case_5.nodes.out
+read_output ../result/case_5.nodes.out
 legal_check
 report_wirelength
-report_pin_density
 exit
