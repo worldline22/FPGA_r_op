@@ -14,9 +14,8 @@ make
 - With binary program `build`, how to run a specific case. We have not complete dynamic strategy for automatic iteration number decision, so you may check and edit the `config.txt` according to `result/record.xlsx` before running a case.
 ```
 cd transmute
-make run1       # run case1
 make run7       # run case7
-make run10
+make run10      # run case10
 ```
 
 - How to build and run the checker program. If our result doesn't have legality problem, the checker program will terminate without error, and show the wirelength result at last.
@@ -24,9 +23,8 @@ make run10
 cd eda_2024_track8_checker
 make clean
 make
-make run1       # check case1
 make run7       # check case7
-make run10
+make run10      # check case10
 ```
 
 ## code structure

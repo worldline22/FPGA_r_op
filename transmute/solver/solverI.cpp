@@ -662,6 +662,10 @@ int ISMSolver_matching_I::instanceWLdifference(const int old_index, const int ne
             return std::numeric_limits<int>::max();
         }
         // pindensity constraint
+        // UTPlaceF-style pindensity constraint
+        // if (tile_old_congest && !tile_new_congest && inst_empty)
+        // if (!tile_old_congest && tile_new_congest && !inst_empty)
+        // judgement should be put before first return 0
         if(tile_new->pin_density + pin_add > pin_denMax){
             return std::numeric_limits<int>::max();
         }

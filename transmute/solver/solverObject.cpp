@@ -602,8 +602,8 @@ int pindensity_setup()
     {
         STile* tile = it->second;
         double ratio = it->first;
-        std::cout << "Tile " << tile->X << " " << tile->Y << " " << tile->pin_density << " " << ratio << std::endl;
-        std::cout << "Total pin count: " << tile->pin_density << std::endl;
+        // std::cout << "Tile " << tile->X << " " << tile->Y << " " << tile->pin_density << " " << ratio << std::endl;
+        // std::cout << "Total pin count: " << tile->pin_density << std::endl;
         if (top5PctCnt < top5Pct)
         {
             totalPct += ratio;
@@ -615,15 +615,15 @@ int pindensity_setup()
         }
     }
     double avgPct = totalPct / top5Pct;
-    std::cout << "Tile number: " << top5Pct << std::endl;
-    std::cout << "Average pin density: " << avgPct << std::endl;
+    // std::cout << "Tile number: " << top5Pct << std::endl;
+    // std::cout << "Average pin density: " << avgPct << std::endl;
     int pinMax = (int)((MAX_TILE_PIN_INPUT_COUNT + MAX_TILE_PIN_OUTPUT_COUNT) * avgPct);
     return pinMax;
 }
 
 bool in_pinset(int netID, int instID, SPin* pin) {
     SInstance* inst = NetArray[pin->netID]->inpin->instanceOwner;
-    if (get<0>(inst->Location) != get<0>(InstArray[instID]->Location) || get<1>(inst->Location) != get<1>(InstArray[instID]->Location)){
+    if (std::get<0>(inst->Location) != std::get<0>(InstArray[instID]->Location) || std::get<1>(inst->Location) != std::get<1>(InstArray[instID]->Location)){
         return true;
     }
     return false;
@@ -635,7 +635,7 @@ bool out_pinset(int netID, int instID, SPin* pin) {
     int flag = 0;
     for (auto pin : net->outpins){
         SInstance* inst = pin->instanceOwner;
-        if (get<0>(in_inst->Location) != get<0>(inst->Location) || get<1>(in_inst->Location) != get<1>(inst->Location)){
+        if (std::get<0>(in_inst->Location) != std::get<0>(inst->Location) || std::get<1>(in_inst->Location) != std::get<1>(inst->Location)){
             flag = 1;
             break;
         }
