@@ -29,3 +29,16 @@ make run10      # check case10
 
 ## code structure
 All of the solver program is implemented in `transmute` directory. Transmute means things changes radically, we sincerely hope our placement solver can improve wirelength dramatically!
+
+We use codes in `checker_legacy` to parse the input files. These file are copied from official checker, we its data structure and input logic, and move the data to our own data structure in `solver`.
+
+`solver/solverObject.cpp` includes data structure, such as STile, SInstance, SNet and SPin. It initializes solver and provides necessary information. It also includes force-oriented computation.
+
+`solver/wirelength.cpp` links FLUTE solver and gives cost function in ISM Solving.
+
+`solver/solver.cpp` is written for Bank-level coarse-grained ISM. `solver/solverI.cpp` is written for Instance-level fine-grained ISM. The function being executed in parallel is `realizeMatching` and `instanceWLdifference`, including cost computing and ISM solving.
+
+
+## Supplementary, Contribution Details
+
+Contribution in our team is proportional to commit record. Zhan Chen decides the main workflow and completes the framework of algorithm (such as iterative computing, update mechanism). Yuchao Qin finishes the ISM computing kernel (such as Independent Set Constructing, Matching). Haotong Zhang completes the parallelism in the algorithm and made some detailed modification.
