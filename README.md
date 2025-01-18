@@ -41,4 +41,4 @@ We use codes in `checker_legacy` to parse the input files. These file are copied
 
 ## Supplementary, Contribution Details
 
-Contribution in our team is proportional to commit record. Zhan Chen decides the main workflow and completes the framework of algorithm (such as iterative computing, update mechanism). Yuchao Qin finishes the ISM computing kernel (such as Independent Set Constructing, Matching). Haotong Zhang completes the parallelism in the algorithm and made some detailed modification.
+Contribution in our team is proportional to commit record. Zhan Chen decides the main workflow and completes the framework of algorithm (such as iterative computing, update mechanism). Yuchao Qin finishes the ISM computing kernel (such as Independent Set Constructing, Matching). Haotong Zhang makes the parallelism in the algorithm, wirelength computation in ISM computing kernal, and makes some other detailed modification.
